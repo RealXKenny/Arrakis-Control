@@ -1,11 +1,11 @@
-const path = require('node:path');
-const { createLogger } = require('../core/logger');
-const { findJavaScriptFiles } = require('./fileLoader');
+const path = require("node:path");
+const { createLogger } = require("../core/logger");
+const { findJavaScriptFiles } = require("./fileLoader");
 
-const logger = createLogger('COMMANDS');
+const logger = createLogger("COMMANDS");
 
 function loadCommands(client) {
-  const commandsPath = path.join(__dirname, '..', 'commands');
+  const commandsPath = path.join(__dirname, "..", "commands");
   let loaded = 0;
   let skipped = 0;
 
@@ -27,7 +27,7 @@ function loadCommands(client) {
     loaded += 1;
   }
 
-  logger.info(`Loaded ${loaded} command${loaded === 1 ? '' : 's'}${skipped ? `; skipped ${skipped}` : ''}.`);
+  logger.info(`Loaded ${loaded} command${loaded === 1 ? "" : "s"}${skipped ? `; skipped ${skipped}` : ""}.`);
   return { loaded, skipped };
 }
 

@@ -1,7 +1,7 @@
-const { Events } = require('discord.js');
-const { createLogger } = require('../../core/logger');
+const { Events } = require("discord.js");
+const { createLogger } = require("../../core/logger");
 
-const logger = createLogger('DISCORD');
+const logger = createLogger("DISCORD");
 
 module.exports = {
   name: Events.ClientReady,

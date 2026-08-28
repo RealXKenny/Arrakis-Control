@@ -1,9 +1,9 @@
 function loadEnvironment(requiredKeys = []) {
-  require('dotenv').config();
+  require("dotenv").config();
 
   const missingKeys = requiredKeys.filter((key) => !process.env[key]);
   if (missingKeys.length > 0) {
-    throw new Error(`Missing required environment variable(s): ${missingKeys.join(', ')}`);
+    throw new Error(`Missing required environment variable(s): ${missingKeys.join(", ")}`);
   }
 
   return Object.freeze({
@@ -12,7 +12,7 @@ function loadEnvironment(requiredKeys = []) {
     guildId: process.env.GUILD_ID,
     duneConsoleUrl: process.env.DUNE_CONSOLE_URL,
     duneConsolePassword: process.env.DUNE_CONSOLE_PASSWORD,
-    logLevel: process.env.LOG_LEVEL ?? 'INFO',
+    logLevel: process.env.LOG_LEVEL ?? "INFO",
   });
 }
 

@@ -1,12 +1,12 @@
-const path = require('node:path');
-const { createLogger } = require('../core/logger');
-const { findJavaScriptFiles } = require('./fileLoader');
+const path = require("node:path");
+const { createLogger } = require("../core/logger");
+const { findJavaScriptFiles } = require("./fileLoader");
 
-const logger = createLogger('COMPONENTS');
+const logger = createLogger("COMPONENTS");
 const handlerTypes = Object.freeze([
-  ['buttons', 'buttons'],
-  ['selectMenus', 'selectMenus'],
-  ['modals', 'modals'],
+  ["buttons", "buttons"],
+  ["selectMenus", "selectMenus"],
+  ["modals", "modals"],
 ]);
 
 function loadComponentHandlers(client) {
@@ -14,7 +14,7 @@ function loadComponentHandlers(client) {
   let skipped = 0;
 
   for (const [directory, collectionName] of handlerTypes) {
-    const handlersPath = path.join(__dirname, '..', 'components', directory);
+    const handlersPath = path.join(__dirname, "..", "components", directory);
     for (const filePath of findJavaScriptFiles(handlersPath)) {
       const handler = require(filePath);
       if (!handler.customId || !handler.execute) {
@@ -28,7 +28,7 @@ function loadComponentHandlers(client) {
     }
   }
 
-  logger.info(`Loaded ${loaded} component handler${loaded === 1 ? '' : 's'}${skipped ? `; skipped ${skipped}` : ''}.`);
+  logger.info(`Loaded ${loaded} component handler${loaded === 1 ? "" : "s"}${skipped ? `; skipped ${skipped}` : ""}.`);
   return { loaded, skipped };
 }
 

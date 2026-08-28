@@ -1,7 +1,7 @@
-const { Events, MessageFlags } = require('discord.js');
-const { createLogger } = require('../../core/logger');
+const { Events, MessageFlags } = require("discord.js");
+const { createLogger } = require("../../core/logger");
 
-const logger = createLogger('INTERACTIONS');
+const logger = createLogger("INTERACTIONS");
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -9,9 +9,9 @@ module.exports = {
     try {
       if (interaction.isChatInputCommand()) await handleCommand(interaction);
       else if (interaction.isAutocomplete()) await handleAutocomplete(interaction);
-      else if (interaction.isButton()) await handleComponent(interaction, 'buttons', 'button');
-      else if (interaction.isAnySelectMenu()) await handleComponent(interaction, 'selectMenus', 'select menu');
-      else if (interaction.isModalSubmit()) await handleComponent(interaction, 'modals', 'modal form');
+      else if (interaction.isButton()) await handleComponent(interaction, "buttons", "button");
+      else if (interaction.isAnySelectMenu()) await handleComponent(interaction, "selectMenus", "select menu");
+      else if (interaction.isModalSubmit()) await handleComponent(interaction, "modals", "modal form");
     } catch (error) {
       logger.error(`Unhandled ${describeInteraction(interaction)} interaction error.`, error);
       await respondWithError(interaction);
@@ -20,7 +20,7 @@ module.exports = {
 };
 
 async function handleCommand(interaction) {
-  logger.info(`/${interaction.commandName} requested by ${interaction.user.tag} in ${interaction.guildId ?? 'direct messages'}.`);
+  logger.info(`/${interaction.commandName} requested by ${interaction.user.tag} in ${interaction.guildId ?? "direct messages"}.`);
   const command = interaction.client.commands.get(interaction.commandName);
   if (!command) throw new Error(`No command registered for /${interaction.commandName}.`);
 
@@ -53,13 +53,13 @@ async function respondWithError(interaction) {
     try {
       await interaction.respond([]);
     } catch (error) {
-      logger.error('Unable to send autocomplete fallback.', error);
+      logger.error("Unable to send autocomplete fallback.", error);
     }
     return;
   }
 
   const response = {
-    content: 'There was an error while handling this interaction.',
+    content: "There was an error while handling this interaction.",
     flags: MessageFlags.Ephemeral,
   };
 
@@ -68,12 +68,12 @@ async function respondWithError(interaction) {
     else if (interaction.replied) await interaction.followUp(response);
     else await interaction.reply(response);
   } catch (error) {
-    logger.error('Unable to send interaction error response.', error);
+    logger.error("Unable to send interaction error response.", error);
   }
 }
 
 function describeInteraction(interaction) {
   if (interaction.isChatInputCommand()) return `/${interaction.commandName}`;
   if (interaction.isAutocomplete()) return `/${interaction.commandName} autocomplete`;
-  return interaction.customId ?? 'unknown';
+  return interaction.customId ?? "unknown";
 }

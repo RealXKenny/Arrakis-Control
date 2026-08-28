@@ -1,9 +1,9 @@
-const { DuneApi } = require('../api/DuneApi');
-const { loadEnvironment } = require('../config/environment');
-const { createLogger } = require('../core/logger');
+const { DuneApi } = require("../api/DuneApi");
+const { loadEnvironment } = require("../config/environment");
+const { createLogger } = require("../core/logger");
 
-const config = loadEnvironment(['DUNE_CONSOLE_URL', 'DUNE_CONSOLE_PASSWORD']);
-const logger = createLogger('DUNE LOGIN', config.logLevel);
+const config = loadEnvironment(["DUNE_CONSOLE_URL", "DUNE_CONSOLE_PASSWORD"]);
+const logger = createLogger("DUNE LOGIN", config.logLevel);
 
 async function login() {
   const duneApi = new DuneApi(config.duneConsoleUrl);
@@ -12,6 +12,6 @@ async function login() {
 }
 
 login().catch((error) => {
-  logger.error('Unable to log in to the Dune Console.', error);
+  logger.error("Unable to log in to the Dune Console.", error);
   process.exitCode = 1;
 });
