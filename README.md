@@ -38,4 +38,4 @@ Add a file in a category under `src/commands/` that exports a `data` `SlashComma
 
 Never commit `.env`; it is intentionally ignored.
 
-Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, timestamped logs emitted by the bot. Startup logs show the number of loaded commands, component handlers, and event handlers. Each command and UI interaction is logged without exposing credentials.
+Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, color-coded logs emitted by the bot. Timestamps use America/New_York in `MM/DD/YYYY hh:mm:ss AM/PM` format. Startup logs show the number of loaded commands, component handlers, and event handlers. Each command and UI interaction is logged without exposing credentials.

@@ -7,6 +7,7 @@ const { createLogger } = require('./logger');
 
 function createBotApplication(config) {
   const logger = createLogger('BOT', config.logLevel);
+  logger.header('ARRAKIS CONTROL', 'Dune: Awakening Discord control bot');
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
   client.commands = new Collection();
   client.buttons = new Collection();
