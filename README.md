@@ -25,6 +25,7 @@ src/
   commands/players/     Dune player command modules
   config/               Environment configuration
   core/                 Bot lifecycle and logging
+  components/           Button, select-menu, and modal form handlers
   events/client/        Discord client event modules
   loaders/              Recursive command and event discovery
   scripts/              Command deployment and project checks
@@ -37,4 +38,4 @@ Add a file in a category under `src/commands/` that exports a `data` `SlashComma
 
 Never commit `.env`; it is intentionally ignored.
 
-Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, timestamped logs emitted by the bot.
+Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, timestamped logs emitted by the bot. Startup logs show the number of loaded commands, component handlers, and event handlers. Each command and UI interaction is logged without exposing credentials.

@@ -1,4 +1,7 @@
 const { URL } = require('node:url');
+const { createLogger } = require('../../core/logger');
+
+const logger = createLogger('DUNE API');
 
 class DuneConsoleClient {
   constructor(baseUrl) {
@@ -60,6 +63,8 @@ class DuneConsoleClient {
     if (authenticate && this.sessionCookie) headers.Cookie = this.sessionCookie;
     if (includeCsrf && this.csrfToken) headers['x-csrf-token'] = this.csrfToken;
 
+    const startedAt = Date.now();
+    logger.debug(`${method} ${route}`);
     const response = await fetch(url, {
       method,
       headers,
@@ -71,9 +76,11 @@ class DuneConsoleClient {
 
     if (!response.ok) {
       const message = data?.error ?? data?.reason ?? `Request failed with HTTP ${response.status}.`;
+      logger.warn(`${method} ${route} failed with HTTP ${response.status} after ${Date.now() - startedAt}ms.`);
       throw new DuneConsoleApiError(message, response.status, data);
     }
 
+    logger.debug(`${method} ${route} completed with HTTP ${response.status} in ${Date.now() - startedAt}ms.`);
     return data;
   }
 

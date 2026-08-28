@@ -1,6 +1,7 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { DuneApi } = require('../api/DuneApi');
 const { loadCommands } = require('../loaders/commandLoader');
+const { loadComponentHandlers } = require('../loaders/componentLoader');
 const { loadEvents } = require('../loaders/eventLoader');
 const { createLogger } = require('./logger');
 
@@ -8,17 +9,27 @@ function createBotApplication(config) {
   const logger = createLogger('BOT', config.logLevel);
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
   client.commands = new Collection();
+  client.buttons = new Collection();
+  client.selectMenus = new Collection();
+  client.modals = new Collection();
   client.duneApi = new DuneApi(config.duneConsoleUrl);
 
-  loadCommands(client);
-  loadEvents(client);
+  const commands = loadCommands(client);
+  const components = loadComponentHandlers(client);
+  const events = loadEvents(client);
+  logger.info(`Application initialized with ${commands.loaded} commands, ${components.loaded} component handlers, and ${events.loaded} event handlers.`);
+
+  client.on('error', (error) => logger.error('Discord client error.', error));
+  client.on('warn', (message) => logger.warn(`Discord client warning: ${message}`));
+  client.on('shardError', (error) => logger.error('Discord gateway shard error.', error));
 
   let isShuttingDown = false;
 
   async function start() {
     await client.duneApi.login(config.duneConsolePassword);
-    logger.info('Logged in to the Dune Console.');
+    logger.info(`Logged in to the Dune Console; ${client.duneApi.endpoints.length} API endpoints are available.`);
     await client.login(config.discordToken);
+    logger.info('Discord login request completed.');
   }
 
   async function shutdown(signal, exitCode = 0) {
@@ -33,6 +44,7 @@ function createBotApplication(config) {
       logger.error('Unable to log out of the Dune Console.', error);
     } finally {
       client.destroy();
+      logger.info('Discord client closed.');
       process.exit(exitCode);
     }
   }
