@@ -40,12 +40,12 @@ function createBotApplication(config) {
 
     try {
       await client.duneApi.logout();
-      logger.info("Logged out of the Dune Console.");
+      logger.debug("Logged out of the Dune Console.");
     } catch (error) {
       logger.error("Unable to log out of the Dune Console.", error);
     } finally {
       client.destroy();
-      logger.info("Discord client closed.");
+      logger.debug("Discord client closed.");
       process.exit(exitCode);
     }
   }
