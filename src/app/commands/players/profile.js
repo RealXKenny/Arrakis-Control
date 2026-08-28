@@ -26,6 +26,24 @@ module.exports = {
     }
 
     const playerId = player.pawnId ?? player.controllerId;
+    const guildResponse = await interaction.client.duneApi.call("GET", "/api/guilds", {
+      query: { page: 0, pageSize: 100 },
+    });
+    logger.debug("Profile guild response:", JSON.stringify(guildResponse, null, 2));
+    const guildRows = getGuildRows(guildResponse);
+    const guildMembers = await Promise.all(guildRows.map(async (guildRow) => {
+      const guildId = guildRow.guild_id ?? guildRow.guildId ?? guildRow.id;
+      if (!guildId) return null;
+      try {
+        const membersResponse = await interaction.client.duneApi.call("GET", "/api/guilds/{guildId}/members", { params: { guildId } });
+        logger.debug(`Profile guild members response (${guildId}):`, JSON.stringify(membersResponse, null, 2));
+        return { guildRow, membersResponse };
+      } catch (error) {
+        logger.warn(`Unable to load members for guild ${guildId}: ${error.message}`);
+        return null;
+      }
+    }));
+    const guild = findGuild(guildResponse, player, guildMembers);
     const endpointNames = ["currency", "solaris-coin", "factions", "intel", "specs", "progression", "vitals"];
     const responses = await Promise.all(endpointNames.map(async (endpoint) => {
       try {
@@ -43,16 +61,17 @@ module.exports = {
       .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL(`attachment://${IMAGE_NAME}`).setDescription("Dune character profile")))
       .addTextDisplayComponents((text) => text.setContent("## Your Dune Player"))
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-      .addTextDisplayComponents((text) => text.setContent(formatProfile(player, data)));
+      .addTextDisplayComponents((text) => text.setContent(formatProfile(player, data, guild)));
 
     await interaction.editReply({ content: null, embeds: null, components: [card], files: [createProfileBanner(player)], flags: MessageFlags.IsComponentsV2 });
   },
 };
 
-function formatProfile(player, data) {
+function formatProfile(player, data, guild) {
   const lines = [
     `### ${player.characterName ?? "Unknown"}`,
     `**Status:** ${player.onlineStatus ?? "Unknown"}`,
+    `**Guild:** ${guild?.guild_name ?? guild?.guildName ?? guild?.name ?? "No guild"}`,
     "",
     `### Progression\n${formatProgression(data.progression)}`,
     `### Currency\n${formatCurrency(data.currency, data["solaris-coin"])}`,
@@ -62,6 +81,25 @@ function formatProfile(player, data) {
     `### Specializations\n${formatSpecs(data.specs)}`,
   ];
   return lines.join("\n");
+}
+
+function getGuildRows(response) {
+  return response?.rows ?? response?.guilds ?? response?.data ?? response?.results ?? [];
+}
+
+function findGuild(response, player, guildMembers) {
+  const rows = getGuildRows(response);
+  if (!Array.isArray(rows)) return null;
+  const characterName = String(player.characterName ?? "").trim().toLowerCase();
+  const controllerId = String(player.controllerId ?? "");
+  const membership = guildMembers.find(({ membersResponse }) => {
+    const members = membersResponse?.rows ?? membersResponse?.members ?? membersResponse?.data ?? membersResponse?.results ?? [];
+    return Array.isArray(members) && members.some((member) => String(member.player_id ?? member.playerId ?? "") === controllerId
+      || String(member.character_name ?? member.characterName ?? member.name ?? "").trim().toLowerCase() === characterName);
+  });
+  return membership?.guildRow
+    ?? rows.find((guild) => String(guild.character_name ?? guild.characterName ?? "").trim().toLowerCase() === characterName)
+    ?? null;
 }
 
 const unavailable = "Unavailable";

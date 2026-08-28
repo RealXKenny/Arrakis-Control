@@ -12,6 +12,18 @@
           "description": "Expanded /profile with readable currency, Solaris Coin, factions, intel, specs, progression, and vitals data."
         },
         {
+          "type": "feature",
+          "description": "Added guild lookup to /profile and display of the linked character's guild name when available."
+        },
+        {
+          "type": "fix",
+          "description": "Added guild-member lookups and full debug responses to reliably identify a player's guild membership."
+        },
+        {
+          "type": "fix",
+          "description": "Removed the character-name filter from guild discovery, matched members by player ID, and corrected the guild_name field shown in /profile."
+        },
+        {
           "type": "fix",
           "description": "Removed the unsupported player stats request and made /profile responses visible in the channel instead of ephemeral."
         },
