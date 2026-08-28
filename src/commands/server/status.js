@@ -19,16 +19,20 @@ module.exports = {
     const serverName = process.env.SERVER_NAME || DEFAULT_SERVER_NAME;
 
     try {
-      const status = await client.duneApi.call("GET", "/api/server/status");
+      const [status, performance] = await Promise.all([client.duneApi.call("GET", "/api/server/status"), client.duneApi.call("GET", "/api/server/performance")]);
 
       const formatted = formatServerStatus(status);
       const healthy = Boolean(formatted.healthy);
+
       const accentColor = healthy ? DUNE_COLORS[Math.floor(Math.random() * DUNE_COLORS.length)] : 0x8f3025;
+
+      const performanceInfo = formatPerformance(performance);
 
       const banner = createStatusBanner({
         serverName,
         healthy,
         overview: formatted.overview,
+        performance: performanceInfo,
         username: client.user.username,
       });
 
@@ -45,6 +49,8 @@ module.exports = {
         .addTextDisplayComponents((text) => text.setContent(["### 📦 Containers", formatted.containers || "No container data reported."].join("\n")))
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
         .addTextDisplayComponents((text) => text.setContent(["### 🛰️ Listeners", formatted.listeners || "No listener data reported."].join("\n")))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) => text.setContent(["### 📊 Performance", `**CPU:** ${performanceInfo.cpu}`, `**Memory:** ${performanceInfo.memory}`, `**Disk:** ${performanceInfo.disk}`].join("\n")))
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
         .addTextDisplayComponents((text) => text.setContent(["### ⚙️ Automation", formatted.automation || "Not configured."].join("\n")))
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
@@ -82,7 +88,52 @@ module.exports = {
   },
 };
 
-function createStatusBanner({ serverName, healthy, overview, username }) {
+function formatPerformance(data) {
+  const cpu = data?.cpu ?? data?.cpuUsage ?? data?.cpuPercent ?? data?.cpu?.usage ?? data?.cpu?.percent;
+
+  const memory = data?.memory ?? data?.memoryUsage ?? data?.memoryPercent ?? data?.memory?.usage ?? data?.memory?.percent;
+
+  const disk = data?.disk ?? data?.diskUsage ?? data?.diskPercent ?? data?.disk?.usage ?? data?.disk?.percent;
+
+  return {
+    cpu: formatMetric(cpu, "%"),
+    memory: formatMetric(memory, "%"),
+    disk: formatMetric(disk, "%"),
+  };
+}
+
+function formatMetric(value, suffix = "") {
+  if (value === undefined || value === null) {
+    return "Unavailable";
+  }
+
+  if (typeof value === "object") {
+    if (typeof value.percent === "number") {
+      return `${value.percent.toFixed(1)}${suffix}`;
+    }
+
+    if (typeof value.percentage === "number") {
+      return `${value.percentage.toFixed(1)}${suffix}`;
+    }
+
+    if (typeof value.used === "number" && typeof value.total === "number") {
+      const percent = (value.used / value.total) * 100;
+      return `${percent.toFixed(1)}%`;
+    }
+  }
+
+  if (typeof value === "number") {
+    return `${value.toFixed(1)}${suffix}`;
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return "Unavailable";
+}
+
+function createStatusBanner({ serverName, healthy, overview, performance, username }) {
   const canvas = createCanvas(1200, 400);
   const ctx = canvas.getContext("2d");
 
@@ -124,9 +175,7 @@ function createStatusBanner({ serverName, healthy, overview, username }) {
   const overlay = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
   overlay.addColorStop(0, "rgba(10, 7, 5, 0.88)");
-
   overlay.addColorStop(0.55, "rgba(10, 7, 5, 0.45)");
-
   overlay.addColorStop(1, "rgba(10, 7, 5, 0.05)");
 
   ctx.fillStyle = overlay;
@@ -142,7 +191,6 @@ function createStatusBanner({ serverName, healthy, overview, username }) {
   drawFittedText(ctx, serverName.toUpperCase(), 64, 145, 650, "24px sans-serif");
 
   ctx.strokeStyle = healthy ? "#c58b45" : "#a64b3d";
-
   ctx.lineWidth = 2;
 
   ctx.beginPath();
@@ -152,7 +200,6 @@ function createStatusBanner({ serverName, healthy, overview, username }) {
 
   ctx.font = "bold 72px sans-serif";
   ctx.fillStyle = healthy ? "#70b85a" : "#c65345";
-
   ctx.fillText(healthy ? "✓" : "!", 70, 265);
 
   ctx.font = "bold 30px sans-serif";
@@ -166,6 +213,11 @@ function createStatusBanner({ serverName, healthy, overview, username }) {
   drawFittedText(ctx, overview || "No overview data reported.", 165, 265, 600, "20px sans-serif");
 
   ctx.font = "18px sans-serif";
+  ctx.fillStyle = "#ead5ad";
+
+  ctx.fillText(`CPU ${performance.cpu} • RAM ${performance.memory} • DISK ${performance.disk}`, 64, 320);
+
+  ctx.font = "17px sans-serif";
   ctx.fillStyle = "#ead5ad";
 
   ctx.fillText(`${username} • Spice flows through Arrakis`, 64, 350);
@@ -199,8 +251,8 @@ function drawDunes(ctx, canvas) {
     }
 
     ctx.lineTo(canvas.width, canvas.height);
-
     ctx.closePath();
+
     ctx.fillStyle = color;
     ctx.fill();
   };
@@ -214,10 +266,10 @@ function drawDunes(ctx, canvas) {
 function drawFittedText(ctx, text, x, y, maxWidth, font) {
   ctx.font = font;
 
-  let output = text;
+  let output = String(text);
 
   while (ctx.measureText(output).width > maxWidth && output.length > 3) {
-    output = output.slice(0, -4) + "...";
+    output = `${output.slice(0, -4)}...`;
   }
 
   ctx.fillText(output, x, y);
