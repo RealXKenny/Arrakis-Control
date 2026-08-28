@@ -48,7 +48,7 @@ function buildNotes({ version: releaseVersion, currentTag: tag, previousTag: pre
 
   for (const change of changes) groups.get(categoryFor(change.subject)).push(change);
 
-  const lines = [`# Arrakis Control v${releaseVersion}`, "", "## Docker image", "", "```bash", `docker pull <docker-hub-username>/arrakis-control:${releaseVersion}`, "```", "", "## Changes", ""];
+  const lines = [`# Arrakis Control v${releaseVersion}`, "", "## Docker image", "", "```bash", `docker pull realxkenny/arrakis-control:${releaseVersion}`, "```", "", "## Changes", ""];
 
   if (changes.length === 0) lines.push("No source changes were recorded for this release.");
   for (const [category, categoryChanges] of groups) {
