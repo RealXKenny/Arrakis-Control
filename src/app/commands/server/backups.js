@@ -35,7 +35,7 @@ module.exports = {
       const card = new ContainerBuilder()
         .setAccentColor(accentColor)
 
-        .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-backups.png")))
+        .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://dune-server-backups.png")))
 
         .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Server Backups"))
 
@@ -698,7 +698,7 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
 
   ctx.font = "bold 52px sans-serif";
   ctx.fillStyle = "#f2d39b";
-  ctx.fillText("CRIMSON SKIES", 60, 105);
+  ctx.fillText("DUNE SERVER", 60, 105);
 
   ctx.font = "24px sans-serif";
   ctx.fillStyle = "#e6bd79";
@@ -765,7 +765,7 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
   ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
   return new AttachmentBuilder(canvas.toBuffer("image/png"), {
-    name: "crimson-skies-backups.png",
+    name: "dune-server-backups.png",
   });
 }
 

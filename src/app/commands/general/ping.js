@@ -96,7 +96,7 @@ module.exports = {
 
     ctx.font = "bold 52px sans-serif";
     ctx.fillStyle = "#f2d39b";
-    ctx.fillText("CRIMSON SKIES", 60, 105);
+    ctx.fillText("DUNE SERVER", 60, 105);
 
     ctx.font = "24px sans-serif";
     ctx.fillStyle = "#e6bd79";
@@ -148,12 +148,12 @@ module.exports = {
     ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
     const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
-      name: "crimson-skies-ping.png",
+      name: "dune-server-ping.png",
     });
 
     const pingCard = new ContainerBuilder()
       .setAccentColor(accentColor)
-      .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-ping.png")))
+      .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://dune-server-ping.png")))
       .addTextDisplayComponents((text) => text.setContent("## 🏓 Pong!"))
       .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))

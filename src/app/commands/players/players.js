@@ -194,12 +194,12 @@ module.exports = {
       ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
       const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
-        name: "crimson-skies-players.png",
+        name: "dune-server-players.png",
       });
 
       const playersCard = new ContainerBuilder()
         .setAccentColor(0xc58b45)
-        .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-players.png")))
+        .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://dune-server-players.png")))
         .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Players"))
         .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))

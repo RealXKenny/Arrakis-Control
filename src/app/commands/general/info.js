@@ -107,7 +107,7 @@ module.exports = {
 
     ctx.font = "bold 52px sans-serif";
     ctx.fillStyle = "#f2d39b";
-    ctx.fillText("CRIMSON SKIES", 60, 105);
+    ctx.fillText("DUNE SERVER", 60, 105);
 
     ctx.font = "24px sans-serif";
     ctx.fillStyle = "#e6bd79";
@@ -145,12 +145,12 @@ module.exports = {
     ctx.fillText(`${client.user.username} • Spice flows through Arrakis`, 64, 350);
 
     const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
-      name: "crimson-skies-info.png",
+      name: "dune-server-info.png",
     });
 
     const infoCard = new ContainerBuilder()
       .setAccentColor(accentColor)
-      .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-info.png")))
+      .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://dune-server-info.png")))
       .addTextDisplayComponents((text) => text.setContent(`## 🏜️ ${client.user.username}`))
       .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))

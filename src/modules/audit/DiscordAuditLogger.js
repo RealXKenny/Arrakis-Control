@@ -34,14 +34,18 @@ class DiscordAuditLogger {
 
   async blueprintImported(interaction, linked, result, attachment) {
     const file = await downloadBlueprintAttachment(attachment);
+    const fileSize = attachment?.size ? `${(attachment.size / 1024).toFixed(1)} KB` : "Unknown";
     return this.send("Blueprint imported", [
+      `**Action:** Blueprint import completed`,
       `**Discord user:** ${interaction.user.tag} (${interaction.user.id})`,
       `**Character:** ${linked.characterName ?? "Unknown"}`,
-      `**Blueprint:** ${result.blueprintName ?? attachment?.name ?? "Unknown"}`,
+      `**File:** ${attachment?.name ?? "Unknown"} (${fileSize})`,
+      `**Blueprint:** ${result.blueprintName ?? "Unknown"}`,
       `**Blueprint ID:** ${result.blueprintId ?? "Unknown"}`,
       `**Pieces:** ${result.pieces ?? 0}`,
       `**Placeables:** ${result.placeables ?? 0}`,
       `**Pentashields:** ${result.pentashields ?? 0}`,
+      `**Recorded:** ${new Date().toISOString()}`,
     ], file ? [file] : []);
   }
 

@@ -35,6 +35,9 @@ jobs:
           VERSION="$(tr -d '\r\n' < VERSION)"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Synchronize package.json version
+        run: node src/scripts/sync-version.js
+
       - name: Commit synchronized package version
         shell: bash
         run: |

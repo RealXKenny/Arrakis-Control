@@ -64,7 +64,9 @@ Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, co
 
 ## Docker releases
 
-`VERSION` is the canonical bot version and must be a semantic version such as `1.0.0`. Updating that file and pushing it to `main` automatically synchronizes `package.json`, creates a GitHub Release tagged `v<version>`, and pushes Docker images tagged `<version>` and `latest`. Release notes group commits into features, fixes, performance, documentation, refactoring, maintenance, and other changes; they also include commit details, a changed-files summary, and a comparison link. You can run `npm run version:sync` locally to synchronize `package.json` before committing.
+Before each release, update `CHANGELOG.json` with the new version, date, summary, and detailed changes. Keep the newest release first. This file is the user-readable release history and should be committed with the version update.
+
+`VERSION` is the canonical bot version and must be a semantic version such as `1.0.0`. Updating that file and pushing it to `main` automatically synchronizes `package.json`, creates a GitHub Release tagged `v<version>`, and pushes Docker images tagged `<version>` and `latest`. Release notes are generated exclusively from the matching, human-written `CHANGELOG.json` entry, keeping every release clean and user-friendly. You can run `npm run version:sync` locally to synchronize `package.json` before committing.
 
 Before the first release, create a Docker Hub repository named `arrakis-control` and add these GitHub repository secrets:
 

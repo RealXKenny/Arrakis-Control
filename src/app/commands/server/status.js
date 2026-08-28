@@ -49,7 +49,7 @@ module.exports = {
 
       const statusCard = new ContainerBuilder()
         .setAccentColor(accentColor)
-        .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-status.png")))
+        .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://dune-server-status.png")))
         .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Server Status"))
         .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
@@ -532,7 +532,7 @@ function createStatusBanner({ serverName, healthy, overall, population, region, 
 
   ctx.font = "bold 52px sans-serif";
   ctx.fillStyle = "#f2d39b";
-  ctx.fillText("CRIMSON SKIES", 60, 85);
+  ctx.fillText("DUNE SERVER", 60, 85);
 
   ctx.font = "24px sans-serif";
   ctx.fillStyle = "#e6bd79";
@@ -579,7 +579,7 @@ function createStatusBanner({ serverName, healthy, overall, population, region, 
   ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
   return new AttachmentBuilder(canvas.toBuffer("image/png"), {
-    name: "crimson-skies-status.png",
+    name: "dune-server-status.png",
   });
 }
 

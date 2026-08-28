@@ -1,0 +1,44 @@
+{
+  "project": "arrakis-control",
+  "formatVersion": 1,
+  "releases": [
+    {
+      "version": "1.0.4",
+      "date": "2026-08-28",
+      "summary": "Removed server-specific Crimson Skies branding from generated command artwork.",
+      "changes": [
+        {
+          "type": "maintenance",
+          "description": "Replaced hardcoded server branding and asset names with generic Dune Server placeholders."
+        },
+        {
+          "type": "docs",
+          "description": "Clarified that deployment-specific channel IDs belong only in environment configuration."
+        }
+      ]
+    },
+    {
+      "version": "1.0.3",
+      "date": "2026-08-28",
+      "summary": "Organized the source tree and improved blueprint audit logging.",
+      "changes": [
+        {
+          "type": "refactor",
+          "description": "Grouped Discord-facing code, infrastructure, reusable modules, and shared helpers into clear source areas."
+        },
+        {
+          "type": "fix",
+          "description": "Blueprint imports now resolve the Console player correctly and use the player pawn ID."
+        },
+        {
+          "type": "feature",
+          "description": "Blueprint audit messages include the uploaded JSON through a Components V2 File component."
+        },
+        {
+          "type": "docs",
+          "description": "Updated project and source-layout documentation."
+        }
+      ]
+    }
+  ]
+}

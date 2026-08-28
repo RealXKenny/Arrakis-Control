@@ -1,6 +1,6 @@
 {
   "name": "arrakis-control",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A modular Discord.js v14 bot.",
   "main": "src/index.js",
   "private": true,
