@@ -36,7 +36,7 @@ function createBotApplication(config) {
   async function shutdown(signal, exitCode = 0) {
     if (isShuttingDown) return;
     isShuttingDown = true;
-    logger.info(`Received ${signal}; signing out of the Dune Console.`);
+    logger.debug(`Received ${signal}; signing out of the Dune Console.`);
 
     try {
       await client.duneApi.logout();
