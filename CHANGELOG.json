@@ -3,6 +3,21 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.0.7",
+      "date": "2026-08-28",
+      "summary": "Fixed the Docker build and GitHub Actions runtime configuration.",
+      "changes": [
+        {
+          "type": "fix",
+          "description": "Corrected the Alpine emoji font package name so Docker images build successfully."
+        },
+        {
+          "type": "maintenance",
+          "description": "Updated CI and release workflows to use Node.js 24 and removed the Node.js 20 deprecation warning."
+        }
+      ]
+    },
+    {
       "version": "1.0.6",
       "date": "2026-08-28",
       "summary": "Fixed missing fonts in Canvas-generated Discord images.",
