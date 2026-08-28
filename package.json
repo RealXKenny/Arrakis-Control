@@ -1,0 +1,20 @@
+{
+  "name": "arrakis-control",
+  "version": "1.0.0",
+  "description": "A modular Discord.js v14 bot.",
+  "main": "src/index.js",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "deploy:commands": "node scripts/deploy-commands.js",
+    "lint": "node scripts/check-syntax.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.25.1",
+    "dotenv": "^16.6.1"
+  }
+}
