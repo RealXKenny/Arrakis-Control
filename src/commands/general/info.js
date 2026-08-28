@@ -7,22 +7,11 @@ module.exports = {
 
   async execute(interaction) {
     const client = interaction.client;
-
     const serverName = process.env.SERVER_NAME || "Dune: Awakening Community Server";
-
     const uptimeSeconds = Math.floor(client.uptime / 1000);
     const memoryUsage = process.memoryUsage();
 
-    // Dune: Awakening inspired colors
-    const duneColors = [
-      0xc58b45, // Spice Gold
-      0xd2a85a, // Arrakis Sand
-      0xa96832, // Desert Orange
-      0x8f542c, // Spice Brown
-      0x70452c, // Deep Desert
-      0xb87333, // Copper Spice
-      0x9c6b3c, // Sandstone
-    ];
+    const duneColors = [0xc58b45, 0xd2a85a, 0xa96832, 0x8f542c, 0x70452c, 0xb87333, 0x9c6b3c];
 
     const accentColor = duneColors[Math.floor(Math.random() * duneColors.length)];
 
@@ -50,16 +39,9 @@ module.exports = {
 
     const websocketPing = client.ws.ping >= 0 ? `${client.ws.ping}ms` : "Measuring...";
 
-    /*
-     * ─────────────────────────────────────────────
-     * Canvas banner
-     * ─────────────────────────────────────────────
-     */
-
     const canvas = createCanvas(1200, 400);
     const ctx = canvas.getContext("2d");
 
-    // Background
     const background = ctx.createLinearGradient(0, 0, 0, canvas.height);
 
     background.addColorStop(0, "#21140d");
@@ -70,7 +52,6 @@ module.exports = {
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Sun / spice glow
     const glow = ctx.createRadialGradient(900, 100, 20, 900, 100, 450);
 
     glow.addColorStop(0, "rgba(255, 190, 90, 0.5)");
@@ -80,7 +61,6 @@ module.exports = {
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Dunes
     const drawDune = (y, height, color, offset = 0) => {
       ctx.beginPath();
       ctx.moveTo(0, canvas.height);
@@ -99,12 +79,11 @@ module.exports = {
       ctx.fill();
     };
 
-    drawDune(280, 70, "#82451f", 0);
+    drawDune(280, 70, "#82451f");
     drawDune(315, 60, "#9a592e", 150);
     drawDune(345, 50, "#b87333", 300);
     drawDune(370, 35, "#d2a85a", 500);
 
-    // Sand particles
     ctx.fillStyle = "rgba(255, 220, 150, 0.3)";
 
     for (let i = 0; i < 180; i++) {
@@ -117,7 +96,6 @@ module.exports = {
       ctx.fill();
     }
 
-    // Text readability overlay
     const overlay = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
     overlay.addColorStop(0, "rgba(10, 7, 5, 0.8)");
@@ -127,26 +105,30 @@ module.exports = {
     ctx.fillStyle = overlay;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Title
     ctx.font = "bold 52px sans-serif";
     ctx.fillStyle = "#f2d39b";
     ctx.fillText("CRIMSON SKIES", 60, 105);
 
-    // Subtitle
     ctx.font = "24px sans-serif";
     ctx.fillStyle = "#e6bd79";
-    ctx.fillText("DUNE: AWAKENING COMMUNITY SERVER", 64, 145);
 
-    // Decorative line
+    let displayServerName = serverName;
+    const maxServerNameWidth = 650;
+
+    while (ctx.measureText(displayServerName).width > maxServerNameWidth && displayServerName.length > 3) {
+      displayServerName = displayServerName.slice(0, -4) + "...";
+    }
+
+    ctx.fillText(displayServerName.toUpperCase(), 64, 145);
+
     ctx.strokeStyle = "#c58b45";
     ctx.lineWidth = 2;
 
     ctx.beginPath();
     ctx.moveTo(64, 170);
-    ctx.lineTo(520, 170);
+    ctx.lineTo(620, 170);
     ctx.stroke();
 
-    // Decorative diamond
     ctx.fillStyle = "#d2a85a";
 
     ctx.beginPath();
@@ -157,42 +139,23 @@ module.exports = {
     ctx.closePath();
     ctx.fill();
 
-    // Footer
     ctx.font = "18px sans-serif";
     ctx.fillStyle = "#ead5ad";
+
     ctx.fillText(`${client.user.username} • Spice flows through Arrakis`, 64, 350);
 
     const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
       name: "crimson-skies-info.png",
     });
 
-    /*
-     * ─────────────────────────────────────────────
-     * Components V2
-     * ─────────────────────────────────────────────
-     */
-
     const infoCard = new ContainerBuilder()
       .setAccentColor(accentColor)
-
-      /*
-       * IMAGE INSIDE THE CONTAINER
-       */
       .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-info.png")))
-
-      // Header
       .addTextDisplayComponents((text) => text.setContent(`## 🏜️ ${client.user.username}`))
-
       .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
-
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-      // Bot
       .addTextDisplayComponents((text) => text.setContent(["### 🏜️ Bot", `**Version:** v${getBotVersion()}`, `**User ID:** \`${client.user.id}\``, `**Created:** <t:${Math.floor(client.user.createdTimestamp / 1000)}:D>`].join("\n")))
-
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-      // Statistics
       .addTextDisplayComponents((text) =>
         text.setContent(
           [
@@ -204,17 +167,11 @@ module.exports = {
           ].join("\n"),
         ),
       )
-
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-      // Connection
       .addTextDisplayComponents((text) =>
         text.setContent(["### 🛰️ Connection", `**WebSocket:** ${websocketPing}`, `**Uptime:** ${formatUptime(uptimeSeconds)}`, `**Online since:** <t:${Math.floor((Date.now() - client.uptime) / 1000)}:R>`].join("\n")),
       )
-
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-      // Runtime
       .addTextDisplayComponents((text) =>
         text.setContent(
           [
@@ -228,10 +185,7 @@ module.exports = {
           ].join("\n"),
         ),
       )
-
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-      // Footer
       .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
     await interaction.reply({
