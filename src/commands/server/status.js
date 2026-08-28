@@ -1,6 +1,5 @@
 const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder } = require("discord.js");
 const { createCanvas } = require("canvas");
-const { formatServerStatus } = require("../../formatters/serverStatus");
 const { createLogger } = require("../../core/logger");
 
 const logger = createLogger("SERVER STATUS");
@@ -27,71 +26,133 @@ module.exports = {
         client.duneApi.call("GET", "/api/server/services"),
       ]);
 
-      const formatted = formatServerStatus(status);
-      const healthy = Boolean(formatted.healthy);
+      const statusData = parseServerStatus(status?.stdout || "");
+      const readinessData = parseReadiness(readiness?.stdout || "");
+      const portsData = parsePorts(ports?.stdout || "");
+      const servicesData = parseServices(services?.stdout || "");
 
-      const performanceData = normalizePerformance(performance);
-      const readinessData = normalizeReadiness(readiness);
-      const portsData = normalizeCollection(ports);
-      const servicesData = normalizeCollection(services);
+      const healthy = statusData.overall === "READY" && readinessData.failed === 0;
 
       const accentColor = healthy ? DUNE_COLORS[Math.floor(Math.random() * DUNE_COLORS.length)] : 0x8f3025;
 
       const banner = createStatusBanner({
         serverName,
         healthy,
-        overview: formatted.overview,
-        performance: performanceData,
-        username: client.user.username,
+        overall: statusData.overall,
+        population: statusData.population,
+        region: statusData.region,
+        cpuPercent: performance?.cpuPercent,
+        memoryPercent: performance?.memory?.percent,
+        diskPercent: performance?.disk?.percent,
+        uptime: performance?.uptime,
       });
 
       const statusCard = new ContainerBuilder()
         .setAccentColor(accentColor)
-
         .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-status.png")))
-
         .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Server Status"))
-
         .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
-
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent([`### ${healthy ? "🟢" : "🔴"} ${healthy ? "Server Operational" : "Server Attention Required"}`, formatted.overview || "No overview data reported."].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              `### ${healthy ? "🟢" : "🔴"} ${healthy ? "Server Operational" : "Server Attention Required"}`,
+              `**Overall:** ${statusData.overall || "UNKNOWN"}`,
+              `**Region:** ${statusData.region || "Unknown"}`,
+              `**Population:** ${statusData.population || "Unknown"}`,
+            ].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 🎮 Game Servers", formatted.gameServers || "No game server data reported."].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              "### 📊 Performance",
+              `**CPU:** ${formatPercent(performance?.cpuPercent)}`,
+              `**Memory:** ${formatBytes(performance?.memory?.usedBytes)} / ${formatBytes(performance?.memory?.totalBytes)} (${formatPercent(performance?.memory?.percent)})`,
+              `**Disk:** ${formatBytes(performance?.disk?.usedBytes)} / ${formatBytes(performance?.disk?.totalBytes)} (${formatPercent(performance?.disk?.percent)})`,
+              `**Server Uptime:** ${performance?.uptime || "Unknown"}`,
+            ].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 📦 Containers", formatted.containers || "No container data reported."].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              "### 🎮 Game Servers",
+              statusData.gameServers.length ? statusData.gameServers.map((server) => `${server.state === "READY" ? "🟢" : "🔴"} **${server.map}** — \`${server.state}\` — ${server.uptime}`).join("\n") : "No game server data reported.",
+              statusData.gameServerNote ? `\n-# ${statusData.gameServerNote}` : "",
+            ].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 🛰️ Listeners", formatted.listeners || "No listener data reported."].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              "### 📦 Containers",
+              servicesData.containers.length
+                ? servicesData.containers.map((service) => `${service.status.includes("healthy") ? "🟢" : "🟡"} \`${service.name}\` — ${service.status}`).join("\n")
+                : statusData.containers || "No container data reported.",
+            ].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 📊 Performance", formatPerformance(performanceData)].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              `### 🛰️ Listeners`,
+              `**${readinessData.listenersPassed}/${readinessData.listenersTotal} listeners responding**`,
+              "",
+              readinessData.listeners.length
+                ? readinessData.listeners.map((listener) => `${listener.ok ? "🟢" : "🔴"} **${listener.name}** — \`${listener.port}\` — ${listener.status}`).join("\n")
+                : statusData.listeners || "No listener data reported.",
+            ].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 🧭 Readiness", formatReadiness(readinessData)].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              "### 🧭 Readiness",
+              readinessData.summary ? `**${readinessData.summary}**` : "No readiness summary reported.",
+              `**Checks:** ${readinessData.passed} passed • ${readinessData.failed} failed`,
+              "",
+              readinessData.checks.length
+                ? readinessData.checks
+                    .slice(0, 20)
+                    .map((check) => `${check.ok ? "🟢" : "🔴"} ${check.label}`)
+                    .join("\n")
+                : "No readiness checks reported.",
+            ].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 🔌 Service Ports", formatPorts(portsData)].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(["### 🔌 Service Ports", portsData.length ? portsData.map((port) => `${port.ok ? "🟢" : "🔴"} **${port.name}** — \`${port.address}\` — ${port.status}`).join("\n") : "No service port data reported."].join("\n")),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### ⚙️ Services", formatServices(servicesData)].join("\n")))
-
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            ["### ⚙️ Services", servicesData.services.length ? servicesData.services.map((service) => `${getServiceIndicator(service.status)} \`${service.name}\` — ${service.status}`).join("\n") : "No service data reported."].join("\n"),
+          ),
+        )
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
-        .addTextDisplayComponents((text) => text.setContent(["### 🤖 Automation", formatted.automation || "Not configured."].join("\n")))
-
+        .addTextDisplayComponents((text) => text.setContent(["### 🗄️ Database", `**World partitions:** ${statusData.worldPartitions ?? "Unknown"}`].join("\n")))
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
+        .addTextDisplayComponents((text) => text.setContent(["### 🤖 Automation", `**Autoscaler:** ${statusData.autoscaler || "UNKNOWN"}`, `**Auto updates:** ${statusData.autoUpdates || "UNKNOWN"}`].join("\n")))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              "### 🛡️ Funcom / FLS",
+              `**Director heartbeat:** ${statusData.funcom.directorHeartbeat || "UNKNOWN"}`,
+              `**Population declaration:** ${statusData.funcom.populationDeclaration || "UNKNOWN"}`,
+              `**Max capacity declaration:** ${statusData.funcom.maxCapacity || "UNKNOWN"}`,
+              `**Gateway DB monitoring:** ${statusData.funcom.gatewayDb || "UNKNOWN"}`,
+            ].join("\n"),
+          ),
+        )
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
         .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
       await interaction.editReply({
@@ -107,17 +168,11 @@ module.exports = {
     } catch (error) {
       const errorCard = new ContainerBuilder()
         .setAccentColor(0x8f3025)
-
         .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Server Status"))
-
         .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
-
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
         .addTextDisplayComponents((text) => text.setContent(["### 🔴 Server Status Unavailable", "The Arrakis server status could not be retrieved.", "Please try again later."].join("\n")))
-
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-
         .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
       await interaction.editReply({
@@ -132,203 +187,302 @@ module.exports = {
   },
 };
 
-function normalizePerformance(data) {
-  const source = data?.data ?? data ?? {};
-
-  return {
-    cpu: findValue(source, ["cpu", "cpuUsage", "cpuPercent", "cpu_percentage", "processor"]),
-    memory: findValue(source, ["memory", "memoryUsage", "memoryPercent", "memory_percentage", "ram"]),
-    disk: findValue(source, ["disk", "diskUsage", "diskPercent", "disk_percentage", "storage"]),
+function parseServerStatus(stdout) {
+  const result = {
+    overall: "UNKNOWN",
+    region: "Unknown",
+    population: "Unknown",
+    gameServers: [],
+    gameServerNote: "",
+    containers: "",
+    listeners: "",
+    worldPartitions: null,
+    autoscaler: "UNKNOWN",
+    autoUpdates: "UNKNOWN",
+    funcom: {
+      directorHeartbeat: "UNKNOWN",
+      populationDeclaration: "UNKNOWN",
+      maxCapacity: "UNKNOWN",
+      gatewayDb: "UNKNOWN",
+    },
   };
-}
 
-function normalizeReadiness(data) {
-  const source = data?.data ?? data ?? {};
+  const overall = stdout.match(/Overall:\s+(.+)/);
+  const region = stdout.match(/Region:\s+(.+)/);
+  const population = stdout.match(/Population:\s+(.+)/);
+  const partitions = stdout.match(/World partitions:\s+(\d+)/);
+  const autoscaler = stdout.match(/Autoscaler:\s+(.+)/);
+  const autoUpdates = stdout.match(/Auto updates:\s+(.+)/);
 
-  if (Array.isArray(source)) {
-    return {
-      items: source,
-      ready: null,
-      total: source.length,
-    };
+  if (overall) result.overall = overall[1].trim();
+  if (region) result.region = region[1].trim();
+  if (population) result.population = population[1].trim();
+  if (partitions) result.worldPartitions = Number(partitions[1]);
+  if (autoscaler) result.autoscaler = autoscaler[1].trim();
+  if (autoUpdates) result.autoUpdates = autoUpdates[1].trim();
+
+  const gameSection = stdout.match(/=== Game servers ===([\s\S]*?)(?:\n=== Automation ===|$)/);
+
+  if (gameSection) {
+    const lines = gameSection[1]
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    for (const line of lines) {
+      const match = line.match(/^(\S+)\s+(READY|NOT_READY|STOPPED|UNKNOWN)\s+(.+)$/);
+
+      if (match) {
+        result.gameServers.push({
+          map: match[1],
+          state: match[2],
+          uptime: match[3],
+        });
+      }
+
+      if (line.startsWith("Note:")) {
+        result.gameServerNote = line.replace(/^Note:\s*/, "");
+      }
+    }
   }
 
-  const items = source.services || source.checks || source.results || source.readiness || source.items || [];
+  const containerSection = stdout.match(/=== Containers ===([\s\S]*?)(?:\n=== Listeners ===|$)/);
 
-  return {
-    items: Array.isArray(items) ? items : [],
-    ready: findValue(source, ["ready", "healthy", "isReady", "allReady"]),
-    total: Array.isArray(items) ? items.length : 0,
-  };
-}
-
-function normalizeCollection(data) {
-  const source = data?.data ?? data ?? {};
-
-  if (Array.isArray(source)) {
-    return source;
+  if (containerSection) {
+    result.containers = containerSection[1]
+      .split("\n")
+      .filter((line) => line.trim() && !line.trim().startsWith("SERVICE") && !line.includes("==="))
+      .map((line) => line.trim())
+      .join("\n");
   }
 
-  const collection = source.items || source.services || source.ports || source.results || source.data;
+  const listenerSection = stdout.match(/=== Listeners ===([\s\S]*?)(?:\n=== Database ===|$)/);
 
-  return Array.isArray(collection) ? collection : [source];
-}
-
-function formatPerformance(performance) {
-  const cpu = formatMetric(performance.cpu, "%");
-  const memory = formatMetric(performance.memory, "%");
-  const disk = formatMetric(performance.disk, "%");
-
-  if (cpu === "N/A" && memory === "N/A" && disk === "N/A") {
-    return "No performance data reported.";
+  if (listenerSection) {
+    result.listeners = listenerSection[1]
+      .split("\n")
+      .filter((line) => line.trim() && !line.trim().startsWith("CHECK") && !line.includes("==="))
+      .map((line) => line.trim())
+      .join("\n");
   }
 
-  return [`**CPU:** ${cpu}`, `**Memory:** ${memory}`, `**Disk:** ${disk}`].join(" • ");
-}
+  const funcomSection = stdout.match(/=== Funcom\/FLS summary ===([\s\S]*?)(?:\nTip:|$)/);
 
-function formatReadiness(readiness) {
-  if (readiness.ready !== null && readiness.total === 0) {
-    return `**Status:** ${formatStatusValue(readiness.ready)}`;
-  }
+  if (funcomSection) {
+    const section = funcomSection[1];
 
-  if (!readiness.items.length) {
-    if (readiness.ready !== null) {
-      return `**Status:** ${formatStatusValue(readiness.ready)}`;
+    const director = section.match(/Director heartbeat:\s+(.+)/);
+    const populationDeclaration = section.match(/Population declaration:\s+(.+)/);
+    const maxCapacity = section.match(/Max capacity declaration:\s+(.+)/);
+    const gatewayDb = section.match(/Gateway DB monitoring:\s+(.+)/);
+
+    if (director) {
+      result.funcom.directorHeartbeat = director[1].trim();
     }
 
-    return "No readiness data reported.";
-  }
-
-  const readyCount = readiness.items.filter((item) => {
-    const value = findValue(item, ["ready", "healthy", "status", "state"]);
-
-    return isPositiveStatus(value);
-  }).length;
-
-  const total = readiness.items.length;
-
-  return `**Ready:** ${readyCount}/${total} services`;
-}
-
-function formatPorts(ports) {
-  if (!ports.length || isEmptyObject(ports[0])) {
-    return "No port data reported.";
-  }
-
-  const lines = ports.slice(0, 20).map((port) => {
-    const name = findValue(port, ["name", "service", "label", "description"]) ?? "Unknown";
-
-    const host = findValue(port, ["host", "hostname", "address"]) ?? "localhost";
-
-    const value = findValue(port, ["port", "ports", "value", "externalPort"]) ?? "N/A";
-
-    const protocol = findValue(port, ["protocol", "transport", "type"]) ?? "";
-
-    const status = findValue(port, ["status", "state", "healthy"]);
-
-    return `\`${name}\` • \`${host}:${value}${protocol ? `/${protocol}` : ""}\` • ${formatStatusValue(status)}`;
-  });
-
-  return lines.join("\n");
-}
-
-function formatServices(services) {
-  if (!services.length || isEmptyObject(services[0])) {
-    return "No service data reported.";
-  }
-
-  const lines = services.slice(0, 20).map((service) => {
-    const name = findValue(service, ["name", "service", "id", "container"]) ?? "Unknown";
-
-    const status = findValue(service, ["status", "state", "health", "healthy"]) ?? "Unknown";
-
-    return `${formatStatusEmoji(status)} \`${name}\` — ${formatStatusValue(status)}`;
-  });
-
-  return lines.join("\n");
-}
-
-function formatMetric(value, suffix = "") {
-  if (value === null || value === undefined) {
-    return "N/A";
-  }
-
-  if (typeof value === "object") {
-    const numeric = value.percent ?? value.percentage ?? value.value ?? value.used;
-
-    if (numeric !== undefined) {
-      return `${numeric}${suffix}`;
+    if (populationDeclaration) {
+      result.funcom.populationDeclaration = populationDeclaration[1].trim();
     }
 
-    return "Available";
+    if (maxCapacity) {
+      result.funcom.maxCapacity = maxCapacity[1].trim();
+    }
+
+    if (gatewayDb) {
+      result.funcom.gatewayDb = gatewayDb[1].trim();
+    }
   }
 
-  if (typeof value === "number") {
-    return `${Number(value.toFixed(1))}${suffix}`;
-  }
-
-  return String(value);
+  return result;
 }
 
-function formatStatusValue(value) {
-  if (value === true) {
-    return "READY";
+function parseReadiness(stdout) {
+  const result = {
+    summary: "",
+    passed: 0,
+    failed: 0,
+    listenersPassed: 0,
+    listenersTotal: 0,
+    checks: [],
+    listeners: [],
+  };
+
+  const summary = stdout.match(/READY:\s+(.+)/);
+
+  if (summary) {
+    result.summary = summary[1].trim();
   }
 
-  if (value === false) {
-    return "NOT READY";
+  const lines = stdout
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  for (const line of lines) {
+    const match = line.match(/^(OK|FAIL)\s+(.+)$/);
+
+    if (!match) continue;
+
+    const ok = match[1] === "OK";
+
+    if (ok) {
+      result.passed++;
+    } else {
+      result.failed++;
+    }
+
+    result.checks.push({
+      ok,
+      label: match[2],
+    });
   }
 
-  if (value === null || value === undefined) {
-    return "UNKNOWN";
+  const listenerSection = stdout.match(/=== Listener checks ===([\s\S]*?)(?:\n=== Database world partition checks ===|$)/);
+
+  if (listenerSection) {
+    const listenerLines = listenerSection[1]
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    for (const line of listenerLines) {
+      const match = line.match(/^(OK|FAIL)\s+(TCP|UDP)\s+(\d+)\s+(.+)$/);
+
+      if (!match) continue;
+
+      const ok = match[1] === "OK";
+
+      result.listeners.push({
+        ok,
+        protocol: match[2],
+        port: `${match[3]}/${match[2].toLowerCase()}`,
+        name: match[4],
+        status: ok ? "OK" : "FAIL",
+      });
+
+      result.listenersTotal++;
+      if (ok) result.listenersPassed++;
+    }
   }
 
-  return String(value).toUpperCase();
+  return result;
 }
 
-function formatStatusEmoji(value) {
-  if (isPositiveStatus(value)) {
-    return "🟢";
+function parsePorts(stdout) {
+  const ports = [];
+
+  const section = stdout.match(/=== Local listeners ===([\s\S]*?)(?:\n=== Generated INI values ===|$)/);
+
+  if (!section) return ports;
+
+  for (const line of section[1].split("\n")) {
+    const match = line.trim().match(/^(\w+)\s+(.+?)\s+(TCP|UDP)\s+(\d+)(?:\s+at\s+(.+))?$/);
+
+    if (match) {
+      ports.push({
+        ok: true,
+        name: match[2],
+        address: `${match[5] || "localhost"}:${match[4]}/${match[3].toLowerCase()}`,
+        status: "OK",
+      });
+    }
   }
 
-  if (value === false || ["offline", "down", "failed", "error", "unhealthy"].includes(String(value).toLowerCase())) {
-    return "🔴";
+  const fallbackLines = section[1]
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("OK"));
+
+  if (!ports.length) {
+    for (const line of fallbackLines) {
+      const match = line.match(/^OK\s+(.+?)\s+listening on (TCP|UDP)\s+(\d+)(?:\s+at\s+(.+))?$/);
+
+      if (!match) continue;
+
+      ports.push({
+        ok: true,
+        name: match[1],
+        address: `${match[4] || "localhost"}:${match[3]}/${match[2].toLowerCase()}`,
+        status: "OK",
+      });
+    }
   }
+
+  return ports;
+}
+
+function parseServices(stdout) {
+  const result = {
+    services: [],
+    containers: [],
+  };
+
+  const lines = stdout
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .filter(Boolean);
+
+  const startIndex = lines.findIndex((line) => line.startsWith("NAMES"));
+
+  if (startIndex === -1) return result;
+
+  for (const line of lines.slice(startIndex + 1)) {
+    const match = line.match(/^(\S+)\s{2,}(.+?)(?:\s{2,}(.*))?$/);
+
+    if (!match) continue;
+
+    const name = match[1];
+    const status = match[2].trim();
+
+    result.services.push({
+      name,
+      status,
+      ports: match[3]?.trim() || "",
+    });
+
+    result.containers.push({
+      name,
+      status,
+    });
+  }
+
+  return result;
+}
+
+function getServiceIndicator(status) {
+  const value = status.toLowerCase();
+
+  if (value.includes("healthy")) return "🟢";
+  if (value.startsWith("up")) return "🟢";
+  if (value.includes("starting")) return "🟡";
+  if (value.includes("restarting")) return "🟠";
+  if (value.includes("exited")) return "🔴";
+  if (value.includes("dead")) return "🔴";
 
   return "🟡";
 }
 
-function isPositiveStatus(value) {
-  if (value === true) {
-    return true;
-  }
-
-  if (typeof value !== "string") {
-    return false;
-  }
-
-  return ["ready", "healthy", "ok", "online", "running", "up", "available", "true"].includes(value.toLowerCase());
+function formatPercent(value) {
+  if (typeof value !== "number") return "Unknown";
+  return `${value.toFixed(1)}%`;
 }
 
-function findValue(object, keys) {
-  if (!object || typeof object !== "object") {
-    return null;
+function formatBytes(bytes) {
+  if (typeof bytes !== "number") return "Unknown";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let value = bytes;
+  let index = 0;
+
+  while (value >= 1024 && index < units.length - 1) {
+    value /= 1024;
+    index++;
   }
 
-  for (const key of keys) {
-    if (object[key] !== undefined && object[key] !== null) {
-      return object[key];
-    }
-  }
-
-  return null;
+  return `${value.toFixed(index >= 2 ? 1 : 0)} ${units[index]}`;
 }
 
-function isEmptyObject(value) {
-  return value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0;
-}
-
-function createStatusBanner({ serverName, healthy, overview, performance, username }) {
+function createStatusBanner({ serverName, healthy, overall, population, region, cpuPercent, memoryPercent, diskPercent, uptime }) {
   const canvas = createCanvas(1200, 400);
   const ctx = canvas.getContext("2d");
 
@@ -342,11 +496,11 @@ function createStatusBanner({ serverName, healthy, overview, performance, userna
   ctx.fillStyle = background;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const glow = ctx.createRadialGradient(920, 100, 20, 920, 100, 450);
+  const glow = ctx.createRadialGradient(930, 80, 20, 930, 80, 450);
 
-  glow.addColorStop(0, healthy ? "rgba(255, 190, 90, 0.5)" : "rgba(180, 55, 35, 0.55)");
+  glow.addColorStop(0, healthy ? "rgba(255, 190, 90, 0.55)" : "rgba(180, 55, 35, 0.55)");
 
-  glow.addColorStop(0.45, healthy ? "rgba(190, 100, 40, 0.2)" : "rgba(130, 35, 25, 0.25)");
+  glow.addColorStop(0.45, healthy ? "rgba(190, 100, 40, 0.22)" : "rgba(130, 35, 25, 0.25)");
 
   glow.addColorStop(1, "rgba(0, 0, 0, 0)");
 
@@ -369,7 +523,7 @@ function createStatusBanner({ serverName, healthy, overview, performance, userna
 
   const overlay = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
-  overlay.addColorStop(0, "rgba(10, 7, 5, 0.88)");
+  overlay.addColorStop(0, "rgba(10, 7, 5, 0.9)");
   overlay.addColorStop(0.55, "rgba(10, 7, 5, 0.45)");
   overlay.addColorStop(1, "rgba(10, 7, 5, 0.05)");
 
@@ -378,47 +532,47 @@ function createStatusBanner({ serverName, healthy, overview, performance, userna
 
   ctx.font = "bold 52px sans-serif";
   ctx.fillStyle = "#f2d39b";
-  ctx.fillText("CRIMSON SKIES", 60, 95);
+  ctx.fillText("CRIMSON SKIES", 60, 85);
 
   ctx.font = "24px sans-serif";
   ctx.fillStyle = "#e6bd79";
 
-  drawFittedText(ctx, serverName.toUpperCase(), 64, 135, 650, "24px sans-serif");
+  drawFittedText(ctx, serverName.toUpperCase(), 64, 125, 650, "24px sans-serif");
 
   ctx.strokeStyle = healthy ? "#c58b45" : "#a64b3d";
   ctx.lineWidth = 2;
 
   ctx.beginPath();
-  ctx.moveTo(64, 160);
-  ctx.lineTo(620, 160);
+  ctx.moveTo(64, 150);
+  ctx.lineTo(620, 150);
   ctx.stroke();
 
-  ctx.font = "bold 68px sans-serif";
-  ctx.fillStyle = healthy ? "#70b85a" : "#c65345";
-  ctx.fillText(healthy ? "✓" : "!", 70, 255);
-
   ctx.font = "bold 30px sans-serif";
-  ctx.fillStyle = "#ead5ad";
+  ctx.fillStyle = healthy ? "#70b85a" : "#c65345";
 
-  ctx.fillText(healthy ? "SERVER OPERATIONAL" : "SERVER ATTENTION", 165, 215);
+  ctx.fillText(healthy ? "● SERVER OPERATIONAL" : "● SERVER ATTENTION", 64, 205);
 
   ctx.font = "20px sans-serif";
-  ctx.fillStyle = "#d8bb83";
+  ctx.fillStyle = "#ead5ad";
 
-  drawFittedText(ctx, overview || "No overview data reported.", 165, 255, 600, "20px sans-serif");
-
-  drawPerformance(ctx, performance);
+  ctx.fillText(`Status: ${overall}`, 64, 245);
+  ctx.fillText(`Region: ${region}`, 64, 275);
+  ctx.fillText(`Population: ${population}`, 64, 305);
 
   ctx.font = "18px sans-serif";
+  ctx.fillStyle = "#d8bb83";
+
+  ctx.fillText(`CPU ${formatPercent(cpuPercent)}  •  Memory ${formatPercent(memoryPercent)}  •  Disk ${formatPercent(diskPercent)}`, 64, 345);
+
+  ctx.font = "17px sans-serif";
   ctx.fillStyle = "#ead5ad";
-  ctx.fillText(`${username} • Spice flows through Arrakis`, 64, 350);
+
+  drawFittedText(ctx, `Uptime ${uptime || "Unknown"} • Spice flows through Arrakis`, 64, 375, 850, "17px sans-serif");
 
   const accent = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
   accent.addColorStop(0, healthy ? "#8f3025" : "#6e241c");
-
   accent.addColorStop(0.5, healthy ? "#d2a85a" : "#a64b3d");
-
   accent.addColorStop(1, healthy ? "#c58b45" : "#8f3025");
 
   ctx.fillStyle = accent;
@@ -426,33 +580,6 @@ function createStatusBanner({ serverName, healthy, overview, performance, userna
 
   return new AttachmentBuilder(canvas.toBuffer("image/png"), {
     name: "crimson-skies-status.png",
-  });
-}
-
-function drawPerformance(ctx, performance) {
-  const metrics = [
-    ["CPU", performance.cpu],
-    ["MEM", performance.memory],
-    ["DISK", performance.disk],
-  ];
-
-  const startX = 790;
-  const startY = 205;
-
-  ctx.font = "bold 18px sans-serif";
-  ctx.fillStyle = "#ead5ad";
-  ctx.fillText("SYSTEM PERFORMANCE", startX, 165);
-
-  metrics.forEach(([label, value], index) => {
-    const x = startX + index * 115;
-
-    ctx.font = "bold 16px sans-serif";
-    ctx.fillStyle = "#d8bb83";
-    ctx.fillText(label, x, startY);
-
-    ctx.font = "bold 28px sans-serif";
-    ctx.fillStyle = "#f2d39b";
-    ctx.fillText(formatMetric(value, "%"), x, startY + 35);
   });
 }
 
