@@ -35,20 +35,35 @@ jobs:
           VERSION="$(tr -d '\r\n' < VERSION)"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Synchronize package version
-        run: npm run version:sync
-
       - name: Commit synchronized package version
         shell: bash
         run: |
           if git diff --quiet -- package.json; then
             exit 0
           fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add package.json
           git commit -m "chore: sync package version v${{ steps.version.outputs.version }}"
-          git push origin HEAD:${{ github.ref_name }}
+
+          for attempt in 1 2 3; do
+            git fetch origin "${{ github.ref_name }}"
+
+            if git rebase "origin/${{ github.ref_name }}"; then
+              if git push origin HEAD:${{ github.ref_name }}; then
+                exit 0
+              fi
+            fi
+
+            echo "Push attempt ${attempt} failed; retrying..."
+            git rebase --abort 2>/dev/null || true
+            sleep 2
+          done
+
+          echo "Failed to push synchronized package version."
+          exit 1
 
       - name: Generate detailed release notes
         run: node src/scripts/generate-release-notes.js "$RUNNER_TEMP/release-notes.md"
