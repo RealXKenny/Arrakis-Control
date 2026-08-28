@@ -9,6 +9,18 @@
       "changes": [
         {
           "type": "feature",
+          "description": "Expanded /profile with readable currency, Solaris Coin, factions, intel, specs, progression, and vitals data."
+        },
+        {
+          "type": "fix",
+          "description": "Removed the unsupported player stats request and made /profile responses visible in the channel instead of ephemeral."
+        },
+        {
+          "type": "maintenance",
+          "description": "Cleaned up /profile output by hiding Pawn ID, rounding vitals, and adding a feature flag for future Smuggler faction data."
+        },
+        {
+          "type": "feature",
           "description": "Added /profile to show the invoking user's linked character through the Discord Adapter actor context; /players remains the server-wide player list."
         },
         {
