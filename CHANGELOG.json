@@ -3,6 +3,17 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.0.6",
+      "date": "2026-08-28",
+      "summary": "Fixed missing fonts in Canvas-generated Discord images.",
+      "changes": [
+        {
+          "type": "fix",
+          "description": "Added fontconfig, DejaVu fonts, and Noto emoji fonts to the Docker image so generated images render Unicode characters and emoji instead of square glyphs."
+        }
+      ]
+    },
+    {
       "version": "1.0.4",
       "date": "2026-08-28",
       "summary": "Removed server-specific Crimson Skies branding from generated command artwork.",
@@ -10,10 +21,6 @@
         {
           "type": "maintenance",
           "description": "Replaced hardcoded server branding and asset names with generic Dune Server placeholders."
-        },
-        {
-          "type": "fix",
-          "description": "Added Unicode and emoji fonts to the Docker image so Canvas-generated images render text correctly instead of showing square glyphs."
         },
         {
           "type": "docs",
