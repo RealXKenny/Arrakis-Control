@@ -1,9 +1,11 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize } = require("discord.js");
 const { createCanvas } = require("canvas");
 const { createLogger } = require("../../infrastructure/core/logger");
+const { findPanelMessage } = require("../../shared/utils/findPanelMessage");
 
 const logger = createLogger("BLUEPRINT PANEL");
 const PANEL_IMAGE_NAME = "dune-blueprint-import.png";
+const PANEL_MARKER = "# Import Blueprint";
 
 function buildBlueprintUploadPanel() {
   return new ContainerBuilder()
@@ -29,30 +31,21 @@ async function ensureBlueprintUploadPanel(client, channelId) {
   const channel = await client.channels.fetch(channelId);
   if (!channel?.isTextBased()) throw new Error(`Blueprint panel channel ${channelId} is not a text channel.`);
 
-  const messages = await channel.messages.fetch({ limit: 1 });
-  const latestMessage = messages.first();
+  const existingPanel = await findPanelMessage(channel, client.user.id, PANEL_MARKER);
   const payload = {
     components: [buildBlueprintUploadPanel()],
     files: [createBlueprintBanner()],
     flags: MessageFlags.IsComponentsV2,
   };
 
-  if (latestMessage?.author.id === client.user.id) {
-    if (hasBlueprintButton(latestMessage.components)) {
-      await latestMessage.edit({ content: null, embeds: null, ...payload });
-      logger.info(`Updated the latest blueprint upload panel in channel ${channelId}.`);
-    } else {
-      logger.info(`Skipped blueprint upload panel in channel ${channelId}: the latest message is already from this bot.`);
-    }
+  if (existingPanel) {
+    await existingPanel.edit({ content: null, embeds: null, ...payload });
+    logger.info(`Updated the blueprint upload panel in channel ${channelId}.`);
     return;
   }
 
   await channel.send(payload);
   logger.info(`Posted blueprint upload panel in channel ${channelId}.`);
-}
-
-function hasBlueprintButton(components) {
-  return components.some((component) => component.customId === "blueprint-upload" || hasBlueprintButton(component.components ?? []));
 }
 
 function createBlueprintBanner() {

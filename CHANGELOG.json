@@ -3,6 +3,25 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.0.8",
+      "date": "2026-08-28",
+      "summary": "Improved panel discovery when multiple bot branches share a channel.",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added /profile to show the invoking user's linked character through the Discord Adapter actor context; /players remains the server-wide player list."
+        },
+        {
+          "type": "fix",
+          "description": "Panels now find and update their own message by title instead of relying on the latest bot message."
+        },
+        {
+          "type": "maintenance",
+          "description": "Player-link and blueprint panels can now coexist safely in the same Discord channel."
+        }
+      ]
+    },
+    {
       "version": "1.0.7",
       "date": "2026-08-28",
       "summary": "Fixed the Docker build and GitHub Actions runtime configuration.",

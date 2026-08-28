@@ -25,7 +25,7 @@ Set `DUNE_DISCORD_AUDIT_CHANNEL_ID` to receive Components V2 audit entries for l
 1. Install [Node.js 20+](https://nodejs.org/).
 2. Run `npm install`.
 3. Copy `.env.example` to `.env` and fill in the values from the Discord Developer Portal.
-4. Run `npm run deploy:commands` to register `/ping`, `/info`, `/status`, `/players`, and `/backups`. With `GUILD_ID`, they register to that development server immediately; without it, they deploy globally (which can take up to an hour to appear).
+4. Run `npm run deploy:commands` to register `/ping`, `/info`, `/status`, `/players`, `/profile`, and `/backups`. With `GUILD_ID`, they register to that development server immediately; without it, they deploy globally (which can take up to an hour to appear).
 5. Start the bot with `npm start`.
 
 ## Project layout

@@ -10,6 +10,7 @@ const {
 } = require('discord.js');
 const { createCanvas } = require('canvas');
 const { createLogger } = require('../../infrastructure/core/logger');
+const { findPanelMessage } = require('../../shared/utils/findPanelMessage');
 
 const logger = createLogger('PLAYER PANEL');
 const PANEL_MARKER = '# Link Dune Player';
@@ -38,8 +39,7 @@ async function ensurePlayerLinkPanel(client, channelId) {
   const channel = await client.channels.fetch(channelId);
   if (!channel?.isTextBased()) throw new Error(`Panel channel ${channelId} is not a text channel.`);
 
-  const messages = await channel.messages.fetch({ limit: 1 });
-  const latestMessage = messages.first();
+  const existingPanel = await findPanelMessage(channel, client.user.id, PANEL_MARKER);
   const panel = buildPlayerLinkPanel();
   const payload = {
     components: [panel],
@@ -47,24 +47,14 @@ async function ensurePlayerLinkPanel(client, channelId) {
     flags: MessageFlags.IsComponentsV2,
   };
 
-  if (latestMessage?.author.id === client.user.id) {
-    if (hasPlayerLinkButton(latestMessage.components)) {
-      await latestMessage.edit({ content: null, embeds: null, ...payload });
-      logger.info(`Updated the latest player link panel in channel ${channelId}.`);
-    } else {
-      logger.info(`Skipped player link panel in channel ${channelId}: the latest message is already from this bot.`);
-    }
+  if (existingPanel) {
+    await existingPanel.edit({ content: null, embeds: null, ...payload });
+    logger.info(`Updated the player link panel in channel ${channelId}.`);
     return;
   }
 
   await channel.send(payload);
   logger.info(`Posted player link panel in channel ${channelId}.`);
-}
-
-function hasPlayerLinkButton(components) {
-  return components.some((component) =>
-    component.customId === 'player-link' || hasPlayerLinkButton(component.components ?? []),
-  );
 }
 
 function createPlayerLinkBanner() {
