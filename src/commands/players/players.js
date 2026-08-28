@@ -332,7 +332,7 @@ module.exports = {
 
       ctx.fillStyle = "#d8bb83";
 
-      ctx.fillText("SPICE • SURVIVAL • ARRakis", 58, 265);
+      ctx.fillText("SPICE • SURVIVAL • ARRAKIS", 58, 265);
 
       /*
        * Bottom accent
