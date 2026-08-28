@@ -1,17 +1,17 @@
-require('dotenv').config();
-
 const { DuneApi } = require('../api/DuneApi');
-const { validateEnvironment } = require('../utils/environment/validateEnvironment');
+const { loadEnvironment } = require('../config/environment');
+const { createLogger } = require('../core/logger');
 
-validateEnvironment(['DUNE_CONSOLE_URL', 'DUNE_CONSOLE_PASSWORD']);
+const config = loadEnvironment(['DUNE_CONSOLE_URL', 'DUNE_CONSOLE_PASSWORD']);
+const logger = createLogger('DUNE LOGIN', config.logLevel);
 
 async function login() {
-  const duneApi = new DuneApi(process.env.DUNE_CONSOLE_URL);
-  await duneApi.login(process.env.DUNE_CONSOLE_PASSWORD);
-  console.log(`Logged in to the Dune Console. Loaded ${duneApi.endpoints.length} documented endpoints.`);
+  const duneApi = new DuneApi(config.duneConsoleUrl);
+  await duneApi.login(config.duneConsolePassword);
+  logger.info(`Logged in to the Dune Console. Loaded ${duneApi.endpoints.length} documented endpoints.`);
 }
 
 login().catch((error) => {
-  console.error('Unable to log in to the Dune Console:', error.message);
+  logger.error('Unable to log in to the Dune Console.', error);
   process.exitCode = 1;
 });

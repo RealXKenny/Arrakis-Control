@@ -21,9 +21,10 @@ Only console login is wired in this phase. Add `DUNE_CONSOLE_URL` and `DUNE_CONS
 ```text
 src/
   commands/general/     General slash-command modules
+  config/               Environment configuration
+  core/                 Bot lifecycle and logging
   events/client/        Discord client event modules
-  handlers/loaders/     Recursive command and event loaders
-  utils/environment/    Shared environment helpers
+  loaders/              Recursive command and event discovery
   scripts/              Command deployment and project checks
 .github/workflows/ CI workflow
 ```
@@ -33,3 +34,5 @@ src/
 Add a file in a category under `src/commands/` that exports a `data` `SlashCommandBuilder` and an async `execute(interaction)` function. Then run `npm run deploy:commands` again; every command module in that folder and its subfolders is registered automatically.
 
 Never commit `.env`; it is intentionally ignored.
+
+Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, timestamped logs emitted by the bot.

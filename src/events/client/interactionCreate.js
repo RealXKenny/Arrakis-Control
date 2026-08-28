@@ -1,4 +1,7 @@
 const { Events } = require('discord.js');
+const { createLogger } = require('../../core/logger');
+
+const logger = createLogger('INTERACTIONS');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -7,14 +10,14 @@ module.exports = {
 
     const command = interaction.client.commands.get(interaction.commandName);
     if (!command) {
-      console.warn(`No command registered for /${interaction.commandName}.`);
+      logger.warn(`No command registered for /${interaction.commandName}.`);
       return;
     }
 
     try {
       await command.execute(interaction);
     } catch (error) {
-      console.error(`Error executing /${interaction.commandName}:`, error);
+      logger.error(`Error executing /${interaction.commandName}.`, error);
       const response = { content: 'There was an error while running this command.', ephemeral: true };
 
       if (interaction.replied || interaction.deferred) {
