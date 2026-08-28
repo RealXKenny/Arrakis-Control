@@ -13,7 +13,12 @@ RUN apk add --no-cache \
     pixman-dev \
     pangomm-dev \
     libjpeg-turbo-dev \
-    pkgconfig
+    pkgconfig \
+    fontconfig \
+    ttf-dejavu \
+    noto-fonts-emoji
+
+RUN fc-cache -f
 
 COPY package.json ./
 

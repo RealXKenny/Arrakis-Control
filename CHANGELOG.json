@@ -12,6 +12,10 @@
           "description": "Replaced hardcoded server branding and asset names with generic Dune Server placeholders."
         },
         {
+          "type": "fix",
+          "description": "Added Unicode and emoji fonts to the Docker image so Canvas-generated images render text correctly instead of showing square glyphs."
+        },
+        {
           "type": "docs",
           "description": "Clarified that deployment-specific channel IDs belong only in environment configuration."
         }
