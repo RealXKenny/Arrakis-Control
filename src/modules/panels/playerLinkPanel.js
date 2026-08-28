@@ -1,0 +1,134 @@
+const {
+  AttachmentBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  MediaGalleryBuilder,
+  MediaGalleryItemBuilder,
+  MessageFlags,
+  SeparatorSpacingSize,
+} = require('discord.js');
+const { createCanvas } = require('canvas');
+const { createLogger } = require('../../infrastructure/core/logger');
+
+const logger = createLogger('PLAYER PANEL');
+const PANEL_MARKER = '# Link Dune Player';
+const PANEL_IMAGE_NAME = 'dune-player-link.png';
+
+function buildPlayerLinkPanel() {
+  return new ContainerBuilder()
+    .setAccentColor(0xC58B45)
+    .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(
+      new MediaGalleryItemBuilder()
+        .setURL(`attachment://${PANEL_IMAGE_NAME}`)
+        .setDescription('Dune desert landscape for character linking'),
+    ))
+    .addTextDisplayComponents((text) => text.setContent(PANEL_MARKER))
+    .addTextDisplayComponents((text) => text.setContent('Link your Discord account to your Dune character.\n\nYour character must be online before you can receive a verification code.'))
+    .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+    .addActionRowComponents((row) => row.setComponents(
+      new ButtonBuilder().setCustomId('player-link').setLabel('Link Account').setStyle(ButtonStyle.Primary),
+      new ButtonBuilder().setCustomId('player-unlink').setLabel('Unlink Account').setStyle(ButtonStyle.Danger),
+    ));
+}
+
+async function ensurePlayerLinkPanel(client, channelId) {
+  if (!channelId) return;
+
+  const channel = await client.channels.fetch(channelId);
+  if (!channel?.isTextBased()) throw new Error(`Panel channel ${channelId} is not a text channel.`);
+
+  const messages = await channel.messages.fetch({ limit: 1 });
+  const latestMessage = messages.first();
+  const panel = buildPlayerLinkPanel();
+  const payload = {
+    components: [panel],
+    files: [createPlayerLinkBanner()],
+    flags: MessageFlags.IsComponentsV2,
+  };
+
+  if (latestMessage?.author.id === client.user.id) {
+    if (hasPlayerLinkButton(latestMessage.components)) {
+      await latestMessage.edit({ content: null, embeds: null, ...payload });
+      logger.info(`Updated the latest player link panel in channel ${channelId}.`);
+    } else {
+      logger.info(`Skipped player link panel in channel ${channelId}: the latest message is already from this bot.`);
+    }
+    return;
+  }
+
+  await channel.send(payload);
+  logger.info(`Posted player link panel in channel ${channelId}.`);
+}
+
+function hasPlayerLinkButton(components) {
+  return components.some((component) =>
+    component.customId === 'player-link' || hasPlayerLinkButton(component.components ?? []),
+  );
+}
+
+function createPlayerLinkBanner() {
+  const canvas = createCanvas(1200, 400);
+  const context = canvas.getContext('2d');
+  const background = context.createLinearGradient(0, 0, 0, canvas.height);
+  background.addColorStop(0, '#1c1009');
+  background.addColorStop(0.52, '#77401f');
+  background.addColorStop(1, '#d2a85a');
+  context.fillStyle = background;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawDunes(context, canvas);
+
+  const shade = context.createLinearGradient(0, 0, canvas.width, 0);
+  shade.addColorStop(0, 'rgba(8, 5, 3, 0.88)');
+  shade.addColorStop(0.62, 'rgba(8, 5, 3, 0.25)');
+  shade.addColorStop(1, 'rgba(8, 5, 3, 0)');
+  context.fillStyle = shade;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  context.fillStyle = '#f3d39b';
+  context.font = 'bold 52px sans-serif';
+  context.fillText('LINK DUNE PLAYER', 64, 110);
+  context.fillStyle = '#e6bd79';
+  context.font = '24px sans-serif';
+  context.fillText('CONNECT YOUR DISCORD ACCOUNT', 67, 153);
+  context.strokeStyle = '#c58b45';
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(67, 178);
+  context.lineTo(610, 178);
+  context.stroke();
+  context.fillStyle = '#ead5ad';
+  context.font = '22px sans-serif';
+  context.fillText('Your path through Arrakis begins here.', 67, 232);
+  context.font = '18px sans-serif';
+  context.fillStyle = '#d8bb83';
+  context.fillText('A private verification code will be delivered in-game.', 67, 345);
+
+  return new AttachmentBuilder(canvas.toBuffer('image/png'), { name: PANEL_IMAGE_NAME });
+}
+
+function drawDunes(context, canvas) {
+  const dunes = [
+    [270, 70, '#743a1b', 0],
+    [315, 60, '#9a592e', 150],
+    [350, 45, '#b87333', 300],
+    [376, 30, '#d2a85a', 500],
+  ];
+
+  for (const [y, height, color, offset] of dunes) {
+    context.beginPath();
+    context.moveTo(0, canvas.height);
+    context.lineTo(0, y);
+    for (let x = 0; x <= canvas.width; x += 20) {
+      const wave = Math.sin((x + offset) / 130) * height * 0.25 + Math.sin((x + offset) / 270) * height * 0.2;
+      context.lineTo(x, y + wave);
+    }
+    context.lineTo(canvas.width, canvas.height);
+    context.closePath();
+    context.fillStyle = color;
+    context.fill();
+  }
+}
+
+module.exports = { ensurePlayerLinkPanel };

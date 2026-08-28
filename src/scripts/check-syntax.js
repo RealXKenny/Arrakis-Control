@@ -1,7 +1,7 @@
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
-const { createLogger } = require("../core/logger");
-const { findJavaScriptFiles } = require("../loaders/fileLoader");
+const { createLogger } = require("../infrastructure/core/logger");
+const { findJavaScriptFiles } = require("../infrastructure/loaders/fileLoader");
 
 const logger = createLogger("SYNTAX");
 

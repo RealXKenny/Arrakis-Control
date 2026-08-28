@@ -1,6 +1,6 @@
-const { DuneApi } = require("../api/DuneApi");
-const { loadEnvironment } = require("../config/environment");
-const { createLogger } = require("../core/logger");
+const { DuneApi } = require("../infrastructure/api/DuneApi");
+const { loadEnvironment } = require("../infrastructure/config/environment");
+const { createLogger } = require("../infrastructure/core/logger");
 
 const config = loadEnvironment(["DUNE_CONSOLE_URL", "DUNE_CONSOLE_PASSWORD"]);
 const logger = createLogger("DUNE LOGIN", config.logLevel);
