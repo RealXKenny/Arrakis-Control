@@ -12,7 +12,7 @@ module.exports = {
 
     const statuses = [
       {
-        name: "the sands of Arrakis",
+        name: "Watching the sands of Arrakis",
         type: ActivityType.Watching,
       },
       {
@@ -20,15 +20,15 @@ module.exports = {
         type: ActivityType.Playing,
       },
       {
-        name: "the spice flow",
+        name: "Watching the spice flow",
         type: ActivityType.Watching,
       },
       {
-        name: "over Arrakis",
+        name: "Watching over Arrakis",
         type: ActivityType.Watching,
       },
       {
-        name: "Dune: Awakening",
+        name: "Playing Dune: Awakening",
         type: ActivityType.Playing,
       },
     ];
