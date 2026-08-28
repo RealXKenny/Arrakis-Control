@@ -39,3 +39,15 @@ Add a file in a category under `src/commands/` that exports a `data` `SlashComma
 Never commit `.env`; it is intentionally ignored.
 
 Set `LOG_LEVEL` to `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the custom, color-coded logs emitted by the bot. Timestamps use America/New_York in `MM/DD/YYYY hh:mm:ss AM/PM` format. Startup logs show the number of loaded commands, component handlers, and event handlers. Each command and UI interaction is logged without exposing credentials.
+
+## Docker releases
+
+`VERSION` is the canonical bot version and must be a semantic version such as `1.0.0`. Updating that file and pushing it to `main` automatically synchronizes `package.json`, creates a GitHub Release tagged `v<version>`, and pushes Docker images tagged `<version>` and `latest`. You can run `npm run version:sync` locally to synchronize `package.json` before committing.
+
+Before the first release, create a Docker Hub repository named `arrakis-control` and add these GitHub repository secrets:
+
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN` — a Docker Hub access token with permission to push images
+
+You can build the image locally with `docker build --build-arg BOT_VERSION=$(Get-Content VERSION) -t arrakis-control:local .`.
+Run it with your configuration file using `docker run --env-file .env arrakis-control:local`.

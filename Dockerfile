@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json ./
+RUN npm install --omit=dev
+
+COPY src ./src
+COPY docs ./docs
+COPY VERSION ./VERSION
+
+ARG BOT_VERSION
+ENV BOT_VERSION=${BOT_VERSION}
+LABEL org.opencontainers.image.title="Arrakis Control" \
+      org.opencontainers.image.version=${BOT_VERSION}
+
+CMD ["node", "src/index.js"]

@@ -5,6 +5,7 @@ const {
   SlashCommandBuilder,
   version: discordJsVersion,
 } = require('discord.js');
+const { getBotVersion } = require('../../config/version');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -24,6 +25,7 @@ module.exports = {
         `**Users cached:** ${client.users.cache.size}`,
         `**Ping:** ${client.ws.ping}ms`,
         `**Uptime:** <t:${Math.floor((Date.now() - client.uptime) / 1000)}:R> (${uptimeSeconds}s)`,
+        `**Bot version:** v${getBotVersion()}`,
         `**discord.js:** v${discordJsVersion}`,
         `**Node.js:** ${process.version}`,
       ].join('\n')));
