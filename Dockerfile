@@ -16,7 +16,7 @@ RUN apk add --no-cache \
     pkgconfig \
     fontconfig \
     ttf-dejavu \
-    noto-fonts-emoji
+    font-noto-emoji
 
 RUN fc-cache -f
 
