@@ -20,12 +20,12 @@ module.exports = {
 };
 
 async function handleCommand(interaction) {
-  logger.info(`/${interaction.commandName} requested by ${interaction.user.tag} in ${interaction.guildId ?? "direct messages"}.`);
+  logger.debug(`/${interaction.commandName} requested by ${interaction.user.tag} in ${interaction.guildId ?? "direct messages"}.`);
   const command = interaction.client.commands.get(interaction.commandName);
   if (!command) throw new Error(`No command registered for /${interaction.commandName}.`);
 
   await command.execute(interaction);
-  logger.info(`/${interaction.commandName} completed.`);
+  logger.debug(`/${interaction.commandName} completed.`);
 }
 
 async function handleAutocomplete(interaction) {
@@ -43,9 +43,9 @@ async function handleComponent(interaction, collectionName, label) {
     return;
   }
 
-  logger.info(`${label} ${interaction.customId} used by ${interaction.user.tag}.`);
+  logger.debug(`${label} ${interaction.customId} used by ${interaction.user.tag}.`);
   await handler.execute(interaction);
-  logger.info(`${label} ${interaction.customId} completed.`);
+  logger.debug(`${label} ${interaction.customId} completed.`);
 }
 
 async function respondWithError(interaction) {
