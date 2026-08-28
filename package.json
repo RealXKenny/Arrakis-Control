@@ -11,7 +11,8 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
-    "lint": "node src/scripts/check-syntax.js"
+    "lint": "node src/scripts/check-syntax.js",
+    "login": "node src/scripts/login.js"
   },
   "dependencies": {
     "discord.js": "^14.25.1",

@@ -2,6 +2,12 @@
 
 A modular Discord.js v14 bot starter with a `/ping` slash command and GitHub Actions verification.
 
+## Dune Console API
+
+The complete supplied endpoint reference is included in [docs/dune-awakening-console-api-reference.md](docs/dune-awakening-console-api-reference.md). The bot loads that reference into a searchable endpoint catalog when `DUNE_CONSOLE_URL` is configured, covering every documented route without invoking any of them.
+
+Only console login is wired in this phase. Add `DUNE_CONSOLE_URL` and `DUNE_CONSOLE_PASSWORD` to `.env`, then run `npm run login` to explicitly verify the session-cookie and CSRF login flow. The client logs in first, then reads `/api/auth/state` using that session to obtain its CSRF token. The bot never logs in automatically, and no server, player, database, or admin actions have been connected to Discord commands yet.
+
 ## Setup
 
 1. Install [Node.js 20+](https://nodejs.org/).
