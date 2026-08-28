@@ -18,7 +18,11 @@
     "release:notes": "node src/scripts/generate-release-notes.js"
   },
   "dependencies": {
+    "canvas": "^3.2.3",
     "discord.js": "^14.25.1",
     "dotenv": "^16.6.1"
+  },
+  "allowScripts": {
+    "canvas@3.2.3": true
   }
 }
