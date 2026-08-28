@@ -1,9 +1,9 @@
 require('dotenv').config();
 
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { loadCommands } = require('./handlers/commandHandler');
-const { loadEvents } = require('./handlers/eventHandler');
-const { validateEnvironment } = require('./utils/validateEnvironment');
+const { loadCommands } = require('./handlers/loaders/commandHandler');
+const { loadEvents } = require('./handlers/loaders/eventHandler');
+const { validateEnvironment } = require('./utils/environment/validateEnvironment');
 
 validateEnvironment(['DISCORD_TOKEN']);
 

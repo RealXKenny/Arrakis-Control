@@ -10,8 +10,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "deploy:commands": "node scripts/deploy-commands.js",
-    "lint": "node scripts/check-syntax.js"
+    "deploy:commands": "node src/scripts/deploy-commands.js",
+    "lint": "node src/scripts/check-syntax.js"
   },
   "dependencies": {
     "discord.js": "^14.25.1",

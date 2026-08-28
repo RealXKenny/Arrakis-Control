@@ -1,16 +1,14 @@
 require('dotenv').config();
 
-const fs = require('node:fs');
 const path = require('node:path');
 const { REST, Routes } = require('discord.js');
-const { validateEnvironment } = require('../src/utils/validateEnvironment');
+const { findJavaScriptFiles } = require('../handlers/loaders/fileLoader');
+const { validateEnvironment } = require('../utils/environment/validateEnvironment');
 
 validateEnvironment(['DISCORD_TOKEN', 'CLIENT_ID']);
 
-const commandsPath = path.join(__dirname, '..', 'src', 'commands');
-const commands = fs.readdirSync(commandsPath)
-  .filter((file) => file.endsWith('.js'))
-  .map((file) => require(path.join(commandsPath, file)).data.toJSON());
+const commandsPath = path.join(__dirname, '..', 'commands');
+const commands = findJavaScriptFiles(commandsPath).map((filePath) => require(filePath).data.toJSON());
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
 async function deployCommands() {
