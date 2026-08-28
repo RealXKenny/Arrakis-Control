@@ -1,6 +1,6 @@
 # Arrakis Control
 
-A modular Discord.js v14 bot starter with a `/ping` slash command and GitHub Actions verification.
+A modular Discord.js v14 bot with `/ping`, `/info`, and `/status` slash commands, plus GitHub Actions verification.
 
 ## Dune Console API
 
@@ -21,6 +21,7 @@ Only console login is wired in this phase. Add `DUNE_CONSOLE_URL` and `DUNE_CONS
 ```text
 src/
   commands/general/     General slash-command modules
+  commands/server/      Dune server command modules
   config/               Environment configuration
   core/                 Bot lifecycle and logging
   events/client/        Discord client event modules

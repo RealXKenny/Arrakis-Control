@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const { createLogger } = require('../../core/logger');
 
 const logger = createLogger('INTERACTIONS');
@@ -18,12 +18,21 @@ module.exports = {
       await command.execute(interaction);
     } catch (error) {
       logger.error(`Error executing /${interaction.commandName}.`, error);
-      const response = { content: 'There was an error while running this command.', ephemeral: true };
+      const response = {
+        content: 'There was an error while running this command.',
+        flags: MessageFlags.Ephemeral,
+      };
 
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp(response);
-      } else {
-        await interaction.reply(response);
+      try {
+        if (interaction.deferred) {
+          await interaction.editReply(response);
+        } else if (interaction.replied) {
+          await interaction.followUp(response);
+        } else {
+          await interaction.reply(response);
+        }
+      } catch (responseError) {
+        logger.error('Unable to send the command error response.', responseError);
       }
     }
   },
