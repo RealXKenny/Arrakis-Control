@@ -7,10 +7,11 @@ module.exports = {
   async execute(interaction) {
     const client = interaction.client;
 
+    const serverName = process.env.SERVER_NAME || "Dune: Awakening Community Server";
+
     const uptimeSeconds = Math.floor(client.uptime / 1000);
     const memoryUsage = process.memoryUsage();
 
-    // Dune: Awakening inspired colors
     const duneColors = [
       0xc58b45, // Spice Gold
       0xd2a85a, // Arrakis Sand
@@ -52,7 +53,7 @@ module.exports = {
 
       // Header
       .addTextDisplayComponents((text) => text.setContent(`## 🏜️ ${client.user.username}`))
-      .addTextDisplayComponents((text) => text.setContent("-# ARRakis • Dune: Awakening\n" + `Information and operational statistics for **${client.user.username}**.`))
+      .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
 
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
