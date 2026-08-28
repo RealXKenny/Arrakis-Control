@@ -6,7 +6,7 @@ const logger = createLogger("BACKUPS");
 
 const DEFAULT_SERVER_NAME = "Dune: Awakening Community Server";
 
-const ACCENT_COLORS = [0xc58b45, 0xd2a85a, 0xa96832, 0x8f542c, 0x70452c, 0xb87333, 0x9c6b3c];
+const DUNE_COLORS = [0xc58b45, 0xd2a85a, 0xa96832, 0x8f542c, 0x70452c, 0xb87333, 0x9c6b3c];
 
 module.exports = {
   data: new SlashCommandBuilder().setName("backups").setDescription("Show available Dune server backups and auto-backup status."),
@@ -23,7 +23,7 @@ module.exports = {
       const backups = parseBackups(backupResponse);
       const autoBackup = parseAutoBackup(autoBackupResponse);
 
-      const accentColor = ACCENT_COLORS[Math.floor(Math.random() * ACCENT_COLORS.length)];
+      const accentColor = DUNE_COLORS[Math.floor(Math.random() * DUNE_COLORS.length)];
 
       const banner = createBackupBanner({
         serverName,
@@ -32,12 +32,12 @@ module.exports = {
         autoBackup: autoBackup.enabled,
       });
 
-      const backupsCard = new ContainerBuilder()
+      const card = new ContainerBuilder()
         .setAccentColor(accentColor)
 
         .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL("attachment://crimson-skies-backups.png")))
 
-        .addTextDisplayComponents((text) => text.setContent("## 💾 Dune Server Backups"))
+        .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Server Backups"))
 
         .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
 
@@ -47,15 +47,30 @@ module.exports = {
 
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
-        .addTextDisplayComponents((text) => text.setContent([`### ${autoBackup.enabled ? "🟢" : "🔴"} Auto-Backups`, autoBackup.summary].join("\n")))
+        .addTextDisplayComponents((text) =>
+          text.setContent([`### ${autoBackup.enabled ? "🟢" : "🔴"} Auto-Backups`, `**Status:** ${autoBackup.enabled ? "🟢 ENABLED" : "🔴 DISABLED"}`, `**Directory:** \`${autoBackup.directory || "Unknown"}\``].join("\n")),
+        )
 
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
-        .addTextDisplayComponents((text) => text.setContent(["### 🕒 Schedule", autoBackup.schedule].join("\n")))
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            [
+              "### 🕒 Schedule",
+              `**Backup time:** \`${autoBackup.backupTime || "Unknown"} UTC\``,
+              `**Interval:** \`${autoBackup.intervalHours ?? "Unknown"} hours\``,
+              `**Retention:** \`${autoBackup.retentionDays ?? "Unknown"} days\``,
+              `**Next backup:** ${autoBackup.nextBackup || "Unknown"}`,
+              `**Last backup:** ${autoBackup.lastBackup || "Unknown"}`,
+            ].join("\n"),
+          ),
+        )
 
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
-        .addTextDisplayComponents((text) => text.setContent(["### 🗄️ Storage", autoBackup.storage].join("\n")))
+        .addTextDisplayComponents((text) =>
+          text.setContent(["### ⚙️ Systemd Timer", `**Status:** \`${autoBackup.timerStatus || "Unknown"}\``, `**Unit:** \`${autoBackup.timerUnit || "Unknown"}\``, `**Activates:** \`${autoBackup.serviceUnit || "Unknown"}\``].join("\n")),
+        )
 
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
@@ -64,7 +79,7 @@ module.exports = {
       await interaction.editReply({
         content: null,
         embeds: null,
-        components: [backupsCard],
+        components: [card],
         files: [banner],
         flags: MessageFlags.IsComponentsV2,
         allowedMentions: {
@@ -72,16 +87,24 @@ module.exports = {
         },
       });
     } catch (error) {
+      const errorDetails = getErrorDetails(error);
+
       const errorCard = new ContainerBuilder()
         .setAccentColor(0x8f3025)
 
-        .addTextDisplayComponents((text) => text.setContent("## 💾 Dune Server Backups"))
+        .addTextDisplayComponents((text) => text.setContent("## 🏜️ Dune Server Backups"))
 
         .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
 
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
-        .addTextDisplayComponents((text) => text.setContent(["### 🔴 Backup Information Unavailable", "The server backup information could not be retrieved.", "Please try again later."].join("\n")))
+        .addTextDisplayComponents((text) =>
+          text.setContent(
+            ["### 🔴 Backups Unavailable", "The server backup information could not be retrieved.", "", `**Error:** \`${errorDetails.message}\``, errorDetails.status ? `**HTTP Status:** \`${errorDetails.status}\`` : null]
+              .filter(Boolean)
+              .join("\n"),
+          ),
+        )
 
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
 
@@ -92,19 +115,12 @@ module.exports = {
         embeds: null,
         components: [errorCard],
         flags: MessageFlags.IsComponentsV2,
-        allowedMentions: {
-          parse: [],
-        },
       });
 
-      logger.error("Unable to retrieve Dune server backup information.", error);
+      logger.error(`Unable to retrieve Dune server backup information. ${errorDetails.message}`, error);
     }
   },
 };
-
-/* -------------------------------------------------------------------------- */
-/* BACKUPS                                                                    */
-/* -------------------------------------------------------------------------- */
 
 function parseBackups(response) {
   if (Array.isArray(response)) {
@@ -121,10 +137,6 @@ function parseBackups(response) {
 
   if (typeof response?.stdout === "string") {
     return parseBackupOutput(response.stdout);
-  }
-
-  if (typeof response === "string") {
-    return parseBackupOutput(response);
   }
 
   if (response && typeof response === "object") {
@@ -146,17 +158,10 @@ function parseBackups(response) {
 
 function parseBackupOutput(stdout) {
   const lines = stdout
-    .split("\n")
+    .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
     .filter((line) => !line.startsWith("==="));
-
-  if (!lines.length) {
-    return {
-      count: 0,
-      content: "No backups available.",
-    };
-  }
 
   const backups = [];
 
@@ -168,7 +173,7 @@ function parseBackupOutput(stdout) {
     }
 
     backups.push({
-      timestamp: `${match[1]}T${match[2]}`,
+      timestamp: `${match[1]}T${match[2]}Z`,
       path: match[3].trim(),
     });
   }
@@ -184,9 +189,16 @@ function formatBackupList(backups) {
     };
   }
 
+  const sorted = [...backups].sort((a, b) => {
+    const aTime = getTimestamp(a);
+    const bTime = getTimestamp(b);
+
+    return bTime - aTime;
+  });
+
   return {
-    count: backups.length,
-    content: backups.map((backup, index) => formatBackup(backup, index)).join("\n\n"),
+    count: sorted.length,
+    content: sorted.map((backup, index) => formatBackup(backup, index)).join("\n\n"),
   };
 }
 
@@ -210,14 +222,10 @@ function formatBackup(backup, index) {
   const filename = getFilename(path);
   const details = [];
 
-  if (timestamp) {
-    const date = new Date(timestamp);
+  const timestampText = discordTimestamp(timestamp);
 
-    if (!Number.isNaN(date.getTime())) {
-      details.push(`<t:${Math.floor(date.getTime() / 1000)}:f>`);
-    } else {
-      details.push(String(timestamp));
-    }
+  if (timestampText) {
+    details.push(timestampText);
   }
 
   if (size !== undefined && size !== null) {
@@ -230,10 +238,6 @@ function formatBackup(backup, index) {
 
   return [`**${index + 1}.** 💾 \`${filename}\``, details.length ? `└ ${details.join(" • ")}` : null].filter(Boolean).join("\n");
 }
-
-/* -------------------------------------------------------------------------- */
-/* AUTO BACKUPS                                                               */
-/* -------------------------------------------------------------------------- */
 
 function parseAutoBackup(response) {
   if (!response) {
@@ -256,187 +260,291 @@ function parseAutoBackup(response) {
 }
 
 function parseAutoBackupOutput(stdout) {
-  const text = String(stdout);
+  const text = String(stdout).replace(/\r/g, "");
 
-  const enabled = detectEnabled(text);
+  const enabled = extractBoolean(text, /Enabled:\s*(true|false)/i);
 
-  const backupTime = findValue(text, /Backup time:\s*([^\n]+)/i) || "Unknown";
+  const backupTime = extractValue(text, /Backup time:\s*([^\s]+)/i) ?? extractValue(text, /backup[_\s-]?time:\s*([^\s]+)/i);
 
-  const interval = findValue(text, /Interval hours:\s*([^\n]+)/i) || "Unknown";
+  const intervalMatch = text.match(/Interval hours:\s*(\d+(?:\.\d+)?)/i);
 
-  const retention = findValue(text, /Retention:\s*([^\n]+)/i) || "Unknown";
+  const retentionMatch = text.match(/Retention:\s*(\d+)\s*days?/i);
 
-  const directory = findValue(text, /Backup directory:\s*([^\n]+)/i) || "Unknown";
+  const directory = extractValue(text, /Backup directory:\s*(.+?)(?=\s+Systemd timer:|\n|$)/i);
 
-  const systemdTimer = findValue(text, /Systemd timer:\s*([^\n]+)/i) || "Unknown";
+  const timerStatus = extractValue(text, /Systemd timer:\s*([^\s]+)/i) ?? detectTimerStatus(text);
 
-  const next = findValue(text, /NEXT\s+LEFT\s+LAST/i) ? parseTimerNext(text) : null;
+  const timerSection = extractTimerSection(text);
 
-  const last = parseTimerLast(text);
+  const timer = parseSystemdTimer(timerSection);
 
-  const backups = parseBackupEntriesFromAutoOutput(text);
+  const lastBackup = findLastBackup(text);
 
-  const nextLine = next ? `**Next backup:** <t:${Math.floor(next.getTime() / 1000)}:F> • <t:${Math.floor(next.getTime() / 1000)}:R>` : "**Next backup:** Unknown";
-
-  const lastLine = last ? `**Last backup:** <t:${Math.floor(last.getTime() / 1000)}:F> • <t:${Math.floor(last.getTime() / 1000)}:R>` : "**Last backup:** Unknown";
+  const nextBackup =
+    timer.nextBackup ??
+    calculateNextBackup({
+      backupTime,
+      intervalHours: intervalMatch ? Number(intervalMatch[1]) : null,
+      lastBackupTimestamp: lastBackup?.timestamp ?? null,
+    });
 
   return {
     enabled,
-
-    summary: [`**Status:** ${enabled ? "ENABLED" : "DISABLED"}`, `**Systemd timer:** ${formatStatus(systemdTimer)}`].join("\n"),
-
-    schedule: [`**Backup time:** \`${backupTime}\``, `**Interval:** \`${interval} hours\``, `**Retention:** \`${retention} days\``, nextLine, lastLine].join("\n"),
-
-    storage: [`**Directory:** \`${directory}\``, backups.length ? `**Recent backups:** ${backups.length}` : "**Recent backups:** None reported"].join("\n"),
+    backupTime,
+    intervalHours: intervalMatch ? Number(intervalMatch[1]) : null,
+    retentionDays: retentionMatch ? Number(retentionMatch[1]) : null,
+    directory,
+    timerStatus,
+    timerUnit: timer.timerUnit,
+    serviceUnit: timer.serviceUnit,
+    nextBackup: nextBackup ? discordTimestamp(nextBackup) : "Unknown",
+    lastBackup: lastBackup ? formatLastBackup(lastBackup.timestamp) : "Unknown",
   };
 }
 
 function parseAutoBackupObject(response) {
   const enabled = getBoolean(response.enabled ?? response.active ?? response.running ?? response.autoBackup ?? response.auto_backup);
 
-  const backupTime = response.backupTime ?? response.backup_time ?? response.time ?? "Unknown";
+  const backupTime = response.backupTime ?? response.backup_time ?? response.time ?? null;
 
-  const interval = response.intervalHours ?? response.interval_hours ?? response.interval ?? "Unknown";
+  const intervalHours = response.intervalHours ?? response.interval_hours ?? response.interval ?? null;
 
-  const retention = response.retentionDays ?? response.retention_days ?? response.retention ?? "Unknown";
+  const retentionDays = response.retentionDays ?? response.retention_days ?? response.retention ?? null;
 
-  const directory = response.backupDirectory ?? response.backup_directory ?? response.directory ?? "Unknown";
+  const directory = response.directory ?? response.backupDirectory ?? response.backup_directory ?? null;
 
-  const systemdTimer = response.systemdTimer ?? response.systemd_timer ?? response.timer ?? "Unknown";
+  const timer = response.timer ?? {};
 
-  const nextBackup = response.next ?? response.nextBackup ?? response.next_backup;
+  const nextRaw = response.nextBackup ?? response.next_backup ?? response.next ?? timer.next ?? timer.nextBackup ?? null;
 
-  const lastBackup = response.last ?? response.lastBackup ?? response.last_backup;
+  const lastRaw = response.lastBackup ?? response.last_backup ?? response.last ?? null;
+
+  const calculatedNext =
+    nextRaw ||
+    calculateNextBackup({
+      backupTime,
+      intervalHours,
+      lastBackupTimestamp: getTimestamp(lastRaw),
+    });
 
   return {
     enabled,
-
-    summary: [`**Status:** ${enabled ? "ENABLED" : "DISABLED"}`, `**Systemd timer:** ${formatStatus(systemdTimer)}`].join("\n"),
-
-    schedule: [`**Backup time:** \`${backupTime}\``, `**Interval:** \`${interval}\``, `**Retention:** \`${retention}\``, formatTimestampLine("Next backup", nextBackup), formatTimestampLine("Last backup", lastBackup)].join("\n"),
-
-    storage: [`**Directory:** \`${directory}\``, "**Recent backups:** API response available"].join("\n"),
+    backupTime,
+    intervalHours: toNumberOrNull(intervalHours),
+    retentionDays: toNumberOrNull(retentionDays),
+    directory,
+    timerStatus: response.timerStatus ?? response.timer_status ?? timer.status ?? null,
+    timerUnit: response.timerUnit ?? response.timer_unit ?? timer.unit ?? null,
+    serviceUnit: response.serviceUnit ?? response.service_unit ?? timer.service ?? null,
+    nextBackup: calculatedNext ? discordTimestamp(calculatedNext) : "Unknown",
+    lastBackup: lastRaw ? formatLastBackup(lastRaw) : "Unknown",
   };
 }
 
-function emptyAutoBackup() {
-  return {
-    enabled: false,
-
-    summary: ["**Status:** UNKNOWN", "**Systemd timer:** UNKNOWN"].join("\n"),
-
-    schedule: ["**Backup time:** `Unknown`", "**Interval:** `Unknown`", "**Retention:** `Unknown`", "**Next backup:** Unknown", "**Last backup:** Unknown"].join("\n"),
-
-    storage: ["**Directory:** `Unknown`", "**Recent backups:** None reported"].join("\n"),
-  };
-}
-
-/* -------------------------------------------------------------------------- */
-/* AUTO BACKUP PARSING HELPERS                                                */
-/* -------------------------------------------------------------------------- */
-
-function parseTimerNext(text) {
-  const match = text.match(/NEXT\s+LEFT\s+LAST\s+PASSED\s+UNIT\s+ACTIVATES\s*\n?([\s\S]*?)(?:\n\n|\n\d{4}-\d{2}-\d{2})/i);
-
-  if (!match) {
-    return null;
+function parseSystemdTimer(text) {
+  if (!text) {
+    return {
+      nextBackup: null,
+      timerUnit: null,
+      serviceUnit: null,
+    };
   }
 
-  const line = match[1]
+  const lines = text
     .split("\n")
-    .map((value) => value.trim())
-    .find(Boolean);
+    .map((line) => line.trim())
+    .filter(Boolean);
 
-  if (!line) {
-    return null;
+  const timerLine = lines.find((line) => /^Sat|^Sun|^Mon|^Tue|^Wed|^Thu|^Fri/i.test(line));
+
+  let nextBackup = null;
+  let timerUnit = null;
+  let serviceUnit = null;
+
+  if (timerLine) {
+    const match = timerLine.match(/^(?:Sat|Sun|Mon|Tue|Wed|Thu|Fri)\s+(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+UTC\s+.*?\s+(dune-[^\s]+\.timer)\s+(dune-[^\s]+\.service)/i);
+
+    if (match) {
+      nextBackup = `${match[1]}T${match[2]}Z`;
+      timerUnit = match[3];
+      serviceUnit = match[4];
+    }
   }
 
-  const dateMatch = line.match(/\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+UTC/i);
+  if (!timerUnit) {
+    const unitMatch = text.match(/(dune-[a-z0-9-]+\.timer)/i);
 
-  if (!dateMatch) {
-    return null;
+    timerUnit = unitMatch?.[1] ?? null;
   }
 
-  return parseUtcDate(dateMatch[1], dateMatch[2]);
+  if (!serviceUnit) {
+    const serviceMatch = text.match(/(dune-[a-z0-9-]+\.service)/i);
+
+    serviceUnit = serviceMatch?.[1] ?? null;
+  }
+
+  return {
+    nextBackup,
+    timerUnit,
+    serviceUnit,
+  };
 }
 
-function parseTimerLast(text) {
-  const match = text.match(/\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+UTC\s+[\s\S]*?\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+UTC/i);
+function extractTimerSection(text) {
+  const index = text.search(/NEXT\s+LEFT\s+LAST\s+PASSED/i);
+
+  if (index === -1) {
+    return "";
+  }
+
+  return text.slice(index);
+}
+
+function findLastBackup(text) {
+  const matches = [...text.matchAll(/(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}(?::\d{2})?)\s+(runtime\/backups\/db\/\S+\.backup)/gi)];
+
+  if (!matches.length) {
+    return null;
+  }
+
+  const backups = matches
+    .map((match) => ({
+      timestamp: `${match[1]}T${match[2]}${match[2].length === 5 ? ":00" : ""}Z`,
+      path: match[3],
+    }))
+    .sort((a, b) => getTimestamp(b.timestamp) - getTimestamp(a.timestamp));
+
+  return backups[0];
+}
+
+function calculateNextBackup({ backupTime, intervalHours, lastBackupTimestamp }) {
+  const now = Date.now();
+
+  if (lastBackupTimestamp) {
+    const last = getTimestamp(lastBackupTimestamp);
+
+    if (Number.isFinite(last)) {
+      const interval = Number(intervalHours) > 0 ? Number(intervalHours) * 60 * 60 * 1000 : null;
+
+      if (interval) {
+        let next = last + interval;
+
+        while (next <= now) {
+          next += interval;
+        }
+
+        return new Date(next).toISOString();
+      }
+    }
+  }
+
+  if (!backupTime) {
+    return null;
+  }
+
+  const match = String(backupTime).match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
 
   if (!match) {
     return null;
   }
 
-  return parseUtcDate(match[3], match[4]);
-}
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  const second = Number(match[3] || 0);
 
-function parseBackupEntriesFromAutoOutput(text) {
-  const entries = [];
-
-  const regex = /(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+(runtime\/backups\/db\/\S+)/g;
-
-  let match;
-
-  while ((match = regex.exec(text)) !== null) {
-    entries.push({
-      timestamp: `${match[1]}T${match[2]}:00`,
-      path: match[3],
-    });
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59) {
+    return null;
   }
 
-  return entries;
+  const date = new Date();
+
+  date.setUTCHours(hour, minute, second, 0);
+
+  if (date.getTime() <= now) {
+    date.setUTCDate(date.getUTCDate() + 1);
+  }
+
+  return date.toISOString();
 }
 
-function parseUtcDate(date, time) {
-  const value = new Date(`${date}T${time}Z`);
+function formatLastBackup(timestamp) {
+  const discord = discordTimestamp(timestamp);
 
-  return Number.isNaN(value.getTime()) ? null : value;
+  if (!discord) {
+    return "Unknown";
+  }
+
+  return `${discord} • ${relativeTimestamp(timestamp)}`;
 }
 
-function findValue(text, regex) {
+function discordTimestamp(value) {
+  const timestamp = getTimestamp(value);
+
+  if (!Number.isFinite(timestamp)) {
+    return null;
+  }
+
+  return `<t:${Math.floor(timestamp / 1000)}:F>`;
+}
+
+function relativeTimestamp(value) {
+  const timestamp = getTimestamp(value);
+
+  if (!Number.isFinite(timestamp)) {
+    return "Unknown";
+  }
+
+  return `<t:${Math.floor(timestamp / 1000)}:R>`;
+}
+
+function getTimestamp(value) {
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
+  if (typeof value === "number") {
+    return value < 1e12 ? value * 1000 : value;
+  }
+
+  if (!value) {
+    return NaN;
+  }
+
+  const text = String(value).trim();
+
+  if (/^\d+$/.test(text)) {
+    const numeric = Number(text);
+
+    return numeric < 1e12 ? numeric * 1000 : numeric;
+  }
+
+  const normalized = text.endsWith("Z") ? text : text.replace(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})$/, "$1Z");
+
+  const timestamp = Date.parse(normalized);
+
+  return Number.isFinite(timestamp) ? timestamp : NaN;
+}
+
+function extractValue(text, regex) {
   const match = text.match(regex);
 
   return match?.[1]?.trim() || null;
 }
 
-function formatStatus(value) {
-  const text = String(value).trim();
+function extractBoolean(text, regex) {
+  const match = text.match(regex);
 
-  if (/enabled|running|active|healthy|ok/i.test(text)) {
-    return "🟢 ENABLED";
-  }
-
-  if (/disabled|inactive|stopped|failed|error/i.test(text)) {
-    return "🔴 DISABLED";
-  }
-
-  return `🟡 ${text.toUpperCase()}`;
-}
-
-function formatTimestampLine(label, value) {
-  if (!value) {
-    return `**${label}:** Unknown`;
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return `**${label}:** \`${value}\``;
-  }
-
-  const timestamp = Math.floor(date.getTime() / 1000);
-
-  return `**${label}:** <t:${timestamp}:F> • <t:${timestamp}:R>`;
-}
-
-function detectEnabled(value) {
-  const text = String(value).toLowerCase();
-
-  if (text.includes("disabled") || text.includes("inactive") || text.includes("stopped") || text.includes("off")) {
+  if (!match) {
     return false;
   }
 
-  return text.includes("enabled") || text.includes("active") || text.includes("running") || text.includes("on");
+  return getBoolean(match[1]);
+}
+
+function detectTimerStatus(text) {
+  const match = text.match(/Systemd timer:\s*(enabled|disabled|active|inactive)/i);
+
+  return match?.[1]?.toLowerCase() ?? "Unknown";
 }
 
 function getBoolean(value) {
@@ -449,15 +557,40 @@ function getBoolean(value) {
   }
 
   if (typeof value === "string") {
-    return detectEnabled(value);
+    const normalized = value.trim().toLowerCase();
+
+    if (["true", "yes", "enabled", "active", "running", "on"].includes(normalized)) {
+      return true;
+    }
+
+    if (["false", "no", "disabled", "inactive", "stopped", "off"].includes(normalized)) {
+      return false;
+    }
   }
 
   return false;
 }
 
-/* -------------------------------------------------------------------------- */
-/* GENERAL HELPERS                                                            */
-/* -------------------------------------------------------------------------- */
+function toNumberOrNull(value) {
+  const number = Number(value);
+
+  return Number.isFinite(number) ? number : null;
+}
+
+function emptyAutoBackup() {
+  return {
+    enabled: false,
+    backupTime: null,
+    intervalHours: null,
+    retentionDays: null,
+    directory: null,
+    timerStatus: null,
+    timerUnit: null,
+    serviceUnit: null,
+    nextBackup: "Unknown",
+    lastBackup: "Unknown",
+  };
+}
 
 function formatLabel(value) {
   return String(value)
@@ -506,9 +639,12 @@ function formatBytes(bytes) {
   return `${(value / 1024 ** 3).toFixed(1)} GB`;
 }
 
-/* -------------------------------------------------------------------------- */
-/* CANVAS                                                                     */
-/* -------------------------------------------------------------------------- */
+function getErrorDetails(error) {
+  return {
+    message: error?.message || error?.details?.error || "Unknown error",
+    status: error?.status ?? error?.details?.status ?? null,
+  };
+}
 
 function createBackupBanner({ serverName, username, count, autoBackup }) {
   const canvas = createCanvas(1200, 400);
@@ -526,9 +662,9 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
 
   const glow = ctx.createRadialGradient(920, 100, 20, 920, 100, 450);
 
-  glow.addColorStop(0, autoBackup ? "rgba(255, 190, 90, 0.5)" : "rgba(180, 55, 35, 0.55)");
+  glow.addColorStop(0, "rgba(255, 190, 90, 0.5)");
 
-  glow.addColorStop(0.45, autoBackup ? "rgba(190, 100, 40, 0.2)" : "rgba(130, 35, 25, 0.25)");
+  glow.addColorStop(0.45, "rgba(190, 100, 40, 0.2)");
 
   glow.addColorStop(1, "rgba(0, 0, 0, 0)");
 
@@ -552,7 +688,9 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
   const overlay = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
   overlay.addColorStop(0, "rgba(10, 7, 5, 0.88)");
+
   overlay.addColorStop(0.55, "rgba(10, 7, 5, 0.45)");
+
   overlay.addColorStop(1, "rgba(10, 7, 5, 0.05)");
 
   ctx.fillStyle = overlay;
@@ -567,8 +705,7 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
 
   drawFittedText(ctx, serverName.toUpperCase(), 64, 145, 650, "24px sans-serif");
 
-  ctx.strokeStyle = autoBackup ? "#c58b45" : "#a64b3d";
-
+  ctx.strokeStyle = "#c58b45";
   ctx.lineWidth = 2;
 
   ctx.beginPath();
@@ -610,6 +747,7 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
   ctx.strokeRect(-45, -45, 90, 90);
 
   ctx.fillStyle = "rgba(197, 139, 69, 0.15)";
+
   ctx.fillRect(-45, -45, 90, 90);
 
   ctx.restore();
@@ -617,10 +755,13 @@ function createBackupBanner({ serverName, username, count, autoBackup }) {
   const accent = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
   accent.addColorStop(0, "#8f3025");
+
   accent.addColorStop(0.5, "#d2a85a");
+
   accent.addColorStop(1, "#c58b45");
 
   ctx.fillStyle = accent;
+
   ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
   return new AttachmentBuilder(canvas.toBuffer("image/png"), {
@@ -633,6 +774,7 @@ function drawDunes(ctx, canvas) {
     ctx.beginPath();
 
     ctx.moveTo(0, canvas.height);
+
     ctx.lineTo(0, y);
 
     for (let x = 0; x <= canvas.width; x += 20) {
@@ -650,8 +792,11 @@ function drawDunes(ctx, canvas) {
   };
 
   drawDune(280, 70, "#82451f");
+
   drawDune(315, 60, "#9a592e", 150);
+
   drawDune(345, 50, "#b87333", 300);
+
   drawDune(370, 35, "#d2a85a", 500);
 }
 
