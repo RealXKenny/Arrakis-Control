@@ -16,7 +16,7 @@ module.exports = {
         type: ActivityType.Watching,
       },
       {
-        name: serverName,
+        name: `Playing ${serverName}`,
         type: ActivityType.Playing,
       },
       {
