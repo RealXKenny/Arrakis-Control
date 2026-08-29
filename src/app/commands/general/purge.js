@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { MessageFlags, SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,7 +17,7 @@ module.exports = {
     if (!interaction.inGuild()) {
       await interaction.reply({
         content: "This command can only be used inside a server.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -25,14 +25,14 @@ module.exports = {
     if (!hasStaffRole(interaction)) {
       await interaction.reply({
         content: "You need a configured staff role to use this command.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
     const amount = interaction.options.getInteger("amount", true);
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const deleted = await interaction.channel.bulkDelete(amount, true);
 

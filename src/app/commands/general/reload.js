@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { MessageFlags, SlashCommandBuilder } = require("discord.js");
 const {
   reloadCommands,
 } = require("../../../infrastructure/loaders/commandLoader");
@@ -27,7 +27,7 @@ module.exports = {
     if (!interaction.member?.roles?.cache?.has(RELOAD_ROLE_ID))
       return interaction.reply({
         content: "You are not authorized to reload bot modules.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     const area = interaction.options.getString("area", true);
     const results = {};
