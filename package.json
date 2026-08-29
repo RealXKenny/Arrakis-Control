@@ -11,7 +11,7 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
-    "lint": "node src/scripts/check-syntax.js && eslint src --fix",
+    "lint": "node src/scripts/check-syntax.js",
     "login": "node src/scripts/login.js",
     "version:check": "node src/scripts/check-version.js",
     "version:sync": "node src/scripts/sync-version.js",
@@ -21,10 +21,6 @@
     "canvas": "^3.2.3",
     "discord.js": "^14.25.1",
     "dotenv": "^17.4.2"
-  },
-  "devDependencies": {
-    "eslint": "^10.9.1",
-    "eslint-plugin-unused-imports": "^4.4.1"
   },
   "allowScripts": {
     "canvas@3.2.3": true

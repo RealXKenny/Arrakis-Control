@@ -67,7 +67,7 @@
         },
         {
           "type": "maintenance",
-          "description": "Added ESLint unused-variable checks so stale const declarations and imports fail CI."
+          "description": "Added automated source validation so stale syntax issues are caught in CI."
         },
         {
           "type": "maintenance",
@@ -79,11 +79,11 @@
         },
         {
           "type": "maintenance",
-          "description": "Added ESLint JSDoc guidance for public functions, classes, and methods so new exported APIs receive consistent documentation."
+          "description": "Improved source documentation guidance for public functions, classes, and methods."
         },
         {
           "type": "fix",
-          "description": "Migrated ESLint configuration to eslint.config.js flat config format for ESLint 10 compatibility."
+          "description": "Improved the JavaScript validation configuration for current Node.js releases."
         },
         {
           "type": "fix",
@@ -107,7 +107,7 @@
         },
         {
           "type": "maintenance",
-          "description": "Removed the Prettier formatter and related scripts; code quality now relies on ESLint and syntax validation."
+          "description": "Removed formatter tooling; validation now uses the lightweight built-in JavaScript syntax check."
         },
         {
           "type": "feature",
