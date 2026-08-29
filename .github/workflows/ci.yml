@@ -25,5 +25,3 @@ jobs:
         run: npm run version:check
       - name: Check JavaScript syntax
         run: npm run lint
-      - name: Check Prettier formatting
-        run: npm run format:check

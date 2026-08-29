@@ -67,19 +67,7 @@
         },
         {
           "type": "maintenance",
-          "description": "Added a repository-wide Prettier configuration with format and format:check scripts for consistent source formatting."
-        },
-        {
-          "type": "maintenance",
-          "description": "GitHub Actions now checks the entire repository with Prettier on every push and pull request."
-        },
-        {
-          "type": "maintenance",
           "description": "Added ESLint unused-variable checks so stale const declarations and imports fail CI."
-        },
-        {
-          "type": "maintenance",
-          "description": "Changed formatting and lint scripts to automatically remove fixable unused declarations and imports while applying Prettier consistently."
         },
         {
           "type": "maintenance",
@@ -116,6 +104,10 @@
         {
           "type": "feature",
           "description": "Added a Discord ShardingManager entrypoint and dedicated shard worker with reconnect, readiness, and process diagnostics."
+        },
+        {
+          "type": "maintenance",
+          "description": "Removed the Prettier formatter and related scripts; code quality now relies on ESLint and syntax validation."
         },
         {
           "type": "feature",

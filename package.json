@@ -12,8 +12,6 @@
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
     "lint": "node src/scripts/check-syntax.js && eslint src --fix",
-    "format": "prettier --write . && eslint src --fix",
-    "format:check": "prettier --check .",
     "login": "node src/scripts/login.js",
     "version:check": "node src/scripts/check-version.js",
     "version:sync": "node src/scripts/sync-version.js",
@@ -26,8 +24,7 @@
   },
   "devDependencies": {
     "eslint": "^10.9.1",
-    "eslint-plugin-unused-imports": "^4.4.1",
-    "prettier": "^3.9.6"
+    "eslint-plugin-unused-imports": "^4.4.1"
   },
   "allowScripts": {
     "canvas@3.2.3": true
