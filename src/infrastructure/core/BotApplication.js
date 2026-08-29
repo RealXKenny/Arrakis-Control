@@ -49,6 +49,7 @@ function createBotApplication(config) {
   client.auditLogger = new DiscordAuditLogger(
     client,
     config.duneDiscordAuditChannelId,
+    config.duneDiscordActivityLogChannelId,
   );
 
   const commands = loadCommands(client);
@@ -132,6 +133,7 @@ function createBotApplication(config) {
     logger.debug(`Received ${signal}; signing out of the Dune Console.`);
 
     try {
+      if (client.auditLogInterval) clearInterval(client.auditLogInterval);
       await client.duneApi.logout();
       logger.debug("Logged out of the Dune Console.");
     } catch (error) {

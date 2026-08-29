@@ -9,9 +9,19 @@ const { createLogger } = require("../../infrastructure/core/logger");
 const logger = createLogger("DISCORD AUDIT");
 
 class DiscordAuditLogger {
-  constructor(client, channelId) {
+  constructor(client, channelId, activityChannelId) {
     this.client = client;
     this.channelId = channelId;
+    this.activityChannelId = activityChannelId;
+  }
+
+  async interaction(interaction, type) {
+    return this.sendTo(this.activityChannelId, "Discord interaction", [
+      `**Type:** ${type}`,
+      `**User:** ${interaction.user?.tag ?? "Unknown"} (${interaction.user?.id ?? "Unknown"})`,
+      `**Guild:** ${interaction.guild?.name ?? "Direct message"}`,
+      `**Channel:** ${interaction.channelId ?? "Unknown"}`,
+    ]);
   }
 
   async playerLinkRequested(interaction, result) {
@@ -61,15 +71,19 @@ class DiscordAuditLogger {
   }
 
   async send(title, lines, files = []) {
-    if (!this.channelId) {
+    return this.sendTo(this.channelId, title, lines, files);
+  }
+
+  async sendTo(channelId, title, lines, files = []) {
+    if (!channelId) {
       logger.warn(
-        `Skipped audit entry '${title}': DUNE_DISCORD_AUDIT_CHANNEL_ID is not configured.`,
+        `Skipped Discord log '${title}': no destination channel is configured.`,
       );
       return;
     }
 
     try {
-      const channel = await this.client.channels.fetch(this.channelId);
+      const channel = await this.client.channels.fetch(channelId);
       if (!channel?.isTextBased())
         throw new Error(
           `Audit channel ${this.channelId} is not a text channel.`,
@@ -99,7 +113,7 @@ class DiscordAuditLogger {
       } catch (error) {
         throw error;
       }
-      logger.info(`Sent audit entry: ${title}.`);
+      logger.debug(`Sent audit entry: ${title}.`);
     } catch (error) {
       logger.error(`Unable to send audit entry: ${title}.`, error);
     }

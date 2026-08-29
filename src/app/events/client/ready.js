@@ -10,6 +10,7 @@ const { ensureRolePanel } = require("../../../modules/panels/rolePanel");
 const { ensureVerificationPanel } = require("../../../modules/panels/verificationPanel");
 const { ensureRulesPanel } = require("../../../modules/panels/rulesPanel");
 const { ensureServerInfoPanel } = require("../../../modules/panels/serverInfoPanel");
+const { startAuditLogForwarder } = require("../../../modules/audit/DiscordAuditLogForwarder");
 
 const logger = createLogger("DISCORD");
 
@@ -66,6 +67,7 @@ module.exports = {
     setInterval(updatePresence, 30_000);
 
     logger.info(`Ready! Logged in as ${client.user.tag}.`);
+    client.auditLogInterval = startAuditLogForwarder(client);
 
     try {
       if (client.discordAdapter) {

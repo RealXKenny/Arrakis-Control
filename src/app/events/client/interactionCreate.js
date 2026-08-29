@@ -14,6 +14,10 @@ module.exports = {
         guildId: interaction.guildId,
         channelId: interaction.channelId,
       });
+      await interaction.client.auditLogger?.interaction(
+        interaction,
+        describeInteraction(interaction),
+      );
       if (interaction.isChatInputCommand()) await handleCommand(interaction);
       else if (interaction.isAutocomplete())
         await handleAutocomplete(interaction);

@@ -22,6 +22,7 @@ function loadEnvironment(requiredKeys = []) {
     duneDiscordBlueprintPanelChannelId:
       process.env.DUNE_DISCORD_BLUEPRINT_PANEL_CHANNEL_ID,
     duneDiscordAuditChannelId: process.env.DUNE_DISCORD_AUDIT_CHANNEL_ID,
+    duneDiscordActivityLogChannelId: process.env.DUNE_DISCORD_ACTIVITY_LOG_CHANNEL_ID,
     discordRolePanelChannelId: process.env.DISCORD_ROLE_PANEL_CHANNEL_ID,
     discordVerifyChannelId: process.env.DISCORD_VERIFY_CHANNEL_ID,
     discordRulesChannelId: process.env.DISCORD_RULES_CHANNEL_ID,

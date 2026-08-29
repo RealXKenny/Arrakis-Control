@@ -11,6 +11,11 @@ module.exports = {
   name: Events.GuildMemberRemove,
 
   async execute(member) {
+    await member.client.auditLogger?.sendTo(
+      member.client.auditLogger.activityChannelId,
+      "Member left",
+      [`**User:** ${member.user.tag} (${member.id})`, `**Guild:** ${member.guild.name}`],
+    );
     const channelId = process.env.DISCORD_GOODBYE_CHANNEL_ID;
     if (!channelId) return;
 
