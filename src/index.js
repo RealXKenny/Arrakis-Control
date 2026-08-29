@@ -12,6 +12,7 @@ process.once('SIGBREAK', () => app.shutdown('SIGBREAK'));
 process.on('unhandledRejection', (error) => {
   logger.error('Unhandled promise rejection.', error);
 });
+
 process.on('uncaughtException', (error) => {
   logger.error('Uncaught exception; shutting down safely.', error);
   app.shutdown('uncaught exception', 1);
