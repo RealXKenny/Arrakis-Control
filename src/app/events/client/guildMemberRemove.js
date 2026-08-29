@@ -26,15 +26,14 @@ module.exports = {
       title: "## A Traveler Has Departed",
       body: `**${member.user.tag}** has left **${member.guild.name}**.\n\nMay the winds of Arrakis guide their journey.`,
       color: 0xa94442,
-    });
+    }).addMediaGalleryComponents(
+      new MediaGalleryBuilder().addItems(
+        new MediaGalleryItemBuilder().setURL("attachment://member-goodbye.png"),
+      ),
+    );
 
     await channel.send({
-      ...createV2Response([
-        new MediaGalleryBuilder().addItems(
-          new MediaGalleryItemBuilder().setURL("attachment://member-goodbye.png"),
-        ),
-        container,
-      ], [banner]),
+      ...createV2Response([container], [banner]),
       flags: MessageFlags.IsComponentsV2,
       allowedMentions: { parse: [] },
     });

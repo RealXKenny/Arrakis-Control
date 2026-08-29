@@ -26,15 +26,14 @@ module.exports = {
       title: "## Welcome to Arrakis!",
       body: `Welcome ${member} to **${member.guild.name}**.\n\nPrepare yourself for the spice and watch the sands carefully.`,
       color: 0x4caf50,
-    });
+    }).addMediaGalleryComponents(
+      new MediaGalleryBuilder().addItems(
+        new MediaGalleryItemBuilder().setURL("attachment://member-welcome.png"),
+      ),
+    );
 
     await channel.send({
-      ...createV2Response([
-        new MediaGalleryBuilder().addItems(
-          new MediaGalleryItemBuilder().setURL("attachment://member-welcome.png"),
-        ),
-        container,
-      ], [banner]),
+      ...createV2Response([container], [banner]),
       flags: MessageFlags.IsComponentsV2,
       allowedMentions: { users: [member.id] },
     });
