@@ -12,9 +12,9 @@
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
     "lint": "node src/scripts/check-syntax.js",
-    "version:check": "node src/scripts/check-version.js",
-    "version:sync": "node src/scripts/sync-version.js",
-    "release:notes": "node src/scripts/generate-release-notes.js"
+    "version:check": "node src/scripts/version.js check",
+    "version:sync": "node src/scripts/version.js sync",
+    "release:notes": "node src/scripts/version.js notes"
   },
   "dependencies": {
     "canvas": "^3.2.3",
