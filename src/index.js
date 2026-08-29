@@ -1,4 +1,5 @@
 const path = require("node:path");
+const { fork } = require("node:child_process");
 const { ShardingManager } = require("discord.js");
 const { loadEnvironment } = require("./infrastructure/config/environment");
 const { createLogger } = require("./infrastructure/core/logger");
@@ -13,9 +14,15 @@ const environment = loadEnvironment(REQUIRED_ENVIRONMENT);
 const logger = createLogger("SHARD MANAGER", environment.logLevel);
 
 const manager = createShardManager(environment);
+const dashboard = startDashboard();
+let isStopping = false;
+
+for (const signal of ["SIGINT", "SIGTERM", "SIGBREAK"]) {
+  process.once(signal, () => stopAll(signal));
+}
 
 registerShardEvents(manager, logger);
-startShardManager(manager, logger);
+startShardManager(manager, logger, dashboard);
 
 function createShardManager(config) {
   const totalShards = process.env.TOTAL_SHARDS
@@ -37,19 +44,37 @@ function registerShardEvents(shardManager, shardLogger) {
       shardLogger.info(`Launched Discord shard ${shard.id}; shard is ready.`);
     });
 
+    shard.on("death", () => {
+      if (!isStopping) shardLogger.error(`Discord shard ${shard.id} process exited unexpectedly.`);
+    });
+
     shard.on("reconnecting", () => {
       shardLogger.warn(`Discord shard ${shard.id} is reconnecting.`);
     });
 
-    shard.on("death", () => {
-      shardLogger.error(`Discord shard ${shard.id} process exited.`);
-    });
   });
 }
 
-function startShardManager(shardManager, shardLogger) {
+function stopAll(signal) {
+  if (isStopping) return;
+  isStopping = true;
+  logger.info(`Received ${signal}; stopping Discord shards.`);
+  dashboard?.kill(signal);
+  for (const shard of manager.shards.values()) shard.kill();
+  setTimeout(() => process.exit(0), 1_000).unref();
+}
+
+function startShardManager(shardManager, shardLogger, dashboardProcess) {
   shardManager.spawn().catch((error) => {
     shardLogger.error("Unable to spawn Discord shards.", error);
+    dashboardProcess?.kill();
     process.exitCode = 1;
+  });
+}
+
+function startDashboard() {
+  if (process.env.DASHBOARD_ENABLED !== "true") return null;
+  return fork(path.join(__dirname, "dashboard", "server.js"), {
+    stdio: "inherit",
   });
 }

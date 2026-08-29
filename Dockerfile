@@ -25,6 +25,7 @@ COPY package.json ./
 RUN npm install --omit=dev
 
 COPY src ./src
+RUN if [ -f src/dashboard/frontend/package.json ]; then cd src/dashboard/frontend && npm install --no-audit --no-fund && npm run build; fi
 COPY docs ./docs
 COPY VERSION ./VERSION
 COPY CHANGELOG.json ./CHANGELOG.json

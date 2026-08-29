@@ -63,9 +63,7 @@ function createBotApplication(config) {
       return;
     }
 
-    const route = config.guildId
-      ? Routes.applicationGuildCommands(config.clientId, config.guildId)
-      : Routes.applicationCommands(config.clientId);
+    const route = Routes.applicationCommands(config.clientId);
     const payload = [...client.commands.values()].map((command) =>
       command.data.toJSON(),
     );

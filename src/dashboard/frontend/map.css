@@ -1,0 +1,7 @@
+/* Live-map-specific layout. Keep map presentation separate from API code. */
+.map-page { width: min(1400px, 100%); text-align: left; }
+.map-page .map-viewport { height: min(78vh, 900px); overflow: hidden; position: relative; border: 1px solid #a86f38; border-radius: 18px; background: #0b0705; cursor: grab; }
+.map-page .map-viewport:active { cursor: grabbing; }
+.map-page .map-canvas { position: absolute; inset: 0 auto auto 0; width: 100%; transform-origin: top left; }
+.map-page .map-canvas > img { display: block; width: 100%; height: auto; user-select: none; pointer-events: none; }
+.map-page #markers { position: absolute; inset: 0; }

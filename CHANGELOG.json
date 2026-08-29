@@ -3,6 +3,20 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.1.5",
+      "date": "2026-08-29",
+      "summary": "Expanded the private Dune player portal and reorganized dashboard delivery for production use.",
+      "changes": [
+        { "type": "feature", "description": "Added a private Discord-authenticated player portal with character status, level progress, Intel, Solaris Coin, credits, scrip, health, hydration, and spice-addiction indicators." },
+        { "type": "feature", "description": "Added authenticated Hagga Basin map access with real base coordinates, Dune Base.webp markers, zoom controls, panning, fit-to-map behavior, and responsive mobile support." },
+        { "type": "feature", "description": "Added per-base infrastructure summaries using the bases and water endpoints, including water capacity, fuel cells, generator runtime, and 42-day uptime calculations." },
+        { "type": "feature", "description": "Added colored online/offline status indicators and responsive portal controls for Open map and Sign out." },
+        { "type": "maintenance", "description": "Moved dashboard HTML, CSS, map pages, and static assets into the frontend area while keeping API and OAuth logic in the backend." },
+        { "type": "maintenance", "description": "Added automatic dashboard frontend installation and build before startup and during Docker image creation." },
+        { "type": "fix", "description": "Fixed Windows npm.cmd startup execution, map iframe localhost failures, stale portal rendering, overflowing progress bars, and unavailable base field fallbacks." }
+      ]
+    },
+    {
       "version": "1.1.4",
       "date": "2026-08-29",
       "summary": "Fixed production release announcements by bundling the changelog with the Docker image.",
