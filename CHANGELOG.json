@@ -56,6 +56,10 @@
         },
         {
           "type": "maintenance",
+          "description": "GitHub Actions now checks the entire repository with Prettier on every push and pull request."
+        },
+        {
+          "type": "maintenance",
           "description": "Cleaned up .env.example into grouped Discord, Console, channel, and diagnostics sections and removed the legacy panel-channel fallback."
         },
         {
