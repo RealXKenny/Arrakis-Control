@@ -7,7 +7,6 @@ const { loadCommands } = require('../loaders/commandLoader');
 const { loadComponentHandlers } = require('../loaders/componentLoader');
 const { loadEvents } = require('../loaders/eventLoader');
 const { createLogger } = require('./logger');
-const { createDashboardServer } = require('../../dashboard/server');
 
 function createBotApplication(config) {
   const logger = createLogger('BOT', config.logLevel);
@@ -27,14 +26,6 @@ function createBotApplication(config) {
   client.discordAdapterLinkPanelChannelId = config.duneDiscordLinkPanelChannelId;
   client.discordAdapterBlueprintPanelChannelId = config.duneDiscordBlueprintPanelChannelId;
   client.auditLogger = new DiscordAuditLogger(client, config.duneDiscordAuditChannelId);
-  const dashboard = createDashboardServer({
-    client,
-    port: config.dashboardPort,
-    host: config.dashboardHost,
-    publicUrl: config.dashboardPublicUrl,
-    discordClientId: config.clientId,
-    discordClientSecret: config.discordClientSecret,
-  });
 
   const commands = loadCommands(client);
   const components = loadComponentHandlers(client);
@@ -76,8 +67,6 @@ function createBotApplication(config) {
       `Logged in to the Dune Console; ${client.duneApi.endpoints.length} API endpoints are available.`,
     );
     await client.login(config.discordToken);
-    await dashboard.listen();
-    logger.info(`Web dashboard listening on ${config.dashboardHost}:${config.dashboardPort}.`);
     logger.info('Discord login request completed.');
   }
 
@@ -101,7 +90,6 @@ function createBotApplication(config) {
           error,
         );
       }
-      await dashboard.close();
       logger.debug('Discord client closed.');
       process.exit(exitCode);
     }

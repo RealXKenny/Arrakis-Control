@@ -48,6 +48,22 @@
           "description": "Expanded the landing page status view with population, title, region, container uptime, game-server maps, and listener health cards."
         },
         {
+          "type": "fix",
+          "description": "Restored the explicit Discord login button for private account features while preventing the public homepage from making an unauthorized /api/me request."
+        },
+        {
+          "type": "feature",
+          "description": "Discord OAuth now redirects to a dedicated /dashboard panel, with root-level Home and Dashboard navigation and no hash-page URLs."
+        },
+        {
+          "type": "feature",
+          "description": "Added the protected /dashboard/profile page and /api/profile endpoint for authenticated linked-player information."
+        },
+        {
+          "type": "fix",
+          "description": "Added explicit Discord OAuth callback validation, browser-visible errors, and dashboard logging for missing secrets or redirect URI mismatches."
+        },
+        {
           "type": "feature",
           "description": "Added an authenticated ConvoyClient for Advin VPS customer API requests, including JSON and PNG responses."
         },
