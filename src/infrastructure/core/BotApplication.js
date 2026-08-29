@@ -21,7 +21,9 @@ function createBotApplication(config) {
   // The application owns shared clients and lifecycle wiring; feature modules remain stateless.
   const logger = createLogger("BOT", config.logLevel);
   logger.header("ARRAKIS CONTROL", "Dune: Awakening Discord control bot");
-  const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+  const client = new Client({
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  });
   client.commands = new Collection();
   client.buttons = new Collection();
   client.selectMenus = new Collection();

@@ -1,5 +1,5 @@
 const { AttachmentBuilder } = require("discord.js");
-const { createCanvas } = require("canvas");
+const { createCanvas, loadImage } = require("canvas");
 
 function createDuneBanner({ filename, title, subtitle, detail }) {
   const canvas = createCanvas(1200, 400);
@@ -26,4 +26,24 @@ function createDuneBanner({ filename, title, subtitle, detail }) {
   });
 }
 
-module.exports = { createDuneBanner };
+async function createMemberBanner({ filename, title, member }) {
+  const attachment = createDuneBanner({
+    filename,
+    title,
+    subtitle: member.user.tag,
+    detail: "DUNE: AWAKENING COMMUNITY",
+  });
+  const avatar = await loadImage(member.user.displayAvatarURL({ extension: "png", size: 256 }));
+  const canvas = createCanvas(1200, 400);
+  const context = canvas.getContext("2d");
+  context.drawImage(await loadImage(attachment.attachment), 0, 0);
+  context.save();
+  context.beginPath();
+  context.arc(1010, 200, 105, 0, Math.PI * 2);
+  context.clip();
+  context.drawImage(avatar, 905, 95, 210, 210);
+  context.restore();
+  return new AttachmentBuilder(canvas.toBuffer("image/png"), { name: filename });
+}
+
+module.exports = { createDuneBanner, createMemberBanner };
