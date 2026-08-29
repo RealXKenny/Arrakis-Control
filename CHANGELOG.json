@@ -115,6 +115,10 @@
         },
         {
           "type": "feature",
+          "description": "Added a Discord ShardingManager entrypoint and dedicated shard worker with reconnect, readiness, and process diagnostics."
+        },
+        {
+          "type": "feature",
           "description": "Added protected /reload commands, components, and all targets using role 1539721769244565566 for live module refreshes."
         },
         {

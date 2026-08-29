@@ -1,24 +1,20 @@
+const path = require('node:path');
+const { ShardingManager } = require('discord.js');
 const { loadEnvironment } = require('./infrastructure/config/environment');
-const { createBotApplication } = require('./infrastructure/core/BotApplication');
 const { createLogger } = require('./infrastructure/core/logger');
-
 const config = loadEnvironment(['DISCORD_TOKEN', 'DUNE_CONSOLE_URL', 'DUNE_CONSOLE_PASSWORD']);
-const logger = createLogger('STARTUP', config.logLevel);
-const app = createBotApplication(config);
-
-process.once('SIGINT', () => app.shutdown('SIGINT'));
-process.once('SIGTERM', () => app.shutdown('SIGTERM'));
-process.once('SIGBREAK', () => app.shutdown('SIGBREAK'));
-process.on('unhandledRejection', (error) => {
-  logger.error('Unhandled promise rejection.', error);
+const logger = createLogger('SHARD MANAGER', config.logLevel);
+const manager = new ShardingManager(path.join(__dirname, 'shard.js'), {
+  token: config.discordToken,
+  totalShards: process.env.DISCORD_TOTAL_SHARDS ? Number(process.env.DISCORD_TOTAL_SHARDS) : 'auto',
 });
-
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught exception; shutting down safely.', error);
-  app.shutdown('uncaught exception', 1);
+manager.on('shardCreate', (shard) => {
+  logger.info(`Launched Discord shard ${shard.id}.`);
+  shard.on('ready', () => logger.info(`Discord shard ${shard.id} is ready.`));
+  shard.on('reconnecting', () => logger.warn(`Discord shard ${shard.id} is reconnecting.`));
+  shard.on('death', () => logger.error(`Discord shard ${shard.id} process exited.`));
 });
-
-app.start().catch((error) => {
-  logger.error('Unable to start the bot.', error);
-  app.shutdown('startup failure', 1);
+manager.spawn().catch((error) => {
+  logger.error('Unable to spawn Discord shards.', error);
+  process.exitCode = 1;
 });
