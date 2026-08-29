@@ -1,6 +1,8 @@
 const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder } = require("discord.js");
 const { createCanvas } = require("canvas");
 const { createLogger } = require("../../../infrastructure/core/logger");
+const { createV2Response } = require("../../../shared/utils/componentFactory");
+const { createDuneBanner } = require("../../../shared/utils/imageFactory");
 
 const logger = createLogger("SERVER STATUS");
 
@@ -155,16 +157,7 @@ module.exports = {
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
         .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
-      await interaction.editReply({
-        content: null,
-        embeds: null,
-        components: [statusCard],
-        files: [banner],
-        flags: MessageFlags.IsComponentsV2,
-        allowedMentions: {
-          parse: [],
-        },
-      });
+      await interaction.editReply({ ...createV2Response([statusCard], [banner]), allowedMentions: { parse: [] } });
     } catch (error) {
       const errorCard = new ContainerBuilder()
         .setAccentColor(0x8f3025)
@@ -483,6 +476,7 @@ function formatBytes(bytes) {
 }
 
 function createStatusBanner({ serverName, healthy, overall, population, region, cpuPercent, memoryPercent, diskPercent, uptime }) {
+  return createDuneBanner({ filename: "dune-server-status.png", title: healthy ? "Server Ready" : "Server Alert", subtitle: `${overall ?? "UNKNOWN"} • ${population ?? "0/0"}`, detail: `${serverName} • ${region ?? "ARRAKIS"}` });
   const canvas = createCanvas(1200, 400);
   const ctx = canvas.getContext("2d");
 

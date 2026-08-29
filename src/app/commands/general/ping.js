@@ -1,5 +1,7 @@
 const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder } = require("discord.js");
 const { createCanvas } = require("canvas");
+const { createDuneBanner } = require("../../../shared/utils/imageFactory");
+const { createV2Response } = require("../../../shared/utils/componentFactory");
 
 module.exports = {
   data: new SlashCommandBuilder().setName("ping").setDescription("Check the bot response time."),
@@ -147,9 +149,7 @@ module.exports = {
     ctx.fillStyle = accent;
     ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
-    const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
-      name: "dune-server-ping.png",
-    });
+    const banner = createDuneBanner({ filename: "dune-server-ping.png", title: "Pong", subtitle: "LATENCY CHECK", detail: serverName });
 
     const pingCard = new ContainerBuilder()
       .setAccentColor(accentColor)
@@ -161,15 +161,6 @@ module.exports = {
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
       .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
-    await interaction.editReply({
-      content: null,
-      embeds: null,
-      components: [pingCard],
-      files: [banner],
-      flags: MessageFlags.IsComponentsV2,
-      allowedMentions: {
-        parse: [],
-      },
-    });
+    await interaction.editReply({ ...createV2Response([pingCard], [banner]), allowedMentions: { parse: [] } });
   },
 };

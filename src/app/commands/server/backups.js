@@ -1,6 +1,8 @@
 const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder } = require("discord.js");
 const { createCanvas } = require("canvas");
 const { createLogger } = require("../../../infrastructure/core/logger");
+const { createV2Response } = require("../../../shared/utils/componentFactory");
+const { createDuneBanner } = require("../../../shared/utils/imageFactory");
 
 const logger = createLogger("BACKUPS");
 
@@ -76,16 +78,7 @@ module.exports = {
 
         .addTextDisplayComponents((text) => text.setContent(`-# ${backups.count} backup${backups.count === 1 ? "" : "s"} available • Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
-      await interaction.editReply({
-        content: null,
-        embeds: null,
-        components: [card],
-        files: [banner],
-        flags: MessageFlags.IsComponentsV2,
-        allowedMentions: {
-          parse: [],
-        },
-      });
+      await interaction.editReply({ ...createV2Response([card], [banner]), allowedMentions: { parse: [] } });
     } catch (error) {
       const errorDetails = getErrorDetails(error);
 
@@ -647,6 +640,7 @@ function getErrorDetails(error) {
 }
 
 function createBackupBanner({ serverName, username, count, autoBackup }) {
+  return createDuneBanner({ filename: "dune-server-backups.png", title: "Backups", subtitle: `${count ?? 0} AVAILABLE`, detail: serverName });
   const canvas = createCanvas(1200, 400);
   const ctx = canvas.getContext("2d");
 

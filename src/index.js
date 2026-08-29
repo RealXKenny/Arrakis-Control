@@ -9,6 +9,13 @@ const app = createBotApplication(config);
 process.once("SIGINT", () => app.shutdown("SIGINT"));
 process.once("SIGTERM", () => app.shutdown("SIGTERM"));
 process.once("SIGBREAK", () => app.shutdown("SIGBREAK"));
+process.on("unhandledRejection", (error) => {
+  logger.error("Unhandled promise rejection.", error);
+});
+process.on("uncaughtException", (error) => {
+  logger.error("Uncaught exception; shutting down safely.", error);
+  app.shutdown("uncaught exception", 1);
+});
 
 app.start().catch((error) => {
   logger.error("Unable to start the bot.", error);

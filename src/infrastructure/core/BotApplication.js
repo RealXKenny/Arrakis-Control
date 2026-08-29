@@ -1,4 +1,4 @@
-const { Client, Collection, GatewayIntentBits } = require("discord.js");
+const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 const { DuneApi } = require("../api/DuneApi");
 const { DiscordAdapterClient } = require("../api/DiscordAdapterClient");
 const { DiscordAuditLogger } = require("../../modules/audit/DiscordAuditLogger");
@@ -32,6 +32,10 @@ function createBotApplication(config) {
   client.on("error", (error) => logger.error("Discord client error.", error));
   client.on("warn", (message) => logger.warn(`Discord client warning: ${message}`));
   client.on("shardError", (error) => logger.error("Discord gateway shard error.", error));
+  client.on(Events.ShardDisconnect, (event, shardId) => logger.warn(`Discord shard ${shardId} disconnected (code ${event.code}). Discord.js will reconnect automatically.`));
+  client.on(Events.ShardReconnecting, (shardId) => logger.warn(`Discord shard ${shardId} is reconnecting.`));
+  client.on(Events.ShardResume, (shardId, replayedEvents) => logger.info(`Discord shard ${shardId} resumed after a connection hiccup (${replayedEvents} events replayed).`));
+  client.on(Events.Invalidated, () => logger.error("Discord invalidated the session; a restart may be required."));
 
   let isShuttingDown = false;
 

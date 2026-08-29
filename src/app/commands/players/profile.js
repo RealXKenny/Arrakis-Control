@@ -1,6 +1,7 @@
 const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder } = require("discord.js");
-const { createCanvas } = require("canvas");
 const { createActorContext } = require("../../../shared/utils/createActorContext");
+const { createDuneBanner } = require("../../../shared/utils/imageFactory");
+const { createV2Response } = require("../../../shared/utils/componentFactory");
 const { createLogger } = require("../../../infrastructure/core/logger");
 
 const logger = createLogger("PROFILE");
@@ -63,7 +64,7 @@ module.exports = {
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
       .addTextDisplayComponents((text) => text.setContent(formatProfile(player, data, guild)));
 
-    await interaction.editReply({ content: null, embeds: null, components: [card], files: [createProfileBanner(player)], flags: MessageFlags.IsComponentsV2 });
+    await interaction.editReply(createV2Response([card], [createDuneBanner({ filename: IMAGE_NAME, title: "Dune Profile", subtitle: player.characterName ?? "Unknown", detail: "CHARACTER DATA • ARRAKIS" })]));
   },
 };
 
@@ -110,26 +111,3 @@ const formatIntel = (value) => value ? `**${formatNumber(value.intel)}** / ${for
 const formatVitals = (value) => value ? `Health **${formatNumber(value.currentHealth)} / ${formatNumber(value.maxHealth)}** · Hydration **${formatNumber(value.hydration)} / ${formatNumber(value.maxHydration)}** · Spice addiction **${formatNumber(value.spiceAddictionLevel)} / ${formatNumber(value.maxSpiceAddictionLevel)}**` : unavailable;
 const formatFactions = (value) => (value?.rows ?? []).filter((row) => SHOW_SMUGGLER_FACTION || String(row.faction_name).toLowerCase() !== "smuggler").map((row) => `${row.faction_name ?? "Faction"}: **${formatNumber(row.reputation_amount)}** (rank ${formatNumber(row.estimated_rank)})`).join("\n") || unavailable;
 const formatSpecs = (value) => value ? `Unspent points: **${formatNumber(value.unspentPoints)}** · Skill modules: **${formatNumber(value.skillModules?.length ?? 0)}**` : unavailable;
-
-function createProfileBanner(player) {
-  const canvas = createCanvas(1200, 400);
-  const context = canvas.getContext("2d");
-  const background = context.createLinearGradient(0, 0, 0, canvas.height);
-  background.addColorStop(0, "#180f0a");
-  background.addColorStop(0.55, "#6f3d20");
-  background.addColorStop(1, "#d2a85a");
-  context.fillStyle = background;
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "rgba(8, 5, 3, 0.75)";
-  context.fillRect(0, 0, 720, canvas.height);
-  context.fillStyle = "#f3d39b";
-  context.font = "bold 52px sans-serif";
-  context.fillText("DUNE PROFILE", 64, 110);
-  context.fillStyle = "#e6bd79";
-  context.font = "26px sans-serif";
-  context.fillText(String(player.characterName ?? "UNKNOWN").toUpperCase(), 67, 160);
-  context.fillStyle = "#ead5ad";
-  context.font = "22px sans-serif";
-  context.fillText("CHARACTER DATA • ARRAKIS", 67, 235);
-  return new AttachmentBuilder(canvas.toBuffer("image/png"), { name: IMAGE_NAME });
-}

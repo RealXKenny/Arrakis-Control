@@ -24,6 +24,22 @@
           "description": "Removed the character-name filter from guild discovery, matched members by player ID, and corrected the guild_name field shown in /profile."
         },
         {
+          "type": "maintenance",
+          "description": "Enabled safe full debug logging across interactions, Console API requests, and Discord Adapter requests without logging credentials or file contents."
+        },
+        {
+          "type": "fix",
+          "description": "Console API requests now automatically re-authenticate once and retry when the session expires or is lost during bot operation."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added process-level rejection and exception logging plus timeout-aware network errors for Console API and Discord Adapter requests."
+        },
+        {
+          "type": "fix",
+          "description": "Added Discord gateway reconnect, resume, disconnect, and invalid-session diagnostics plus retries for temporary Console API failures."
+        },
+        {
           "type": "fix",
           "description": "Removed the unsupported player stats request and made /profile responses visible in the channel instead of ephemeral."
         },
@@ -42,6 +58,18 @@
         {
           "type": "maintenance",
           "description": "Player-link and blueprint panels can now coexist safely in the same Discord channel."
+        },
+        {
+          "type": "refactor",
+          "description": "Added shared Components V2 and Canvas banner factories to reduce duplicated UI construction across commands and panels."
+        },
+        {
+          "type": "refactor",
+          "description": "Migrated all slash-command responses to the shared Components V2 response helper and routed command artwork through the centralized Dune banner generator."
+        },
+        {
+          "type": "docs",
+          "description": "Replaced the outdated README with a simpler setup, Docker, release, configuration, and documentation guide."
         }
       ]
     },

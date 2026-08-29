@@ -2,6 +2,8 @@ const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryIt
 const { createCanvas } = require("canvas");
 const { createLogger } = require("../../../infrastructure/core/logger");
 const { formatPlayers } = require("../../../modules/formatters/players");
+const { createDuneBanner } = require("../../../shared/utils/imageFactory");
+const { createV2Response } = require("../../../shared/utils/componentFactory");
 
 const logger = createLogger("PLAYERS");
 const PAGE_SIZE = 20;
@@ -193,9 +195,7 @@ module.exports = {
       ctx.fillStyle = accent;
       ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
 
-      const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
-        name: "dune-server-players.png",
-      });
+      const banner = createDuneBanner({ filename: "dune-server-players.png", title: "Dune Players", subtitle: `${onlineCount} ONLINE • ${offlineCount} OFFLINE`, detail: serverName });
 
       const playersCard = new ContainerBuilder()
         .setAccentColor(0xc58b45)
@@ -209,16 +209,7 @@ module.exports = {
         .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
         .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
-      await interaction.editReply({
-        content: null,
-        embeds: null,
-        components: [playersCard],
-        files: [banner],
-        flags: MessageFlags.IsComponentsV2,
-        allowedMentions: {
-          parse: [],
-        },
-      });
+      await interaction.editReply({ ...createV2Response([playersCard], [banner]), allowedMentions: { parse: [] } });
     } catch (error) {
       const serverName = process.env.SERVER_NAME || "Dune: Awakening Community Server";
 

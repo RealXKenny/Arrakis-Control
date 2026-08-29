@@ -1,6 +1,8 @@
 const { AttachmentBuilder, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder, version: discordJsVersion } = require("discord.js");
 const { createCanvas } = require("canvas");
 const { getBotVersion } = require("../../../infrastructure/config/version");
+const { createDuneBanner } = require("../../../shared/utils/imageFactory");
+const { createV2Response } = require("../../../shared/utils/componentFactory");
 
 module.exports = {
   data: new SlashCommandBuilder().setName("info").setDescription("View information about this bot."),
@@ -144,9 +146,7 @@ module.exports = {
 
     ctx.fillText(`${client.user.username} • Spice flows through Arrakis`, 64, 350);
 
-    const banner = new AttachmentBuilder(canvas.toBuffer("image/png"), {
-      name: "dune-server-info.png",
-    });
+    const banner = createDuneBanner({ filename: "dune-server-info.png", title: "Arrakis Control", subtitle: "BOT INFORMATION", detail: serverName });
 
     const infoCard = new ContainerBuilder()
       .setAccentColor(accentColor)
@@ -188,10 +188,6 @@ module.exports = {
       .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
       .addTextDisplayComponents((text) => text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`));
 
-    await interaction.reply({
-      components: [infoCard],
-      files: [banner],
-      flags: MessageFlags.IsComponentsV2,
-    });
+    await interaction.reply(createV2Response([infoCard], [banner]));
   },
 };

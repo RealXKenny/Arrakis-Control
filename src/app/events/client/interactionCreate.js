@@ -7,6 +7,13 @@ module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
     try {
+      logger.debug("Interaction received.", {
+        type: describeInteraction(interaction),
+        interactionId: interaction.id,
+        userId: interaction.user?.id,
+        guildId: interaction.guildId,
+        channelId: interaction.channelId,
+      });
       if (interaction.isChatInputCommand()) await handleCommand(interaction);
       else if (interaction.isAutocomplete()) await handleAutocomplete(interaction);
       else if (interaction.isButton()) await handleComponent(interaction, "buttons", "button");
@@ -14,6 +21,15 @@ module.exports = {
       else if (interaction.isModalSubmit()) await handleComponent(interaction, "modals", "modal form");
     } catch (error) {
       logger.error(`Unhandled ${describeInteraction(interaction)} interaction error. ${formatError(error)}`);
+      logger.error("Interaction handler failed with full context.", {
+        interaction: describeInteraction(interaction),
+        interactionId: interaction.id,
+        userId: interaction.user?.id,
+        guildId: interaction.guildId,
+        channelId: interaction.channelId,
+        deferred: interaction.deferred,
+        replied: interaction.replied,
+      });
       await respondWithError(interaction);
     }
   },
