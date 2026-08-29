@@ -4,9 +4,9 @@ const { loadEnvironment } = require("./infrastructure/config/environment");
 const { createLogger } = require("./infrastructure/core/logger");
 
 const REQUIRED_ENVIRONMENT = [
-  "DISCORD_TOKEN",
-  "DUNE_CONSOLE_URL",
-  "DUNE_CONSOLE_PASSWORD",
+  "TOKEN",
+  "CONSOLE_URL",
+  "CONSOLE_PASSWORD",
 ];
 
 const environment = loadEnvironment(REQUIRED_ENVIRONMENT);
@@ -18,8 +18,8 @@ registerShardEvents(manager, logger);
 startShardManager(manager, logger);
 
 function createShardManager(config) {
-  const totalShards = process.env.DISCORD_TOTAL_SHARDS
-    ? Number(process.env.DISCORD_TOTAL_SHARDS)
+  const totalShards = process.env.TOTAL_SHARDS
+    ? Number(process.env.TOTAL_SHARDS)
     : "auto";
 
   return new ShardingManager(

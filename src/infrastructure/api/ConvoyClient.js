@@ -8,7 +8,7 @@ const logger = createLogger("CONVOY API");
 class ConvoyClient {
   constructor(baseUrl = "https://vps.advinservers.com", apiKey) {
     if (!apiKey)
-      throw new Error("ADVIN_API_KEY is required for the Convoy API.");
+      throw new Error("API_KEY is required for the Convoy API.");
     this.baseUrl = new URL(baseUrl).toString();
     this.apiKey = apiKey;
   }
@@ -48,7 +48,7 @@ class ConvoyClient {
       );
       const message =
         response.status === 401
-          ? "Advin API authentication failed. Check ADVIN_API_KEY."
+          ? "Advin API authentication failed. Check API_KEY."
           : response.status === 403
             ? "Advin API access denied. Ensure the key has servers.read and its IP group allows this VPS."
             : (data?.message ??

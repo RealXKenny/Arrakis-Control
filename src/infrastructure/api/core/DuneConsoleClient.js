@@ -12,7 +12,7 @@ class DuneConsoleClient {
   constructor(baseUrl) {
     if (!baseUrl)
       throw new Error(
-        "DUNE_CONSOLE_URL is required to create a Dune console client.",
+        "CONSOLE_URL is required to create a Dune console client.",
       );
 
     this.baseUrl = new URL(baseUrl).toString();

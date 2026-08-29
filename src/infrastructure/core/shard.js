@@ -3,9 +3,9 @@ const { createBotApplication } = require("./BotApplication");
 const { createLogger } = require("./logger");
 
 const REQUIRED_ENVIRONMENT = [
-  "DISCORD_TOKEN",
-  "DUNE_CONSOLE_URL",
-  "DUNE_CONSOLE_PASSWORD",
+  "TOKEN",
+  "CONSOLE_URL",
+  "CONSOLE_PASSWORD",
 ];
 
 const config = loadEnvironment(REQUIRED_ENVIRONMENT);

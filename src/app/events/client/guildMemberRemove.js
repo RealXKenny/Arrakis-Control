@@ -16,7 +16,7 @@ module.exports = {
       "Member left",
       [`**User:** ${member.user.tag} (${member.id})`, `**Guild:** ${member.guild.name}`],
     );
-    const channelId = process.env.DISCORD_GOODBYE_CHANNEL_ID;
+    const channelId = process.env.GOODBYE_CHANNEL_ID;
     if (!channelId) return;
 
     const channel = await member.guild.channels.fetch(channelId);

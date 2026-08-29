@@ -10,6 +10,7 @@ const { ensureRolePanel } = require("../../../modules/panels/rolePanel");
 const { ensureVerificationPanel } = require("../../../modules/panels/verificationPanel");
 const { ensureRulesPanel } = require("../../../modules/panels/rulesPanel");
 const { ensureServerInfoPanel } = require("../../../modules/panels/serverInfoPanel");
+const { announceCurrentVersion } = require("../../../modules/panels/versionAnnouncement");
 const { startAuditLogForwarder } = require("../../../modules/audit/DiscordAuditLogForwarder");
 
 const logger = createLogger("DISCORD");
@@ -84,6 +85,14 @@ module.exports = {
       await ensureVerificationPanel(client, client.discordVerifyChannelId);
       await ensureRulesPanel(client, client.discordRulesChannelId);
       await ensureServerInfoPanel(client, client.discordServerInfoChannelId);
+      await announceCurrentVersion(client, client.discordAnnouncementChannelId);
+      if (client.discordAnnouncementChannelId) {
+        const interval = Math.max(client.versionAnnouncementIntervalMinutes, 1) * 60_000;
+        client.versionAnnouncementInterval = setInterval(
+          () => announceCurrentVersion(client, client.discordAnnouncementChannelId),
+          interval,
+        );
+      }
     } catch (error) {
       logger.error("Unable to publish Discord Adapter panels.", error);
     }

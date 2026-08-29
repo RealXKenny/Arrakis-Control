@@ -16,13 +16,13 @@ Accept: application/json
 Content-Type: application/json
 ```
 
-Keys are customer-scoped, revocable immediately, and may be restricted to configured IP groups. Never commit a key to source control. Arrakis Control reads it from `ADVIN_API_KEY`.
+Keys are customer-scoped, revocable immediately, and may be restricted to configured IP groups. Never commit a key to source control. Arrakis Control reads it from `API_KEY`.
 
 ## API client configuration
 
 ```env
-ADVIN_API_URL=https://vps.advinservers.com
-ADVIN_API_KEY=replace_with_advin_api_key
+API_URL=https://vps.advinservers.com
+API_KEY=replace_with_advin_api_key
 ```
 
 The bot exposes the authenticated client as `client.convoyApi`. The `/servers` command requires the `servers.read` ability.

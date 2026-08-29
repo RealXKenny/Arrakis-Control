@@ -52,7 +52,7 @@ function buildBlueprintUploadPanel() {
 async function ensureBlueprintUploadPanel(client, channelId) {
   if (!channelId) {
     logger.warn(
-      "Blueprint panel is disabled: DUNE_DISCORD_BLUEPRINT_PANEL_CHANNEL_ID is not configured.",
+      "Blueprint panel is disabled: BLUEPRINT_PANEL_CHANNEL_ID is not configured.",
     );
     return;
   }

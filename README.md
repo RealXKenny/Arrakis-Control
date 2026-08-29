@@ -45,7 +45,7 @@ docker compose up -d
 
 View logs with `docker compose logs -f arrakis-control`.
 
-The bot must reach the Console URL from inside the container. If both containers share a Docker network, use the Console service name in `DUNE_CONSOLE_URL`.
+The bot must reach the Console URL from inside the container. If both containers share a Docker network, use the Console service name in `CONSOLE_URL`.
 
 ## Releases
 

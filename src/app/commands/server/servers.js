@@ -20,7 +20,7 @@ module.exports = {
     await interaction.deferReply();
     if (!interaction.client.convoyApi) {
       await interaction.editReply(
-        "The Advin VPS integration is not configured. Set ADVIN_API_KEY and restart the bot.",
+        "The Advin VPS integration is not configured. Set API_KEY and restart the bot.",
       );
       return;
     }

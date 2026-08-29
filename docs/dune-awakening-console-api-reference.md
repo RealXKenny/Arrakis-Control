@@ -845,7 +845,7 @@ Requests authenticated by a key return `401` when the credential is invalid, dis
 
 ## Discord Adapter (Experimental)
 
-All Discord adapter endpoints require bearer token authentication (`DUNE_DISCORD_ADAPTER_TOKEN`) and support role-based capability checks. The adapter is disabled by default; enable with `DUNE_DISCORD_ADAPTER_ENABLED=true`.
+All Discord adapter endpoints require bearer token authentication (`ADAPTER_TOKEN`) and support role-based capability checks. The adapter is disabled by default; enable with `ADAPTER_ENABLED=true`.
 
 See [../integrations/discord-integration/README.md](../integrations/discord-integration/README.md) for setup and configuration, or [../integrations/discord-control-bot/api-adapter-contract.md](../integrations/discord-control-bot/api-adapter-contract.md) for the full adapter contract.
 
@@ -983,8 +983,8 @@ Poll status with `GET /api/setup/tasks/{id}` or stream with `GET /api/setup/task
 ### Discord Adapter Auth
 
 - Separate from admin console authentication
-- Uses bearer token: `Authorization: Bearer <DUNE_DISCORD_ADAPTER_TOKEN>`
-- Token from env var `DUNE_DISCORD_ADAPTER_TOKEN` or file `DUNE_DISCORD_ADAPTER_TOKEN_FILE`
+- Uses bearer token: `Authorization: Bearer <ADAPTER_TOKEN>`
+- Token from env var `ADAPTER_TOKEN` or file `ADAPTER_TOKEN_FILE`
 - Enforces role-based capabilities with read-only restrictions on game data
 
 ---

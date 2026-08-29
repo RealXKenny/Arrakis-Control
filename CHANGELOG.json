@@ -3,6 +3,45 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.1.3",
+      "date": "2026-08-29",
+      "summary": "Refined administration, community onboarding, release announcements, and environment configuration.",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added staff moderation commands for banning, kicking, timing out, and muting members, organized under the moderation command group."
+        },
+        {
+          "type": "feature",
+          "description": "Added a configurable owner-only /reload command under the administration command group."
+        },
+        {
+          "type": "feature",
+          "description": "Added detailed server rules, server information, role selection, membership verification, welcome, and goodbye panels with consistent Components V2 styling."
+        },
+        {
+          "type": "feature",
+          "description": "Added periodic release announcements sourced from CHANGELOG.json, including historical backfill, Discord release timestamps, announcement-role mentions, release images, and GitHub release buttons."
+        },
+        {
+          "type": "feature",
+          "description": "Added Discord audit-log polling with deduplication and forwarding to a dedicated activity-log channel."
+        },
+        {
+          "type": "enhancement",
+          "description": "Improved console logging with explicit subsystem colors, level colors, a large Arrakis startup banner, quiet dotenv loading, and cleaner startup ordering."
+        },
+        {
+          "type": "maintenance",
+          "description": "Renamed environment variables to concise names such as TOKEN, CONSOLE_URL, PANEL_CHANNEL_ID, and AUDIT_CHANNEL_ID across source, documentation, and the environment template."
+        },
+        {
+          "type": "refactor",
+          "description": "Centralized role definitions and staff authorization helpers, reorganized command folders, and cleaned up application and shard lifecycle code."
+        }
+      ]
+    },
+    {
       "version": "1.1.2",
       "date": "2026-08-29",
       "summary": "Expanded community onboarding, role management, server information, and Discord moderation auditing.",
@@ -114,7 +153,7 @@
         },
         {
           "type": "maintenance",
-          "description": "Added optional ADVIN_API_URL and ADVIN_API_KEY configuration and exposed the client on the bot application."
+          "description": "Added optional API_URL and API_KEY configuration and exposed the client on the bot application."
         }
       ]
     },

@@ -6,10 +6,10 @@ const logger = createLogger("DISCORD ADAPTER");
 class DiscordAdapterClient {
   constructor(baseUrl, token) {
     if (!baseUrl)
-      throw new Error("DUNE_CONSOLE_URL is required for the Discord Adapter.");
+      throw new Error("CONSOLE_URL is required for the Discord Adapter.");
     if (!token)
       throw new Error(
-        "DUNE_DISCORD_ADAPTER_TOKEN is required for the Discord Adapter.",
+        "ADAPTER_TOKEN is required for the Discord Adapter.",
       );
 
     this.baseUrl = new URL(baseUrl).toString();

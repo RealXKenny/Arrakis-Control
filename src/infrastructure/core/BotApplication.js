@@ -34,7 +34,7 @@ function createBotApplication(config) {
   logger.info(
     client.discordAdapter
       ? "Discord Adapter integration enabled."
-      : "Discord Adapter integration disabled: DUNE_DISCORD_ADAPTER_TOKEN is not configured.",
+      : "Discord Adapter integration disabled: ADAPTER_TOKEN is not configured.",
   );
 
   let isShuttingDown = false;
@@ -83,6 +83,7 @@ function createBotApplication(config) {
 
     try {
       if (client.auditLogInterval) clearInterval(client.auditLogInterval);
+      if (client.versionAnnouncementInterval) clearInterval(client.versionAnnouncementInterval);
       await client.duneApi.logout();
       logger.debug("Logged out of the Dune Console.");
     } catch (error) {
@@ -130,6 +131,8 @@ function configureIntegrations(client, config) {
   client.discordVerifyChannelId = config.discordVerifyChannelId;
   client.discordRulesChannelId = config.discordRulesChannelId;
   client.discordServerInfoChannelId = config.discordServerInfoChannelId;
+  client.discordAnnouncementChannelId = config.discordAnnouncementChannelId;
+  client.versionAnnouncementIntervalMinutes = config.versionAnnouncementIntervalMinutes;
   client.auditLogger = new DiscordAuditLogger(
     client,
     config.duneDiscordAuditChannelId,
