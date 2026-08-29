@@ -27,6 +27,7 @@ RUN npm install --omit=dev
 COPY src ./src
 COPY docs ./docs
 COPY VERSION ./VERSION
+COPY CHANGELOG.json ./CHANGELOG.json
 
 ARG BOT_VERSION
 

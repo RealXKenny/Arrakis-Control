@@ -72,7 +72,6 @@ Every release publishes the Docker image to GitHub Packages as well as Docker Hu
 
 ```bash
 docker pull ghcr.io/realxkenny/arrakis-control:latest
-docker pull ghcr.io/realxkenny/arrakis-control:1.0.9
 ```
 
 For a private package, authenticate first with a GitHub token that has `read:packages`:
