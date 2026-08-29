@@ -12,7 +12,6 @@
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
     "lint": "node src/scripts/check-syntax.js",
-    "login": "node src/scripts/login.js",
     "version:check": "node src/scripts/check-version.js",
     "version:sync": "node src/scripts/sync-version.js",
     "release:notes": "node src/scripts/generate-release-notes.js"
