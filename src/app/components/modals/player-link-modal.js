@@ -6,6 +6,9 @@ const {
   SeparatorSpacingSize,
 } = require('discord.js');
 const { createActorContext } = require('../../../shared/utils/createActorContext');
+const { createLogger } = require('../../../infrastructure/core/logger');
+
+const logger = createLogger('PLAYER LINK');
 
 module.exports = {
   customId: 'player-link-modal',
@@ -18,6 +21,13 @@ module.exports = {
       createActorContext(interaction, 'player-link'),
       characterName,
     );
+    logger.debug('Link request response received.', {
+      ok: result?.ok ?? false,
+      message: result?.message ?? null,
+      characterName: result?.characterName ?? result?.character_name ?? characterName,
+      onlineStatus: result?.onlineStatus ?? result?.online_status ?? null,
+      responseFields: Object.keys(result ?? {}),
+    });
     if (!result?.ok) {
       await interaction.editReply(result?.error ?? 'Unable to start character linking.');
       return;

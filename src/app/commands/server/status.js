@@ -9,8 +9,8 @@ const {
 } = require('discord.js');
 const { createCanvas } = require('canvas');
 const { createLogger } = require('../../../infrastructure/core/logger');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
-const { createDuneBanner } = require('../../../shared/utils/imageFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
+const { createDuneBanner } = require('../../../shared/factories/imageFactory');
 
 const logger = createLogger('SERVER STATUS');
 

@@ -5,6 +5,7 @@ const { findJavaScriptFiles } = require('./fileLoader');
 const logger = createLogger('COMMANDS');
 
 function loadCommands(client) {
+  // Commands are discovered recursively so adding a command never requires a central registry edit.
   const commandsPath = path.join(__dirname, '..', '..', 'app', 'commands');
   let loaded = 0;
   let skipped = 0;
@@ -33,4 +34,12 @@ function loadCommands(client) {
   return { loaded, skipped };
 }
 
-module.exports = { loadCommands };
+function reloadCommands(client) {
+  const commandsPath = path.join(__dirname, '..', '..', 'app', 'commands');
+  for (const filePath of findJavaScriptFiles(commandsPath))
+    delete require.cache[require.resolve(filePath)];
+  client.commands.clear();
+  return loadCommands(client);
+}
+
+module.exports = { loadCommands, reloadCommands };

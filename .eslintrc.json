@@ -1,0 +1,13 @@
+{
+  "plugins": ["unused-imports"],
+  "env": { "node": true, "es2022": true },
+  "parserOptions": { "ecmaVersion": "latest" },
+  "rules": {
+    "no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }
+    ]
+  }
+}

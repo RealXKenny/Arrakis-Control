@@ -1,5 +1,4 @@
 const {
-  AttachmentBuilder,
   ContainerBuilder,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
@@ -10,8 +9,8 @@ const {
 const { createCanvas } = require('canvas');
 const { createLogger } = require('../../../infrastructure/core/logger');
 const { formatPlayers } = require('../../../modules/formatters/players');
-const { createDuneBanner } = require('../../../shared/utils/imageFactory');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
+const { createDuneBanner } = require('../../../shared/factories/imageFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
 
 const logger = createLogger('PLAYERS');
 const PAGE_SIZE = 20;

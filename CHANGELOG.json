@@ -60,6 +60,54 @@
         },
         {
           "type": "maintenance",
+          "description": "Added ESLint unused-variable checks so stale const declarations and imports fail CI."
+        },
+        {
+          "type": "maintenance",
+          "description": "Changed formatting and lint scripts to automatically remove fixable unused declarations and imports while applying Prettier consistently."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added focused inline documentation around shared UI factories, API transport, loaders, and application lifecycle ownership."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added safe link-response diagnostics showing character, status, message, and response fields without logging verification codes."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added ESLint JSDoc guidance for public functions, classes, and methods so new exported APIs receive consistent documentation."
+        },
+        {
+          "type": "fix",
+          "description": "Removed all empty JSDoc placeholders and stopped automated tooling from generating blank documentation blocks."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added meaningful JSDoc to shared component/image factories, environment loading, and Convoy API transport methods."
+        },
+        {
+          "type": "maintenance",
+          "description": "Expanded JSDoc coverage across the Dune API facade, blueprint validator, and recursive module discovery utility."
+        },
+        {
+          "type": "maintenance",
+          "description": "Removed JSDoc blocks and the JSDoc lint dependency for now, leaving the source tree with concise regular comments only."
+        },
+        {
+          "type": "feature",
+          "description": "Added protected /reload commands, components, and all targets using role 1539721769244565566 for live module refreshes."
+        },
+        {
+          "type": "refactor",
+          "description": "Aligned src with the documented Discord bot layout by moving shared UI factories into shared/factories and adding dedicated menus and constants folders."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added .gitkeep markers to empty menus and shared constants directories so planned extension points remain tracked."
+        },
+        {
+          "type": "maintenance",
           "description": "Cleaned up .env.example into grouped Discord, Console, channel, and diagnostics sections and removed the legacy panel-channel fallback."
         },
         {

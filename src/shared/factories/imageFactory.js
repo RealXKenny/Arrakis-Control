@@ -1,6 +1,7 @@
 const { AttachmentBuilder } = require('discord.js');
 const { createCanvas } = require('canvas');
 
+// Keep generated artwork in one place so fonts, colors, and attachment names stay consistent.
 function createDuneBanner({ filename, title, subtitle, detail }) {
   const canvas = createCanvas(1200, 400);
   const context = canvas.getContext('2d');

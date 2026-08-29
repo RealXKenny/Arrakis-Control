@@ -1,15 +1,13 @@
 const {
-  AttachmentBuilder,
   ContainerBuilder,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
-  MessageFlags,
   SeparatorSpacingSize,
   SlashCommandBuilder,
 } = require('discord.js');
 const { createActorContext } = require('../../../shared/utils/createActorContext');
-const { createDuneBanner } = require('../../../shared/utils/imageFactory');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
+const { createDuneBanner } = require('../../../shared/factories/imageFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
 const { createLogger } = require('../../../infrastructure/core/logger');
 
 const logger = createLogger('PROFILE');

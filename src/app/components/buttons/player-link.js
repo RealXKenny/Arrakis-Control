@@ -8,7 +8,7 @@ const {
   TextInputStyle,
 } = require('discord.js');
 const { createActorContext } = require('../../../shared/utils/createActorContext');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
 
 module.exports = {
   customId: 'player-link',

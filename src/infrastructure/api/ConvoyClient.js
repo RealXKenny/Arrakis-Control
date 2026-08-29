@@ -3,6 +3,8 @@ const { createLogger } = require('../core/logger');
 
 const logger = createLogger('CONVOY API');
 
+// Thin authenticated transport for Advin's Convoy customer API. Feature commands
+// intentionally call request() so permission and safety decisions stay at the command layer.
 class ConvoyClient {
   constructor(baseUrl = 'https://vps.advinservers.com', apiKey) {
     if (!apiKey) throw new Error('ADVIN_API_KEY is required for the Convoy API.');

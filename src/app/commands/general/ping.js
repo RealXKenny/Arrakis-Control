@@ -1,5 +1,4 @@
 const {
-  AttachmentBuilder,
   ContainerBuilder,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
@@ -8,8 +7,8 @@ const {
   SlashCommandBuilder,
 } = require('discord.js');
 const { createCanvas } = require('canvas');
-const { createDuneBanner } = require('../../../shared/utils/imageFactory');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
+const { createDuneBanner } = require('../../../shared/factories/imageFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
 
 module.exports = {
   data: new SlashCommandBuilder().setName('ping').setDescription('Check the bot response time.'),

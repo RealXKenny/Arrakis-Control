@@ -11,8 +11,8 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
-    "lint": "node src/scripts/check-syntax.js",
-    "format": "prettier --write .",
+    "lint": "node src/scripts/check-syntax.js && eslint src --fix",
+    "format": "prettier --write . && eslint src --fix",
     "format:check": "prettier --check .",
     "login": "node src/scripts/login.js",
     "version:check": "node src/scripts/check-version.js",
@@ -25,6 +25,8 @@
     "dotenv": "^16.6.1"
   },
   "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "prettier": "^3.9.6"
   },
   "allowScripts": {

@@ -9,6 +9,7 @@ const { loadEvents } = require('../loaders/eventLoader');
 const { createLogger } = require('./logger');
 
 function createBotApplication(config) {
+  // The application owns shared clients and lifecycle wiring; feature modules remain stateless.
   const logger = createLogger('BOT', config.logLevel);
   logger.header('ARRAKIS CONTROL', 'Dune: Awakening Discord control bot');
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });

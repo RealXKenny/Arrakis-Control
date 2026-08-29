@@ -19,7 +19,9 @@ src/
 │   ├── panels/           Persistent Discord panels
 │   └── validators/       Input and blueprint safety checks
 ├── shared/               Feature-neutral helpers
-│   └── utils/            Actor and interaction helpers
+│   ├── factories/        Shared component and image builders
+│   ├── utils/            Actor and interaction helpers
+│   └── constants/        Shared immutable values
 ├── scripts/              Local checks, deployment, and release helpers
 └── index.js              Application entry point
 ```
@@ -31,7 +33,7 @@ src/
 - Put reusable workflows in `modules/`.
 - Keep HTTP details inside `infrastructure/api/`; commands should call a client method.
 - Keep display formatting in `modules/formatters/`; do not parse API responses in panels.
-- Put shared constants in `infrastructure/config/` and generic helpers in `shared/utils/`.
+- Put shared constants in `shared/constants/` and generic helpers in `shared/utils/`.
 - Keep startup, shutdown, and Discord event wiring in `infrastructure/core/` and `app/events/`.
 
 Loaders scan these folders recursively, so new modules are picked up automatically after a restart.

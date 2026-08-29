@@ -4,8 +4,8 @@ const {
   MediaGalleryItemBuilder,
   SlashCommandBuilder,
 } = require('discord.js');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
-const { createDuneBanner } = require('../../../shared/utils/imageFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
+const { createDuneBanner } = require('../../../shared/factories/imageFactory');
 
 const IMAGE_NAME = 'dune-vps-servers.png';
 

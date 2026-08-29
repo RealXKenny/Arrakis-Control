@@ -5,11 +5,12 @@ const { findJavaScriptFiles } = require('./fileLoader');
 const logger = createLogger('COMPONENTS');
 const handlerTypes = Object.freeze([
   ['buttons', 'buttons'],
-  ['selectMenus', 'selectMenus'],
+  ['menus', 'selectMenus'],
   ['modals', 'modals'],
 ]);
 
 function loadComponentHandlers(client) {
+  // Buttons, select menus, and modals share one recursive discovery path.
   let loaded = 0;
   let skipped = 0;
 
@@ -34,4 +35,14 @@ function loadComponentHandlers(client) {
   return { loaded, skipped };
 }
 
-module.exports = { loadComponentHandlers };
+function reloadComponentHandlers(client) {
+  for (const [directory, collectionName] of handlerTypes) {
+    const handlersPath = path.join(__dirname, '..', '..', 'app', 'components', directory);
+    for (const filePath of findJavaScriptFiles(handlersPath))
+      delete require.cache[require.resolve(filePath)];
+    client[collectionName].clear();
+  }
+  return loadComponentHandlers(client);
+}
+
+module.exports = { loadComponentHandlers, reloadComponentHandlers };

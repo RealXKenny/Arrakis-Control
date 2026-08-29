@@ -1,17 +1,15 @@
 const {
-  AttachmentBuilder,
   ContainerBuilder,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
-  MessageFlags,
   SeparatorSpacingSize,
   SlashCommandBuilder,
   version: discordJsVersion,
 } = require('discord.js');
 const { createCanvas } = require('canvas');
 const { getBotVersion } = require('../../../infrastructure/config/version');
-const { createDuneBanner } = require('../../../shared/utils/imageFactory');
-const { createV2Response } = require('../../../shared/utils/componentFactory');
+const { createDuneBanner } = require('../../../shared/factories/imageFactory');
+const { createV2Response } = require('../../../shared/factories/componentFactory');
 
 module.exports = {
   data: new SlashCommandBuilder()
