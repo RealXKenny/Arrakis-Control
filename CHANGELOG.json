@@ -17,6 +17,38 @@
         },
         {
           "type": "feature",
+          "description": "Added an initial web dashboard with bot health and Dune status endpoints plus a Discord /dashboard command link. Advin VPS data is intentionally excluded for now."
+        },
+        {
+          "type": "refactor",
+          "description": "Separated the dashboard into static frontend assets and a backend HTTP API for cleaner future expansion."
+        },
+        {
+          "type": "feature",
+          "description": "Added a normal website-style Discord login button and protected Dune backend status access with OAuth sessions."
+        },
+        {
+          "type": "fix",
+          "description": "Corrected repository VERSION resolution for the dashboard and hardened gateway shard diagnostics when shard metadata is unavailable."
+        },
+        {
+          "type": "fix",
+          "description": "Added multiple VERSION lookup locations and a package.json fallback so stale or differently-laid-out deployments do not crash dashboard startup."
+        },
+        {
+          "type": "fix",
+          "description": "Guarded unsharded Discord client cleanup so early startup failures cannot trigger a secondary 'Shard 0 not found' rejection."
+        },
+        {
+          "type": "fix",
+          "description": "Made the public landing page server status readable without Discord login and removed the login call-to-action from the public view."
+        },
+        {
+          "type": "feature",
+          "description": "Expanded the landing page status view with population, title, region, container uptime, game-server maps, and listener health cards."
+        },
+        {
+          "type": "feature",
           "description": "Added an authenticated ConvoyClient for Advin VPS customer API requests, including JSON and PNG responses."
         },
         {

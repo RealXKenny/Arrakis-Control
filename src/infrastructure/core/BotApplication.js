@@ -7,6 +7,7 @@ const { loadCommands } = require('../loaders/commandLoader');
 const { loadComponentHandlers } = require('../loaders/componentLoader');
 const { loadEvents } = require('../loaders/eventLoader');
 const { createLogger } = require('./logger');
+const { createDashboardServer } = require('../../dashboard/server');
 
 function createBotApplication(config) {
   const logger = createLogger('BOT', config.logLevel);
@@ -26,6 +27,14 @@ function createBotApplication(config) {
   client.discordAdapterLinkPanelChannelId = config.duneDiscordLinkPanelChannelId;
   client.discordAdapterBlueprintPanelChannelId = config.duneDiscordBlueprintPanelChannelId;
   client.auditLogger = new DiscordAuditLogger(client, config.duneDiscordAuditChannelId);
+  const dashboard = createDashboardServer({
+    client,
+    port: config.dashboardPort,
+    host: config.dashboardHost,
+    publicUrl: config.dashboardPublicUrl,
+    discordClientId: config.clientId,
+    discordClientSecret: config.discordClientSecret,
+  });
 
   const commands = loadCommands(client);
   const components = loadComponentHandlers(client);
@@ -48,11 +57,11 @@ function createBotApplication(config) {
     ),
   );
   client.on(Events.ShardReconnecting, (shardId) =>
-    logger.warn(`Discord shard ${shardId} is reconnecting.`),
+    logger.warn(`Discord shard ${shardId ?? 'unknown'} is reconnecting.`),
   );
   client.on(Events.ShardResume, (shardId, replayedEvents) =>
     logger.info(
-      `Discord shard ${shardId} resumed after a connection hiccup (${replayedEvents} events replayed).`,
+      `Discord shard ${shardId ?? 'unknown'} resumed after a connection hiccup (${replayedEvents ?? 0} events replayed).`,
     ),
   );
   client.on(Events.Invalidated, () =>
@@ -67,6 +76,8 @@ function createBotApplication(config) {
       `Logged in to the Dune Console; ${client.duneApi.endpoints.length} API endpoints are available.`,
     );
     await client.login(config.discordToken);
+    await dashboard.listen();
+    logger.info(`Web dashboard listening on ${config.dashboardHost}:${config.dashboardPort}.`);
     logger.info('Discord login request completed.');
   }
 
@@ -81,7 +92,16 @@ function createBotApplication(config) {
     } catch (error) {
       logger.error('Unable to log out of the Dune Console.', error);
     } finally {
-      client.destroy();
+      try {
+        // An unsharded client may not have a gateway shard yet if startup failed early.
+        if (client.readyAt) client.destroy();
+      } catch (error) {
+        logger.warn(
+          'Discord client cleanup was skipped because no active gateway connection existed.',
+          error,
+        );
+      }
+      await dashboard.close();
       logger.debug('Discord client closed.');
       process.exit(exitCode);
     }

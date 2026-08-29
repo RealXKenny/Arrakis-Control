@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Arrakis Control</title>
+    <link rel="stylesheet" href="/dashboard.css" />
+  </head>
+  <body>
+    <nav class="topbar">
+      <strong>ARRAKIS<span>CONTROL</span></strong>
+      <div><a href="#status">Server status</a><a href="#about">About</a></div>
+    </nav>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">DUNE: AWAKENING COMMUNITY</p>
+        <h1>Welcome to<br /><em>Arrakis.</em></h1>
+        <p class="lead">
+          Your home for server status, community updates, and everything happening across the sands.
+        </p>
+        <a class="primary" href="#status">Explore the server ↓</a>
+      </section>
+      <section id="status" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">LIVE OPERATIONS</p>
+            <h2>Server status</h2>
+          </div>
+          <button id="refresh">Refresh status</button>
+        </div>
+        <div class="grid">
+          <article class="server">
+            <div class="card-top"><span class="dot"></span><span>PRIMARY SERVER</span></div>
+            <h3 id="server-title">Dune: Awakening</h3>
+            <p id="server-status">Loading status…</p>
+            <div class="facts">
+              <div><small>POPULATION</small><strong id="population">—</strong></div>
+              <div><small>REGION</small><strong id="region">—</strong></div>
+            </div>
+          </article>
+          <article class="server">
+            <p class="eyebrow">CONTAINERS</p>
+            <h3>Service uptime</h3>
+            <div id="containers" class="rows">Loading…</div>
+          </article>
+          <article class="server">
+            <p class="eyebrow">GAME SERVERS</p>
+            <h3>Maps</h3>
+            <div id="game-servers" class="rows">Loading…</div>
+          </article>
+          <article class="server">
+            <p class="eyebrow">LISTENERS</p>
+            <h3>Network health</h3>
+            <div id="listeners" class="rows">Loading…</div>
+          </article>
+          <article class="server feature">
+            <p class="eyebrow">THE COMMUNITY</p>
+            <h3>Built for the desert</h3>
+            <p>
+              Stay connected with your fellow Fremen, track the world, and keep your journey moving.
+            </p>
+            <div class="line"></div>
+            <p class="muted">More community features coming soon.</p>
+          </article>
+        </div>
+      </section>
+      <section id="about" class="about">
+        <p class="eyebrow">ARRAKIS CONTROL</p>
+        <h2>One place for<br />our server.</h2>
+        <p>
+          Arrakis Control brings the Dune Console closer to the community through a fast, focused
+          experience made for our players.
+        </p>
+      </section>
+      <footer id="bot"></footer>
+    </main>
+    <script src="/dashboard.js"></script>
+  </body>
+</html>
