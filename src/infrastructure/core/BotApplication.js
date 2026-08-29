@@ -44,6 +44,7 @@ function createBotApplication(config) {
     config.duneDiscordBlueprintPanelChannelId;
   client.discordRolePanelChannelId = config.discordRolePanelChannelId;
   client.discordVerifyChannelId = config.discordVerifyChannelId;
+  client.discordRulesChannelId = config.discordRulesChannelId;
   client.auditLogger = new DiscordAuditLogger(
     client,
     config.duneDiscordAuditChannelId,
