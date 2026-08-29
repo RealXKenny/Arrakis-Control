@@ -3,6 +3,25 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.1.1",
+      "date": "2026-08-29",
+      "summary": "Improved source readability and made shard startup easier to maintain.",
+      "changes": [
+        {
+          "type": "maintenance",
+          "description": "Reformatted the bot source, configuration, documentation, and workflows with consistent spacing and indentation."
+        },
+        {
+          "type": "refactor",
+          "description": "Separated shard manager setup, event registration, process handlers, and application startup into clear, maintainable functions."
+        },
+        {
+          "type": "fix",
+          "description": "Kept syntax validation passing after removing ESLint and formatter tooling from the project."
+        }
+      ]
+    },
+    {
       "version": "1.1.0",
       "date": "2026-08-28",
       "summary": "Prepared the next feature release with improved maintainability and container publishing.",
