@@ -80,6 +80,10 @@
         },
         {
           "type": "fix",
+          "description": "Migrated ESLint configuration to eslint.config.js flat config format for ESLint 10 compatibility."
+        },
+        {
+          "type": "fix",
           "description": "Removed all empty JSDoc placeholders and stopped automated tooling from generating blank documentation blocks."
         },
         {
