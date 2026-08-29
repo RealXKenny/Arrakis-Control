@@ -22,6 +22,14 @@
         {
           "type": "fix",
           "description": "Limited automatic Discord command deployment to the primary shard while continuing to add, update, and remove commands from the live command set."
+        },
+        {
+          "type": "feature",
+          "description": "Added the /purge command for staff-role members to remove up to 100 recent channel messages."
+        },
+        {
+          "type": "security",
+          "description": "Changed /purge authorization to use the configured staff roles from environment settings instead of Discord permission checks."
         }
       ]
     },
