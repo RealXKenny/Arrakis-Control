@@ -22,7 +22,7 @@
   "dependencies": {
     "canvas": "^3.2.3",
     "discord.js": "^14.25.1",
-    "dotenv": "^16.6.1"
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
