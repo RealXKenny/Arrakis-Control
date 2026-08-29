@@ -3,6 +3,37 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.1.2",
+      "date": "2026-08-29",
+      "summary": "Expanded community onboarding, role management, server information, and Discord moderation auditing.",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added configurable welcome, goodbye, role-selection, verification, rules, and server-information panels with automatic updates instead of duplicate messages."
+        },
+        {
+          "type": "feature",
+          "description": "Added detailed self-assignable playstyle, faction, and notification roles using individual environment-configured role IDs."
+        },
+        {
+          "type": "feature",
+          "description": "Added membership captcha verification with expiring challenges, verification buttons, and automatic verified-role assignment."
+        },
+        {
+          "type": "feature",
+          "description": "Added Crimson Skies server information and detailed community rules Components V2 panels with Dune-themed images."
+        },
+        {
+          "type": "feature",
+          "description": "Added Discord audit-log forwarding through guild.fetchAuditLogs with deduplication and a separate activity-log channel."
+        },
+        {
+          "type": "enhancement",
+          "description": "Standardized panel colors, embedded images inside Components V2 containers, and added member-avatar artwork to join and leave messages."
+        }
+      ]
+    },
+    {
       "version": "1.1.1",
       "date": "2026-08-29",
       "summary": "Improved source readability and made shard startup easier to maintain.",
