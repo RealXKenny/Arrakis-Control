@@ -6,6 +6,7 @@ const {
 const {
   ensureBlueprintUploadPanel,
 } = require("../../../modules/panels/blueprintUploadPanel");
+const { ensureRolePanel } = require("../../../modules/panels/rolePanel");
 
 const logger = createLogger("DISCORD");
 
@@ -63,17 +64,18 @@ module.exports = {
 
     logger.info(`Ready! Logged in as ${client.user.tag}.`);
 
-    if (!client.discordAdapter) return;
-
     try {
-      await ensurePlayerLinkPanel(
-        client,
-        client.discordAdapterLinkPanelChannelId,
-      );
-      await ensureBlueprintUploadPanel(
-        client,
-        client.discordAdapterBlueprintPanelChannelId,
-      );
+      if (client.discordAdapter) {
+        await ensurePlayerLinkPanel(
+          client,
+          client.discordAdapterLinkPanelChannelId,
+        );
+        await ensureBlueprintUploadPanel(
+          client,
+          client.discordAdapterBlueprintPanelChannelId,
+        );
+      }
+      await ensureRolePanel(client, client.discordRolePanelChannelId);
     } catch (error) {
       logger.error("Unable to publish Discord Adapter panels.", error);
     }

@@ -13,7 +13,7 @@ const { createLogger } = require("../../infrastructure/core/logger");
 const { findPanelMessage } = require("../../shared/utils/findPanelMessage");
 
 const logger = createLogger("PLAYER PANEL");
-const PANEL_MARKER = "# Link Dune Player";
+const PANEL_MARKER = "# Link Account";
 const PANEL_IMAGE_NAME = "dune-player-link.png";
 
 function buildPlayerLinkPanel() {
@@ -29,7 +29,7 @@ function buildPlayerLinkPanel() {
     .addTextDisplayComponents((text) => text.setContent(PANEL_MARKER))
     .addTextDisplayComponents((text) =>
       text.setContent(
-        "Link your Discord account to your Dune character.\n\nYour character must be online before you can receive a verification code.",
+        "Link your Discord account to your Dune account.\n\nYou must be online before you can receive a verification code.",
       ),
     )
     .addSeparatorComponents((separator) =>
@@ -99,10 +99,10 @@ function createPlayerLinkBanner() {
 
   context.fillStyle = "#f3d39b";
   context.font = "bold 52px sans-serif";
-  context.fillText("LINK DUNE PLAYER", 64, 110);
+  context.fillText("LINK ACCOUNT", 64, 110);
   context.fillStyle = "#e6bd79";
   context.font = "24px sans-serif";
-  context.fillText("CONNECT YOUR DISCORD ACCOUNT", 67, 153);
+  context.fillText("CONNECT YOUR ACCOUNT", 67, 153);
   context.strokeStyle = "#c58b45";
   context.lineWidth = 2;
   context.beginPath();
