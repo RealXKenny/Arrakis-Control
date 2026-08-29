@@ -1,4 +1,11 @@
-const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
+const {
+  Client,
+  Collection,
+  Events,
+  GatewayIntentBits,
+  REST,
+  Routes,
+} = require("discord.js");
 const { DuneApi } = require("../api/DuneApi");
 const { DiscordAdapterClient } = require("../api/DiscordAdapterClient");
 const { ConvoyClient } = require("../api/ConvoyClient");
@@ -81,8 +88,36 @@ function createBotApplication(config) {
     logger.info(
       `Logged in to the Dune Console; ${client.duneApi.endpoints.length} API endpoints are available.`,
     );
+
+    await deployCommands();
     await client.login(config.discordToken);
     logger.info("Discord login request completed.");
+  }
+
+  async function deployCommands() {
+    const shardId = process.env.DISCORD_SHARD_ID ?? "0";
+
+    if (shardId !== "0") {
+      logger.debug(`Skipping command deployment on shard ${shardId}.`);
+      return;
+    }
+
+    if (!config.clientId) {
+      logger.warn("Skipping command deployment because CLIENT_ID is not configured.");
+      return;
+    }
+
+    const route = config.guildId
+      ? Routes.applicationGuildCommands(config.clientId, config.guildId)
+      : Routes.applicationCommands(config.clientId);
+    const payload = [...client.commands.values()].map((command) =>
+      command.data.toJSON(),
+    );
+    const rest = new REST({ version: "10" }).setToken(config.discordToken);
+
+    logger.info(`Deploying ${payload.length} application command(s).`);
+    await rest.put(route, { body: payload });
+    logger.info("Application commands deployed.");
   }
 
   async function shutdown(signal, exitCode = 0) {

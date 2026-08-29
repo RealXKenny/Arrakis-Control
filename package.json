@@ -10,7 +10,6 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "deploy:commands": "node src/scripts/deploy-commands.js",
     "lint": "node src/scripts/check-syntax.js",
     "version:check": "node src/scripts/version.js check",
     "version:sync": "node src/scripts/version.js sync",

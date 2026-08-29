@@ -17,7 +17,6 @@ Requirements: Node.js 24+ and a Dune Console instance.
 ```bash
 npm install
 cp .env.example .env
-npm run deploy:commands
 npm start
 ```
 
