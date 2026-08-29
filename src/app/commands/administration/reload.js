@@ -6,8 +6,6 @@ const {
   reloadComponentHandlers,
 } = require("../../../infrastructure/loaders/componentLoader");
 
-const RELOAD_ROLE_ID = "1539721769244565566";
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("reload")
@@ -23,18 +21,27 @@ module.exports = {
           { name: "All", value: "all" },
         ),
     ),
+
   async execute(interaction) {
-    if (!interaction.member?.roles?.cache?.has(RELOAD_ROLE_ID))
-      return interaction.reply({
-        content: "You are not authorized to reload bot modules.",
+    const ownerRoleId = process.env.OWNER_ROLE_ID;
+    if (!ownerRoleId || !interaction.member?.roles?.cache?.has(ownerRoleId)) {
+      await interaction.reply({
+        content: "Only the configured owner role can reload bot modules.",
         flags: MessageFlags.Ephemeral,
       });
+      return;
+    }
+
     const area = interaction.options.getString("area", true);
     const results = {};
-    if (area === "commands" || area === "all")
+
+    if (area === "commands" || area === "all") {
       results.commands = reloadCommands(interaction.client).loaded;
-    if (area === "components" || area === "all")
+    }
+    if (area === "components" || area === "all") {
       results.components = reloadComponentHandlers(interaction.client).loaded;
+    }
+
     await interaction.reply(
       `Reloaded ${results.commands ?? 0} commands and ${results.components ?? 0} component handlers.`,
     );
