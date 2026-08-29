@@ -30,6 +30,18 @@
         {
           "type": "security",
           "description": "Changed /purge authorization to use the configured staff roles from environment settings instead of Discord permission checks."
+        },
+        {
+          "type": "feature",
+          "description": "Added configurable self-assignable playstyle, faction, and notification role panels with individual role ID settings."
+        },
+        {
+          "type": "feature",
+          "description": "Added a configurable membership captcha panel with verification buttons, expiring challenges, and automatic verified-role assignment."
+        },
+        {
+          "type": "enhancement",
+          "description": "Added Dune-themed images inside the role and membership verification Components V2 panels."
         }
       ]
     },
