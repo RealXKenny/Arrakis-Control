@@ -16,52 +16,8 @@
           "description": "Added a grouped Advin Convoy API reference covering authentication, permissions, route families, and safety guidance."
         },
         {
-          "type": "feature",
-          "description": "Added an initial web dashboard with bot health and Dune status endpoints plus a Discord /dashboard command link. Advin VPS data is intentionally excluded for now."
-        },
-        {
-          "type": "refactor",
-          "description": "Separated the dashboard into static frontend assets and a backend HTTP API for cleaner future expansion."
-        },
-        {
-          "type": "feature",
-          "description": "Added a normal website-style Discord login button and protected Dune backend status access with OAuth sessions."
-        },
-        {
-          "type": "fix",
-          "description": "Corrected repository VERSION resolution for the dashboard and hardened gateway shard diagnostics when shard metadata is unavailable."
-        },
-        {
-          "type": "fix",
-          "description": "Added multiple VERSION lookup locations and a package.json fallback so stale or differently-laid-out deployments do not crash dashboard startup."
-        },
-        {
           "type": "fix",
           "description": "Guarded unsharded Discord client cleanup so early startup failures cannot trigger a secondary 'Shard 0 not found' rejection."
-        },
-        {
-          "type": "fix",
-          "description": "Made the public landing page server status readable without Discord login and removed the login call-to-action from the public view."
-        },
-        {
-          "type": "feature",
-          "description": "Expanded the landing page status view with population, title, region, container uptime, game-server maps, and listener health cards."
-        },
-        {
-          "type": "fix",
-          "description": "Restored the explicit Discord login button for private account features while preventing the public homepage from making an unauthorized /api/me request."
-        },
-        {
-          "type": "feature",
-          "description": "Discord OAuth now redirects to a dedicated /dashboard panel, with root-level Home and Dashboard navigation and no hash-page URLs."
-        },
-        {
-          "type": "feature",
-          "description": "Added the protected /dashboard/profile page and /api/profile endpoint for authenticated linked-player information."
-        },
-        {
-          "type": "fix",
-          "description": "Added explicit Discord OAuth callback validation, browser-visible errors, and dashboard logging for missing secrets or redirect URI mismatches."
         },
         {
           "type": "feature",
