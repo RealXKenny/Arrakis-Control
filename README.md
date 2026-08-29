@@ -63,6 +63,22 @@ Copy `.env.example` to `.env` and configure Discord credentials, Dune Console cr
 - [Advin Convoy API reference](docs/advin-convoy-api-reference.md)
 - [Source architecture](src/README.md)
 - [Security policy](SECURITY.md)
+
+## GitHub Container Registry
+
+Every release publishes the Docker image to GitHub Packages as well as Docker Hub:
+
+```bash
+docker pull ghcr.io/realxkenny/arrakis-control:latest
+docker pull ghcr.io/realxkenny/arrakis-control:1.0.9
+```
+
+For a private package, authenticate first with a GitHub token that has `read:packages`:
+
+```bash
+echo "$GITHUB_TOKEN" | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+```
+
 - [Release history](CHANGELOG.json)
 
 ```bash
