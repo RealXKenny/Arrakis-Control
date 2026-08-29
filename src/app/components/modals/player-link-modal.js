@@ -4,51 +4,66 @@ const {
   ContainerBuilder,
   MessageFlags,
   SeparatorSpacingSize,
-} = require('discord.js');
-const { createActorContext } = require('../../../shared/utils/createActorContext');
-const { createLogger } = require('../../../infrastructure/core/logger');
+} = require("discord.js");
+const {
+  createActorContext,
+} = require("../../../shared/utils/createActorContext");
+const { createLogger } = require("../../../infrastructure/core/logger");
 
-const logger = createLogger('PLAYER LINK');
+const logger = createLogger("PLAYER LINK");
 
 module.exports = {
-  customId: 'player-link-modal',
+  customId: "player-link-modal",
   async execute(interaction) {
     if (!interaction.client.discordAdapter)
-      throw new Error('Discord Adapter integration is not configured.');
+      throw new Error("Discord Adapter integration is not configured.");
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-    const characterName = interaction.fields.getTextInputValue('character-name').trim();
+    const characterName = interaction.fields
+      .getTextInputValue("character-name")
+      .trim();
     const result = await interaction.client.discordAdapter.linkPlayer(
-      createActorContext(interaction, 'player-link'),
+      createActorContext(interaction, "player-link"),
       characterName,
     );
-    logger.debug('Link request response received.', {
+    logger.debug("Link request response received.", {
       ok: result?.ok ?? false,
       message: result?.message ?? null,
-      characterName: result?.characterName ?? result?.character_name ?? characterName,
+      characterName:
+        result?.characterName ?? result?.character_name ?? characterName,
       onlineStatus: result?.onlineStatus ?? result?.online_status ?? null,
       responseFields: Object.keys(result ?? {}),
     });
     if (!result?.ok) {
-      await interaction.editReply(result?.error ?? 'Unable to start character linking.');
+      await interaction.editReply(
+        result?.error ?? "Unable to start character linking.",
+      );
       return;
     }
 
-    await interaction.client.auditLogger.playerLinkRequested(interaction, result);
+    await interaction.client.auditLogger.playerLinkRequested(
+      interaction,
+      result,
+    );
 
     const verificationCard = new ContainerBuilder()
       .setAccentColor(0x57f287)
-      .addTextDisplayComponents((text) => text.setContent('## Verification code sent'))
+      .addTextDisplayComponents((text) =>
+        text.setContent("## Verification code sent"),
+      )
       .addTextDisplayComponents((text) =>
         text.setContent(
-          result.message ?? 'A private verification code was sent to your character in-game.',
+          result.message ??
+            "A private verification code was sent to your character in-game.",
         ),
       )
-      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addSeparatorComponents((separator) =>
+        separator.setSpacing(SeparatorSpacingSize.Small),
+      )
       .addActionRowComponents((row) =>
         row.setComponents(
           new ButtonBuilder()
-            .setCustomId('player-verify')
-            .setLabel('Verify Code')
+            .setCustomId("player-verify")
+            .setLabel("Verify Code")
             .setStyle(ButtonStyle.Success),
         ),
       );

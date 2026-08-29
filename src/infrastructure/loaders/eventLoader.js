@@ -1,11 +1,11 @@
-const path = require('node:path');
-const { findJavaScriptFiles } = require('./fileLoader');
-const { createLogger } = require('../core/logger');
+const path = require("node:path");
+const { findJavaScriptFiles } = require("./fileLoader");
+const { createLogger } = require("../core/logger");
 
-const logger = createLogger('EVENTS');
+const logger = createLogger("EVENTS");
 
 function loadEvents(client) {
-  const eventsPath = path.join(__dirname, '..', '..', 'app', 'events');
+  const eventsPath = path.join(__dirname, "..", "..", "app", "events");
   let loaded = 0;
 
   for (const filePath of findJavaScriptFiles(eventsPath)) {
@@ -15,12 +15,14 @@ function loadEvents(client) {
       continue;
     }
 
-    const register = event.once ? client.once.bind(client) : client.on.bind(client);
+    const register = event.once
+      ? client.once.bind(client)
+      : client.on.bind(client);
     register(event.name, (...args) => event.execute(...args));
     loaded += 1;
   }
 
-  logger.info(`Loaded ${loaded} event handler${loaded === 1 ? '' : 's'}.`);
+  logger.info(`Loaded ${loaded} event handler${loaded === 1 ? "" : "s"}.`);
   return { loaded };
 }
 

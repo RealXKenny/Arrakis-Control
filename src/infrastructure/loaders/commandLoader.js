@@ -1,12 +1,12 @@
-const path = require('node:path');
-const { createLogger } = require('../core/logger');
-const { findJavaScriptFiles } = require('./fileLoader');
+const path = require("node:path");
+const { createLogger } = require("../core/logger");
+const { findJavaScriptFiles } = require("./fileLoader");
 
-const logger = createLogger('COMMANDS');
+const logger = createLogger("COMMANDS");
 
 function loadCommands(client) {
   // Commands are discovered recursively so adding a command never requires a central registry edit.
-  const commandsPath = path.join(__dirname, '..', '..', 'app', 'commands');
+  const commandsPath = path.join(__dirname, "..", "..", "app", "commands");
   let loaded = 0;
   let skipped = 0;
 
@@ -29,13 +29,13 @@ function loadCommands(client) {
   }
 
   logger.info(
-    `Loaded ${loaded} command${loaded === 1 ? '' : 's'}${skipped ? `; skipped ${skipped}` : ''}.`,
+    `Loaded ${loaded} command${loaded === 1 ? "" : "s"}${skipped ? `; skipped ${skipped}` : ""}.`,
   );
   return { loaded, skipped };
 }
 
 function reloadCommands(client) {
-  const commandsPath = path.join(__dirname, '..', '..', 'app', 'commands');
+  const commandsPath = path.join(__dirname, "..", "..", "app", "commands");
   for (const filePath of findJavaScriptFiles(commandsPath))
     delete require.cache[require.resolve(filePath)];
   client.commands.clear();

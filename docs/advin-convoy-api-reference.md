@@ -33,46 +33,46 @@ All routes below are relative to the base URL and require authentication. The ab
 
 ### Account
 
-| Method | Route | Ability |
-| --- | --- | --- |
-| GET | `/api/client/audit-logs` | `audit.read` |
+| Method | Route                    | Ability      |
+| ------ | ------------------------ | ------------ |
+| GET    | `/api/client/audit-logs` | `audit.read` |
 
 ### Servers
 
-| Method | Route | Ability |
-| --- | --- | --- |
-| GET | `/api/client/servers` | `servers.read` |
-| GET | `/api/client/servers/{uuid}` | `servers.read` |
-| GET | `/api/client/servers/{server_uuid}/details` | `servers.read` |
-| GET | `/api/client/servers/power-states` | `servers.read` |
-| GET | `/api/client/servers/{server_uuid}/state` | `servers.read` |
-| PATCH | `/api/client/servers/{server_uuid}/state` | `servers.power` |
-| POST | `/api/client/servers/{server_uuid}/create-console-session` | `servers.console` |
-| GET | `/api/client/servers/{server_uuid}/metrics/{type}/{period}` | `servers.read` |
-| GET | `/api/client/servers/{server_uuid}/metrics-data/{type}/{period}` | `servers.read` |
-| GET | `/api/client/servers/{server_uuid}/audit-log` | `servers.read` |
+| Method | Route                                                            | Ability           |
+| ------ | ---------------------------------------------------------------- | ----------------- |
+| GET    | `/api/client/servers`                                            | `servers.read`    |
+| GET    | `/api/client/servers/{uuid}`                                     | `servers.read`    |
+| GET    | `/api/client/servers/{server_uuid}/details`                      | `servers.read`    |
+| GET    | `/api/client/servers/power-states`                               | `servers.read`    |
+| GET    | `/api/client/servers/{server_uuid}/state`                        | `servers.read`    |
+| PATCH  | `/api/client/servers/{server_uuid}/state`                        | `servers.power`   |
+| POST   | `/api/client/servers/{server_uuid}/create-console-session`       | `servers.console` |
+| GET    | `/api/client/servers/{server_uuid}/metrics/{type}/{period}`      | `servers.read`    |
+| GET    | `/api/client/servers/{server_uuid}/metrics-data/{type}/{period}` | `servers.read`    |
+| GET    | `/api/client/servers/{server_uuid}/audit-log`                    | `servers.read`    |
 
 ### Server settings, storage, and backups
 
-| Method | Route | Ability |
-| --- | --- | --- |
-| POST | `/api/client/servers/{server_uuid}/settings/rename` | `servers.settings.write` |
-| POST | `/api/client/servers/{server_uuid}/settings/reinstall` | `servers.settings.write` |
-| DELETE | `/api/client/servers/{server_uuid}/install-failure` | `servers.settings.write` |
-| GET | `/api/client/servers/{server_uuid}/settings/template-groups` | `servers.settings.read` |
-| GET | `/api/client/servers/{server_uuid}/settings/ssh-keys` | `servers.settings.read` |
-| GET | `/api/client/servers/{server_uuid}/settings/user-scripts` | `servers.settings.read` |
-| GET | `/api/client/servers/{server_uuid}/settings/hardware/boot-order` | `servers.settings.read` |
-| PUT | `/api/client/servers/{server_uuid}/settings/hardware/boot-order` | `servers.settings.write` |
-| GET | `/api/client/servers/{server_uuid}/settings/hardware/options` | `servers.settings.read` |
-| PATCH | `/api/client/servers/{server_uuid}/settings/hardware/options` | `servers.settings.write` |
-| GET | `/api/client/servers/{server_uuid}/settings/network` | `servers.settings.read` |
-| PUT | `/api/client/servers/{server_uuid}/settings/network` | `servers.settings.write` |
-| GET | `/api/client/servers/{server_uuid}/backups` | `backups.read` |
-| GET | `/api/client/servers/{server_uuid}/backups/schedule` | `backups.read` |
-| POST | `/api/client/servers/{server_uuid}/backups/schedule` | `backups.write` |
-| POST | `/api/client/servers/{server_uuid}/backups/{backup_uuid}/restore` | `backups.write` |
-| DELETE | `/api/client/servers/{server_uuid}/backups/{backup_uuid}` | `backups.write` |
+| Method | Route                                                             | Ability                  |
+| ------ | ----------------------------------------------------------------- | ------------------------ |
+| POST   | `/api/client/servers/{server_uuid}/settings/rename`               | `servers.settings.write` |
+| POST   | `/api/client/servers/{server_uuid}/settings/reinstall`            | `servers.settings.write` |
+| DELETE | `/api/client/servers/{server_uuid}/install-failure`               | `servers.settings.write` |
+| GET    | `/api/client/servers/{server_uuid}/settings/template-groups`      | `servers.settings.read`  |
+| GET    | `/api/client/servers/{server_uuid}/settings/ssh-keys`             | `servers.settings.read`  |
+| GET    | `/api/client/servers/{server_uuid}/settings/user-scripts`         | `servers.settings.read`  |
+| GET    | `/api/client/servers/{server_uuid}/settings/hardware/boot-order`  | `servers.settings.read`  |
+| PUT    | `/api/client/servers/{server_uuid}/settings/hardware/boot-order`  | `servers.settings.write` |
+| GET    | `/api/client/servers/{server_uuid}/settings/hardware/options`     | `servers.settings.read`  |
+| PATCH  | `/api/client/servers/{server_uuid}/settings/hardware/options`     | `servers.settings.write` |
+| GET    | `/api/client/servers/{server_uuid}/settings/network`              | `servers.settings.read`  |
+| PUT    | `/api/client/servers/{server_uuid}/settings/network`              | `servers.settings.write` |
+| GET    | `/api/client/servers/{server_uuid}/backups`                       | `backups.read`           |
+| GET    | `/api/client/servers/{server_uuid}/backups/schedule`              | `backups.read`           |
+| POST   | `/api/client/servers/{server_uuid}/backups/schedule`              | `backups.write`          |
+| POST   | `/api/client/servers/{server_uuid}/backups/{backup_uuid}/restore` | `backups.write`          |
+| DELETE | `/api/client/servers/{server_uuid}/backups/{backup_uuid}`         | `backups.write`          |
 
 ### Addresses, firewall, and protection
 
@@ -94,21 +94,21 @@ Common route families include:
 
 ### SSH keys, scripts, and ISO images
 
-| Method | Route | Ability |
-| --- | --- | --- |
-| GET | `/api/client/ssh-keys` | `ssh-keys.read` |
-| POST | `/api/client/ssh-keys` | `ssh-keys.write` |
-| PATCH | `/api/client/ssh-keys/{ssh_key_uuid}` | `ssh-keys.write` |
-| DELETE | `/api/client/ssh-keys/{ssh_key_uuid}` | `ssh-keys.write` |
-| GET | `/api/client/user-scripts` | `user-scripts.read` |
-| POST | `/api/client/user-scripts` | `user-scripts.write` |
-| PATCH | `/api/client/user-scripts/{user_script_uuid}` | `user-scripts.write` |
+| Method | Route                                         | Ability              |
+| ------ | --------------------------------------------- | -------------------- |
+| GET    | `/api/client/ssh-keys`                        | `ssh-keys.read`      |
+| POST   | `/api/client/ssh-keys`                        | `ssh-keys.write`     |
+| PATCH  | `/api/client/ssh-keys/{ssh_key_uuid}`         | `ssh-keys.write`     |
+| DELETE | `/api/client/ssh-keys/{ssh_key_uuid}`         | `ssh-keys.write`     |
+| GET    | `/api/client/user-scripts`                    | `user-scripts.read`  |
+| POST   | `/api/client/user-scripts`                    | `user-scripts.write` |
+| PATCH  | `/api/client/user-scripts/{user_script_uuid}` | `user-scripts.write` |
 | DELETE | `/api/client/user-scripts/{user_script_uuid}` | `user-scripts.write` |
-| GET | `/api/client/isos` | `isos.read` |
-| POST | `/api/client/isos` | `isos.write` |
-| POST | `/api/client/isos/query-link` | `isos.read` |
-| DELETE | `/api/client/isos/{iso_uuid}` | `isos.write` |
-| GET | `/api/client/servers/{server_uuid}/isos` | `isos.read` |
+| GET    | `/api/client/isos`                            | `isos.read`          |
+| POST   | `/api/client/isos`                            | `isos.write`         |
+| POST   | `/api/client/isos/query-link`                 | `isos.read`          |
+| DELETE | `/api/client/isos/{iso_uuid}`                 | `isos.write`         |
+| GET    | `/api/client/servers/{server_uuid}/isos`      | `isos.read`          |
 
 ## Safety
 

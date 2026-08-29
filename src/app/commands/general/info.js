@@ -5,26 +5,32 @@ const {
   SeparatorSpacingSize,
   SlashCommandBuilder,
   version: discordJsVersion,
-} = require('discord.js');
-const { createCanvas } = require('canvas');
-const { getBotVersion } = require('../../../infrastructure/config/version');
-const { createDuneBanner } = require('../../../shared/factories/imageFactory');
-const { createV2Response } = require('../../../shared/factories/componentFactory');
+} = require("discord.js");
+const { createCanvas } = require("canvas");
+const { getBotVersion } = require("../../../infrastructure/config/version");
+const { createDuneBanner } = require("../../../shared/factories/imageFactory");
+const {
+  createV2Response,
+} = require("../../../shared/factories/componentFactory");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('info')
-    .setDescription('View information about this bot.'),
+    .setName("info")
+    .setDescription("View information about this bot."),
 
   async execute(interaction) {
     const client = interaction.client;
-    const serverName = process.env.SERVER_NAME || 'Dune: Awakening Community Server';
+    const serverName =
+      process.env.SERVER_NAME || "Dune: Awakening Community Server";
     const uptimeSeconds = Math.floor(client.uptime / 1000);
     const memoryUsage = process.memoryUsage();
 
-    const duneColors = [0xc58b45, 0xd2a85a, 0xa96832, 0x8f542c, 0x70452c, 0xb87333, 0x9c6b3c];
+    const duneColors = [
+      0xc58b45, 0xd2a85a, 0xa96832, 0x8f542c, 0x70452c, 0xb87333, 0x9c6b3c,
+    ];
 
-    const accentColor = duneColors[Math.floor(Math.random() * duneColors.length)];
+    const accentColor =
+      duneColors[Math.floor(Math.random() * duneColors.length)];
 
     const formatUptime = (seconds) => {
       const days = Math.floor(seconds / 86400);
@@ -43,31 +49,32 @@ module.exports = {
       if (minutes) parts.push(`${minutes}m`);
       if (seconds || parts.length === 0) parts.push(`${seconds}s`);
 
-      return parts.join(' ');
+      return parts.join(" ");
     };
 
     const formatMemory = (bytes) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
-    const websocketPing = client.ws.ping >= 0 ? `${client.ws.ping}ms` : 'Measuring...';
+    const websocketPing =
+      client.ws.ping >= 0 ? `${client.ws.ping}ms` : "Measuring...";
 
     const canvas = createCanvas(1200, 400);
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     const background = ctx.createLinearGradient(0, 0, 0, canvas.height);
 
-    background.addColorStop(0, '#21140d');
-    background.addColorStop(0.35, '#5c321e');
-    background.addColorStop(0.7, '#a35f30');
-    background.addColorStop(1, '#d2a85a');
+    background.addColorStop(0, "#21140d");
+    background.addColorStop(0.35, "#5c321e");
+    background.addColorStop(0.7, "#a35f30");
+    background.addColorStop(1, "#d2a85a");
 
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const glow = ctx.createRadialGradient(900, 100, 20, 900, 100, 450);
 
-    glow.addColorStop(0, 'rgba(255, 190, 90, 0.5)');
-    glow.addColorStop(0.45, 'rgba(190, 100, 40, 0.2)');
-    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    glow.addColorStop(0, "rgba(255, 190, 90, 0.5)");
+    glow.addColorStop(0.45, "rgba(190, 100, 40, 0.2)");
+    glow.addColorStop(1, "rgba(0, 0, 0, 0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -92,12 +99,12 @@ module.exports = {
       ctx.fill();
     };
 
-    drawDune(280, 70, '#82451f');
-    drawDune(315, 60, '#9a592e', 150);
-    drawDune(345, 50, '#b87333', 300);
-    drawDune(370, 35, '#d2a85a', 500);
+    drawDune(280, 70, "#82451f");
+    drawDune(315, 60, "#9a592e", 150);
+    drawDune(345, 50, "#b87333", 300);
+    drawDune(370, 35, "#d2a85a", 500);
 
-    ctx.fillStyle = 'rgba(255, 220, 150, 0.3)';
+    ctx.fillStyle = "rgba(255, 220, 150, 0.3)";
 
     for (let i = 0; i < 180; i++) {
       const x = Math.random() * canvas.width;
@@ -111,19 +118,19 @@ module.exports = {
 
     const overlay = ctx.createLinearGradient(0, 0, canvas.width, 0);
 
-    overlay.addColorStop(0, 'rgba(10, 7, 5, 0.8)');
-    overlay.addColorStop(0.55, 'rgba(10, 7, 5, 0.35)');
-    overlay.addColorStop(1, 'rgba(10, 7, 5, 0.05)');
+    overlay.addColorStop(0, "rgba(10, 7, 5, 0.8)");
+    overlay.addColorStop(0.55, "rgba(10, 7, 5, 0.35)");
+    overlay.addColorStop(1, "rgba(10, 7, 5, 0.05)");
 
     ctx.fillStyle = overlay;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = 'bold 52px sans-serif';
-    ctx.fillStyle = '#f2d39b';
-    ctx.fillText('DUNE SERVER', 60, 105);
+    ctx.font = "bold 52px sans-serif";
+    ctx.fillStyle = "#f2d39b";
+    ctx.fillText("DUNE SERVER", 60, 105);
 
-    ctx.font = '24px sans-serif';
-    ctx.fillStyle = '#e6bd79';
+    ctx.font = "24px sans-serif";
+    ctx.fillStyle = "#e6bd79";
 
     let displayServerName = serverName;
     const maxServerNameWidth = 650;
@@ -132,12 +139,12 @@ module.exports = {
       ctx.measureText(displayServerName).width > maxServerNameWidth &&
       displayServerName.length > 3
     ) {
-      displayServerName = displayServerName.slice(0, -4) + '...';
+      displayServerName = displayServerName.slice(0, -4) + "...";
     }
 
     ctx.fillText(displayServerName.toUpperCase(), 64, 145);
 
-    ctx.strokeStyle = '#c58b45';
+    ctx.strokeStyle = "#c58b45";
     ctx.lineWidth = 2;
 
     ctx.beginPath();
@@ -145,7 +152,7 @@ module.exports = {
     ctx.lineTo(620, 170);
     ctx.stroke();
 
-    ctx.fillStyle = '#d2a85a';
+    ctx.fillStyle = "#d2a85a";
 
     ctx.beginPath();
     ctx.moveTo(1050, 105);
@@ -155,15 +162,19 @@ module.exports = {
     ctx.closePath();
     ctx.fill();
 
-    ctx.font = '18px sans-serif';
-    ctx.fillStyle = '#ead5ad';
+    ctx.font = "18px sans-serif";
+    ctx.fillStyle = "#ead5ad";
 
-    ctx.fillText(`${client.user.username} • Spice flows through Arrakis`, 64, 350);
+    ctx.fillText(
+      `${client.user.username} • Spice flows through Arrakis`,
+      64,
+      350,
+    );
 
     const banner = createDuneBanner({
-      filename: 'dune-server-info.png',
-      title: 'Arrakis Control',
-      subtitle: 'BOT INFORMATION',
+      filename: "dune-server-info.png",
+      title: "Arrakis Control",
+      subtitle: "BOT INFORMATION",
       detail: serverName,
     });
 
@@ -171,62 +182,78 @@ module.exports = {
       .setAccentColor(accentColor)
       .addMediaGalleryComponents(
         new MediaGalleryBuilder().addItems(
-          new MediaGalleryItemBuilder().setURL('attachment://dune-server-info.png'),
+          new MediaGalleryItemBuilder().setURL(
+            "attachment://dune-server-info.png",
+          ),
         ),
       )
-      .addTextDisplayComponents((text) => text.setContent(`## 🏜️ ${client.user.username}`))
+      .addTextDisplayComponents((text) =>
+        text.setContent(`## 🏜️ ${client.user.username}`),
+      )
       .addTextDisplayComponents((text) => text.setContent(`-# ${serverName}`))
-      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addSeparatorComponents((separator) =>
+        separator.setSpacing(SeparatorSpacingSize.Small),
+      )
       .addTextDisplayComponents((text) =>
         text.setContent(
           [
-            '### 🏜️ Bot',
+            "### 🏜️ Bot",
             `**Version:** v${getBotVersion()}`,
             `**User ID:** \`${client.user.id}\``,
             `**Created:** <t:${Math.floor(client.user.createdTimestamp / 1000)}:D>`,
-          ].join('\n'),
+          ].join("\n"),
         ),
       )
-      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addSeparatorComponents((separator) =>
+        separator.setSpacing(SeparatorSpacingSize.Small),
+      )
       .addTextDisplayComponents((text) =>
         text.setContent(
           [
-            '### 🦂 Statistics',
+            "### 🦂 Statistics",
             `**Servers:** ${client.guilds.cache.size.toLocaleString()}`,
             `**Cached users:** ${client.users.cache.size.toLocaleString()}`,
             `**Cached channels:** ${client.channels.cache.size.toLocaleString()}`,
             `**Registered commands:** ${client.commands?.size ?? 0}`,
-          ].join('\n'),
+          ].join("\n"),
         ),
       )
-      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addSeparatorComponents((separator) =>
+        separator.setSpacing(SeparatorSpacingSize.Small),
+      )
       .addTextDisplayComponents((text) =>
         text.setContent(
           [
-            '### 🛰️ Connection',
+            "### 🛰️ Connection",
             `**WebSocket:** ${websocketPing}`,
             `**Uptime:** ${formatUptime(uptimeSeconds)}`,
             `**Online since:** <t:${Math.floor((Date.now() - client.uptime) / 1000)}:R>`,
-          ].join('\n'),
+          ].join("\n"),
         ),
       )
-      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addSeparatorComponents((separator) =>
+        separator.setSpacing(SeparatorSpacingSize.Small),
+      )
       .addTextDisplayComponents((text) =>
         text.setContent(
           [
-            '### ⚙️ Runtime',
+            "### ⚙️ Runtime",
             `**discord.js:** v${discordJsVersion}`,
             `**Node.js:** ${process.version}`,
             `**Platform:** ${process.platform}`,
             `**Architecture:** ${process.arch}`,
             `**Memory:** ${formatMemory(memoryUsage.rss)}`,
             `**Heap:** ${formatMemory(memoryUsage.heapUsed)} / ${formatMemory(memoryUsage.heapTotal)}`,
-          ].join('\n'),
+          ].join("\n"),
         ),
       )
-      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addSeparatorComponents((separator) =>
+        separator.setSpacing(SeparatorSpacingSize.Small),
+      )
       .addTextDisplayComponents((text) =>
-        text.setContent(`-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`),
+        text.setContent(
+          `-# Spice flows through Arrakis • Requested by ${interaction.user.tag}`,
+        ),
       );
 
     await interaction.reply(createV2Response([infoCard], [banner]));

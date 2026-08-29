@@ -1,20 +1,25 @@
-const { ActivityType, Events } = require('discord.js');
-const { createLogger } = require('../../../infrastructure/core/logger');
-const { ensurePlayerLinkPanel } = require('../../../modules/panels/playerLinkPanel');
-const { ensureBlueprintUploadPanel } = require('../../../modules/panels/blueprintUploadPanel');
+const { ActivityType, Events } = require("discord.js");
+const { createLogger } = require("../../../infrastructure/core/logger");
+const {
+  ensurePlayerLinkPanel,
+} = require("../../../modules/panels/playerLinkPanel");
+const {
+  ensureBlueprintUploadPanel,
+} = require("../../../modules/panels/blueprintUploadPanel");
 
-const logger = createLogger('DISCORD');
+const logger = createLogger("DISCORD");
 
 module.exports = {
   name: Events.ClientReady,
   once: true,
 
   async execute(client) {
-    const serverName = process.env.SERVER_NAME || 'Dune: Awakening Community Server';
+    const serverName =
+      process.env.SERVER_NAME || "Dune: Awakening Community Server";
 
     const statuses = [
       {
-        name: 'Watching the sands of Arrakis',
+        name: "Watching the sands of Arrakis",
         type: ActivityType.Watching,
       },
       {
@@ -22,15 +27,15 @@ module.exports = {
         type: ActivityType.Playing,
       },
       {
-        name: 'Watching the spice flow',
+        name: "Watching the spice flow",
         type: ActivityType.Watching,
       },
       {
-        name: 'Watching over Arrakis',
+        name: "Watching over Arrakis",
         type: ActivityType.Watching,
       },
       {
-        name: 'Playing Dune: Awakening',
+        name: "Playing Dune: Awakening",
         type: ActivityType.Playing,
       },
     ];
@@ -47,7 +52,7 @@ module.exports = {
             type: status.type,
           },
         ],
-        status: 'online',
+        status: "online",
       });
 
       index = (index + 1) % statuses.length;
@@ -61,10 +66,16 @@ module.exports = {
     if (!client.discordAdapter) return;
 
     try {
-      await ensurePlayerLinkPanel(client, client.discordAdapterLinkPanelChannelId);
-      await ensureBlueprintUploadPanel(client, client.discordAdapterBlueprintPanelChannelId);
+      await ensurePlayerLinkPanel(
+        client,
+        client.discordAdapterLinkPanelChannelId,
+      );
+      await ensureBlueprintUploadPanel(
+        client,
+        client.discordAdapterBlueprintPanelChannelId,
+      );
     } catch (error) {
-      logger.error('Unable to publish Discord Adapter panels.', error);
+      logger.error("Unable to publish Discord Adapter panels.", error);
     }
   },
 };

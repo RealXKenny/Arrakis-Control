@@ -2,7 +2,9 @@ async function findPanelMessage(channel, botUserId, marker) {
   const messages = await channel.messages.fetch({ limit: 50 });
   return (
     messages.find(
-      (message) => message.author?.id === botUserId && containsText(message.components, marker),
+      (message) =>
+        message.author?.id === botUserId &&
+        containsText(message.components, marker),
     ) ?? null
   );
 }
@@ -10,7 +12,9 @@ async function findPanelMessage(channel, botUserId, marker) {
 function containsText(components, marker) {
   return (components ?? []).some((component) => {
     const content = component.content ?? component.data?.content;
-    return content?.includes(marker) || containsText(component.components, marker);
+    return (
+      content?.includes(marker) || containsText(component.components, marker)
+    );
   });
 }
 

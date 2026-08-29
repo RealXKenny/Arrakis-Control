@@ -1,45 +1,63 @@
-const { MessageFlags } = require('discord.js');
-const { createActorContext } = require('../../../shared/utils/createActorContext');
-const { BLUEPRINT_LIMITS } = require('../../../infrastructure/config/limits');
+const { MessageFlags } = require("discord.js");
+const {
+  createActorContext,
+} = require("../../../shared/utils/createActorContext");
+const { BLUEPRINT_LIMITS } = require("../../../infrastructure/config/limits");
 
 const MINIMUM_OFFLINE_MS = BLUEPRINT_LIMITS.minimumOfflineMs;
 
 module.exports = {
-  customId: 'blueprint-upload-modal',
+  customId: "blueprint-upload-modal",
   async execute(interaction) {
     if (!interaction.client.discordAdapter)
-      throw new Error('Discord Adapter integration is not configured.');
+      throw new Error("Discord Adapter integration is not configured.");
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const actor = createActorContext(interaction, 'blueprint-upload');
-    const linked = await interaction.client.discordAdapter.getCurrentPlayer(actor);
+    const actor = createActorContext(interaction, "blueprint-upload");
+    const linked =
+      await interaction.client.discordAdapter.getCurrentPlayer(actor);
     if (!linked?.linked) {
-      await interaction.editReply('You must link a Dune character before uploading a blueprint.');
+      await interaction.editReply(
+        "You must link a Dune character before uploading a blueprint.",
+      );
       return;
     }
 
     const playerId = linked.pawnId;
-    if (!playerId) throw new Error('The linked character did not provide a player pawn ID.');
-    const playerList = await interaction.client.duneApi.call('GET', '/api/players', {
-      query: { q: linked.characterName, status: 'all', page: 0, pageSize: 50 },
-    });
+    if (!playerId)
+      throw new Error("The linked character did not provide a player pawn ID.");
+    const playerList = await interaction.client.duneApi.call(
+      "GET",
+      "/api/players",
+      {
+        query: {
+          q: linked.characterName,
+          status: "all",
+          page: 0,
+          pageSize: 50,
+        },
+      },
+    );
     const profile = findLinkedPlayer(playerList, linked);
     if (!profile) {
       await interaction.editReply(
-        'Unable to find your linked character in the Dune Console. Please unlink and link your account again.',
+        "Unable to find your linked character in the Dune Console. Please unlink and link your account again.",
       );
       return;
     }
-    if (String(linked.onlineStatus).toLowerCase() === 'online' || isOnline(profile)) {
+    if (
+      String(linked.onlineStatus).toLowerCase() === "online" ||
+      isOnline(profile)
+    ) {
       await interaction.editReply(
-        'Your linked character must be offline for at least one minute before uploading a blueprint.',
+        "Your linked character must be offline for at least one minute before uploading a blueprint.",
       );
       return;
     }
     const offlineAt = getOfflineTimestamp(linked, profile);
     if (!offlineAt) {
       await interaction.editReply(
-        'Unable to confirm when your character went offline. Please wait and try again.',
+        "Unable to confirm when your character went offline. Please wait and try again.",
       );
       return;
     }
@@ -48,21 +66,26 @@ module.exports = {
     if (elapsed < MINIMUM_OFFLINE_MS) {
       const remaining = Math.ceil((MINIMUM_OFFLINE_MS - elapsed) / 1000);
       await interaction.editReply(
-        `Your character must remain offline for ${remaining} more second${remaining === 1 ? '' : 's'} before uploading a blueprint.`,
+        `Your character must remain offline for ${remaining} more second${remaining === 1 ? "" : "s"} before uploading a blueprint.`,
       );
       return;
     }
 
-    const files = interaction.fields.getUploadedFiles('blueprint-file', true);
+    const files = interaction.fields.getUploadedFiles("blueprint-file", true);
     if (files.size !== 1) {
-      await interaction.editReply('Upload exactly one blueprint JSON file at a time.');
+      await interaction.editReply(
+        "Upload exactly one blueprint JSON file at a time.",
+      );
       return;
     }
 
-    const result = await interaction.client.duneApi.importBlueprint(playerId, files.first());
+    const result = await interaction.client.duneApi.importBlueprint(
+      playerId,
+      files.first(),
+    );
     await interaction.editReply(
       result.message ??
-        `Blueprint imported for ${linked.characterName ?? 'your linked character'}.`,
+        `Blueprint imported for ${linked.characterName ?? "your linked character"}.`,
     );
     await interaction.client.auditLogger.blueprintImported(
       interaction,
@@ -80,7 +103,7 @@ function isOnline(profile) {
     profile.online_status ??
     profile.player?.status ??
     profile.player?.onlineStatus;
-  return status === true || String(status).toLowerCase() === 'online';
+  return status === true || String(status).toLowerCase() === "online";
 }
 
 function findLinkedPlayer(response, linked) {
@@ -93,18 +116,20 @@ function findLinkedPlayer(response, linked) {
     (Array.isArray(response) ? response : []);
   if (!Array.isArray(rows)) return null;
 
-  const linkedName = String(linked.characterName ?? '')
+  const linkedName = String(linked.characterName ?? "")
     .trim()
     .toLowerCase();
-  const controllerId = String(linked.controllerId ?? '');
+  const controllerId = String(linked.controllerId ?? "");
   return (
     rows.find(
       (player) =>
-        String(player.player_controller_id ?? player.playerControllerId ?? '') === controllerId,
+        String(
+          player.player_controller_id ?? player.playerControllerId ?? "",
+        ) === controllerId,
     ) ??
     rows.find(
       (player) =>
-        String(player.character_name ?? player.characterName ?? '')
+        String(player.character_name ?? player.characterName ?? "")
           .trim()
           .toLowerCase() === linkedName,
     ) ??

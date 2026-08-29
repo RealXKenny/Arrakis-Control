@@ -1,19 +1,23 @@
-const { ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const {
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+} = require("discord.js");
 
 module.exports = {
-  customId: 'player-verify',
+  customId: "player-verify",
   async execute(interaction) {
     const modal = new ModalBuilder()
-      .setCustomId('player-verify-modal')
-      .setTitle('Verify Dune Character')
+      .setCustomId("player-verify-modal")
+      .setTitle("Verify Dune Character")
       .addLabelComponents((label) =>
         label
-          .setLabel('Verification code')
+          .setLabel("Verification code")
           .setTextInputComponent(
             new TextInputBuilder()
-              .setCustomId('verification-code')
+              .setCustomId("verification-code")
               .setStyle(TextInputStyle.Short)
-              .setPlaceholder('ACP-XXXXXX')
+              .setPlaceholder("ACP-XXXXXX")
               .setRequired(true)
               .setMinLength(10)
               .setMaxLength(10),

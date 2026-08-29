@@ -1,13 +1,14 @@
-const { URL } = require('node:url');
-const { createLogger } = require('../core/logger');
+const { URL } = require("node:url");
+const { createLogger } = require("../core/logger");
 
-const logger = createLogger('CONVOY API');
+const logger = createLogger("CONVOY API");
 
 // Thin authenticated transport for Advin's Convoy customer API. Feature commands
 // intentionally call request() so permission and safety decisions stay at the command layer.
 class ConvoyClient {
-  constructor(baseUrl = 'https://vps.advinservers.com', apiKey) {
-    if (!apiKey) throw new Error('ADVIN_API_KEY is required for the Convoy API.');
+  constructor(baseUrl = "https://vps.advinservers.com", apiKey) {
+    if (!apiKey)
+      throw new Error("ADVIN_API_KEY is required for the Convoy API.");
     this.baseUrl = new URL(baseUrl).toString();
     this.apiKey = apiKey;
   }
@@ -15,7 +16,8 @@ class ConvoyClient {
   request(method, route, { query, body, binary = false } = {}) {
     const url = new URL(route, this.baseUrl);
     for (const [key, value] of Object.entries(query ?? {}))
-      if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
+      if (value !== undefined && value !== null)
+        url.searchParams.set(key, String(value));
     return this.#request(method, url, body, binary);
   }
 
@@ -23,8 +25,8 @@ class ConvoyClient {
     const response = await fetch(url, {
       method,
       headers: {
-        Accept: binary ? 'image/png' : 'application/json',
-        'Content-Type': 'application/json',
+        Accept: binary ? "image/png" : "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${this.apiKey}`,
       },
       body: body === undefined ? undefined : JSON.stringify(body),
@@ -41,12 +43,14 @@ class ConvoyClient {
     }
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      logger.warn(`${method} ${url.pathname} failed with HTTP ${response.status}.`);
+      logger.warn(
+        `${method} ${url.pathname} failed with HTTP ${response.status}.`,
+      );
       const message =
         response.status === 401
-          ? 'Advin API authentication failed. Check ADVIN_API_KEY.'
+          ? "Advin API authentication failed. Check ADVIN_API_KEY."
           : response.status === 403
-            ? 'Advin API access denied. Ensure the key has servers.read and its IP group allows this VPS.'
+            ? "Advin API access denied. Ensure the key has servers.read and its IP group allows this VPS."
             : (data?.message ??
               data?.error ??
               `Convoy request failed with HTTP ${response.status}`);
@@ -59,7 +63,7 @@ class ConvoyClient {
 class ConvoyApiError extends Error {
   constructor(message, status, details) {
     super(message);
-    this.name = 'ConvoyApiError';
+    this.name = "ConvoyApiError";
     this.status = status;
     this.details = details;
   }
