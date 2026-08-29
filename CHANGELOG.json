@@ -5,6 +5,29 @@
     {
       "version": "1.0.9",
       "date": "2026-08-28",
+      "summary": "Added the Advin Convoy VPS API foundation.",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added /servers to list authenticated Advin VPS servers through the Convoy API."
+        },
+        {
+          "type": "docs",
+          "description": "Added a grouped Advin Convoy API reference covering authentication, permissions, route families, and safety guidance."
+        },
+        {
+          "type": "feature",
+          "description": "Added an authenticated ConvoyClient for Advin VPS customer API requests, including JSON and PNG responses."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added optional ADVIN_API_URL and ADVIN_API_KEY configuration and exposed the client on the bot application."
+        }
+      ]
+    },
+    {
+      "version": "1.0.9",
+      "date": "2026-08-28",
       "summary": "Improved account-linking feedback and command UI consistency.",
       "changes": [
         {

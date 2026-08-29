@@ -1,6 +1,7 @@
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { DuneApi } = require('../api/DuneApi');
 const { DiscordAdapterClient } = require('../api/DiscordAdapterClient');
+const { ConvoyClient } = require('../api/ConvoyClient');
 const { DiscordAuditLogger } = require('../../modules/audit/DiscordAuditLogger');
 const { loadCommands } = require('../loaders/commandLoader');
 const { loadComponentHandlers } = require('../loaders/componentLoader');
@@ -16,6 +17,9 @@ function createBotApplication(config) {
   client.selectMenus = new Collection();
   client.modals = new Collection();
   client.duneApi = new DuneApi(config.duneConsoleUrl);
+  client.convoyApi = config.advinApiKey
+    ? new ConvoyClient(config.advinApiUrl, config.advinApiKey)
+    : null;
   client.discordAdapter = config.duneDiscordAdapterToken
     ? new DiscordAdapterClient(config.duneConsoleUrl, config.duneDiscordAdapterToken)
     : null;

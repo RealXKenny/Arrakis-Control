@@ -60,6 +60,7 @@ Copy `.env.example` to `.env` and configure Discord credentials, Dune Console cr
 ## Documentation
 
 - [Dune Console API reference](docs/dune-awakening-console-api-reference.md)
+- [Advin Convoy API reference](docs/advin-convoy-api-reference.md)
 - [Source architecture](src/README.md)
 - [Release history](CHANGELOG.json)
 

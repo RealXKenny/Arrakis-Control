@@ -11,6 +11,8 @@ function loadEnvironment(requiredKeys = []) {
     clientId: process.env.CLIENT_ID,
     guildId: process.env.GUILD_ID,
     duneConsoleUrl: process.env.DUNE_CONSOLE_URL,
+    advinApiKey: process.env.ADVIN_API_KEY,
+    advinApiUrl: process.env.ADVIN_API_URL ?? 'https://vps.advinservers.com',
     duneConsolePassword: process.env.DUNE_CONSOLE_PASSWORD,
     duneDiscordAdapterToken: process.env.DUNE_DISCORD_ADAPTER_TOKEN,
     duneDiscordLinkPanelChannelId: process.env.DUNE_DISCORD_LINK_PANEL_CHANNEL_ID,
