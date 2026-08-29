@@ -10,6 +10,10 @@
         {
           "type": "maintenance",
           "description": "Started the 1.1.0 release cycle and synchronized the project version across release metadata."
+        },
+        {
+          "type": "fix",
+          "description": "Normalized the GitHub Container Registry image owner to lowercase so the 1.1.0 Docker release tags are valid."
         }
       ]
     },
