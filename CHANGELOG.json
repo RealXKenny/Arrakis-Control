@@ -28,6 +28,10 @@
           "description": "Added a repository-wide Prettier configuration with format and format:check scripts for consistent source formatting."
         },
         {
+          "type": "maintenance",
+          "description": "Cleaned up .env.example into grouped Discord, Console, channel, and diagnostics sections and removed the legacy panel-channel fallback."
+        },
+        {
           "type": "refactor",
           "description": "Slash commands now use the shared Components V2 response and Dune banner factories."
         }
