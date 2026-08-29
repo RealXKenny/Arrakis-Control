@@ -25,6 +25,7 @@ function loadEnvironment(requiredKeys = []) {
     discordRolePanelChannelId: process.env.DISCORD_ROLE_PANEL_CHANNEL_ID,
     discordVerifyChannelId: process.env.DISCORD_VERIFY_CHANNEL_ID,
     discordRulesChannelId: process.env.DISCORD_RULES_CHANNEL_ID,
+    discordServerInfoChannelId: process.env.DISCORD_SERVER_INFO_CHANNEL_ID,
     logLevel: process.env.LOG_LEVEL ?? "INFO",
   });
 }

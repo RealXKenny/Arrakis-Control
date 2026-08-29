@@ -25,7 +25,7 @@ module.exports = {
     const container = createContainer({
       title: "## Welcome to Arrakis!",
       body: `Welcome ${member} to **${member.guild.name}**.\n\nPrepare yourself for the spice and watch the sands carefully.`,
-      color: 0x4caf50,
+      color: 0xc58b45,
     }).addMediaGalleryComponents(
       new MediaGalleryBuilder().addItems(
         new MediaGalleryItemBuilder().setURL("attachment://member-welcome.png"),

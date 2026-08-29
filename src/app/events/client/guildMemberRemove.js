@@ -25,7 +25,7 @@ module.exports = {
     const container = createContainer({
       title: "## A Traveler Has Departed",
       body: `**${member.user.tag}** has left **${member.guild.name}**.\n\nMay the winds of Arrakis guide their journey.`,
-      color: 0xa94442,
+      color: 0xc58b45,
     }).addMediaGalleryComponents(
       new MediaGalleryBuilder().addItems(
         new MediaGalleryItemBuilder().setURL("attachment://member-goodbye.png"),

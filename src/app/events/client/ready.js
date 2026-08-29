@@ -9,6 +9,7 @@ const {
 const { ensureRolePanel } = require("../../../modules/panels/rolePanel");
 const { ensureVerificationPanel } = require("../../../modules/panels/verificationPanel");
 const { ensureRulesPanel } = require("../../../modules/panels/rulesPanel");
+const { ensureServerInfoPanel } = require("../../../modules/panels/serverInfoPanel");
 
 const logger = createLogger("DISCORD");
 
@@ -80,6 +81,7 @@ module.exports = {
       await ensureRolePanel(client, client.discordRolePanelChannelId);
       await ensureVerificationPanel(client, client.discordVerifyChannelId);
       await ensureRulesPanel(client, client.discordRulesChannelId);
+      await ensureServerInfoPanel(client, client.discordServerInfoChannelId);
     } catch (error) {
       logger.error("Unable to publish Discord Adapter panels.", error);
     }
