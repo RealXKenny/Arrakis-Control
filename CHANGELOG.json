@@ -3,6 +3,37 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.0.9",
+      "date": "2026-08-28",
+      "summary": "Improved account-linking feedback and command UI consistency.",
+      "changes": [
+        {
+          "type": "fix",
+          "description": "The Link Account button now checks the Discord Adapter first and clearly reports when the user is already linked."
+        },
+        {
+          "type": "feature",
+          "description": "Already-linked users receive a direct Unlink Account action before starting a new link request."
+        },
+        {
+          "type": "fix",
+          "description": "Corrected shared-helper imports in the link button so the bot starts cleanly after deployment."
+        },
+        {
+          "type": "feature",
+          "description": "Successful player verification now grants the configured linked-player role and sets the Discord nickname to the Dune character name."
+        },
+        {
+          "type": "maintenance",
+          "description": "Added a repository-wide Prettier configuration with format and format:check scripts for consistent source formatting."
+        },
+        {
+          "type": "refactor",
+          "description": "Slash commands now use the shared Components V2 response and Dune banner factories."
+        }
+      ]
+    },
+    {
       "version": "1.0.8",
       "date": "2026-08-28",
       "summary": "Improved panel discovery when multiple bot branches share a channel.",

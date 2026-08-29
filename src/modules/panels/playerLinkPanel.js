@@ -18,19 +18,33 @@ const PANEL_IMAGE_NAME = 'dune-player-link.png';
 
 function buildPlayerLinkPanel() {
   return new ContainerBuilder()
-    .setAccentColor(0xC58B45)
-    .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(
-      new MediaGalleryItemBuilder()
-        .setURL(`attachment://${PANEL_IMAGE_NAME}`)
-        .setDescription('Dune desert landscape for character linking'),
-    ))
+    .setAccentColor(0xc58b45)
+    .addMediaGalleryComponents(
+      new MediaGalleryBuilder().addItems(
+        new MediaGalleryItemBuilder()
+          .setURL(`attachment://${PANEL_IMAGE_NAME}`)
+          .setDescription('Dune desert landscape for character linking'),
+      ),
+    )
     .addTextDisplayComponents((text) => text.setContent(PANEL_MARKER))
-    .addTextDisplayComponents((text) => text.setContent('Link your Discord account to your Dune character.\n\nYour character must be online before you can receive a verification code.'))
+    .addTextDisplayComponents((text) =>
+      text.setContent(
+        'Link your Discord account to your Dune character.\n\nYour character must be online before you can receive a verification code.',
+      ),
+    )
     .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
-    .addActionRowComponents((row) => row.setComponents(
-      new ButtonBuilder().setCustomId('player-link').setLabel('Link Account').setStyle(ButtonStyle.Primary),
-      new ButtonBuilder().setCustomId('player-unlink').setLabel('Unlink Account').setStyle(ButtonStyle.Danger),
-    ));
+    .addActionRowComponents((row) =>
+      row.setComponents(
+        new ButtonBuilder()
+          .setCustomId('player-link')
+          .setLabel('Link Account')
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId('player-unlink')
+          .setLabel('Unlink Account')
+          .setStyle(ButtonStyle.Danger),
+      ),
+    );
 }
 
 async function ensurePlayerLinkPanel(client, channelId) {
@@ -111,7 +125,8 @@ function drawDunes(context, canvas) {
     context.moveTo(0, canvas.height);
     context.lineTo(0, y);
     for (let x = 0; x <= canvas.width; x += 20) {
-      const wave = Math.sin((x + offset) / 130) * height * 0.25 + Math.sin((x + offset) / 270) * height * 0.2;
+      const wave =
+        Math.sin((x + offset) / 130) * height * 0.25 + Math.sin((x + offset) / 270) * height * 0.2;
       context.lineTo(x, y + wave);
     }
     context.lineTo(canvas.width, canvas.height);

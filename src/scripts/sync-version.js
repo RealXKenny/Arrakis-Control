@@ -1,10 +1,10 @@
-const fs = require("node:fs");
-const path = require("node:path");
+const fs = require('node:fs');
+const path = require('node:path');
 
-const rootPath = path.join(__dirname, "..", "..");
-const version = fs.readFileSync(path.join(rootPath, "VERSION"), "utf8").trim();
-const packagePath = path.join(rootPath, "package.json");
-const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+const rootPath = path.join(__dirname, '..', '..');
+const version = fs.readFileSync(path.join(rootPath, 'VERSION'), 'utf8').trim();
+const packagePath = path.join(rootPath, 'package.json');
+const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
 if (packageJson.version !== version) {
   packageJson.version = version;

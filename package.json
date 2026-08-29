@@ -12,6 +12,8 @@
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/scripts/deploy-commands.js",
     "lint": "node src/scripts/check-syntax.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "login": "node src/scripts/login.js",
     "version:check": "node src/scripts/check-version.js",
     "version:sync": "node src/scripts/sync-version.js",
@@ -21,6 +23,9 @@
     "canvas": "^3.2.3",
     "discord.js": "^14.25.1",
     "dotenv": "^16.6.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6"
   },
   "allowScripts": {
     "canvas@3.2.3": true

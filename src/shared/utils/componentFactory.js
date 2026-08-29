@@ -1,10 +1,13 @@
-const { ContainerBuilder, MessageFlags, SeparatorSpacingSize } = require("discord.js");
+const { ContainerBuilder, MessageFlags, SeparatorSpacingSize } = require('discord.js');
 
-function createContainer({ title, body, color = 0xC58B45, children = [] }) {
+function createContainer({ title, body, color = 0xc58b45, children = [] }) {
   const container = new ContainerBuilder().setAccentColor(color);
   if (title) container.addTextDisplayComponents((text) => text.setContent(title));
   if (body) container.addTextDisplayComponents((text) => text.setContent(body));
-  if (children.length) container.addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small));
+  if (children.length)
+    container.addSeparatorComponents((separator) =>
+      separator.setSpacing(SeparatorSpacingSize.Small),
+    );
   for (const child of children) child(container);
   return container;
 }

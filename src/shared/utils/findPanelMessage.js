@@ -1,6 +1,10 @@
 async function findPanelMessage(channel, botUserId, marker) {
   const messages = await channel.messages.fetch({ limit: 50 });
-  return messages.find((message) => message.author?.id === botUserId && containsText(message.components, marker)) ?? null;
+  return (
+    messages.find(
+      (message) => message.author?.id === botUserId && containsText(message.components, marker),
+    ) ?? null
+  );
 }
 
 function containsText(components, marker) {

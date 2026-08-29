@@ -1,9 +1,9 @@
 function loadEnvironment(requiredKeys = []) {
-  require("dotenv").config();
+  require('dotenv').config();
 
   const missingKeys = requiredKeys.filter((key) => !process.env[key]);
   if (missingKeys.length > 0) {
-    throw new Error(`Missing required environment variable(s): ${missingKeys.join(", ")}`);
+    throw new Error(`Missing required environment variable(s): ${missingKeys.join(', ')}`);
   }
 
   return Object.freeze({
@@ -13,10 +13,11 @@ function loadEnvironment(requiredKeys = []) {
     duneConsoleUrl: process.env.DUNE_CONSOLE_URL,
     duneConsolePassword: process.env.DUNE_CONSOLE_PASSWORD,
     duneDiscordAdapterToken: process.env.DUNE_DISCORD_ADAPTER_TOKEN,
-    duneDiscordLinkPanelChannelId: process.env.DUNE_DISCORD_LINK_PANEL_CHANNEL_ID ?? process.env.DUNE_DISCORD_PANEL_CHANNEL_ID,
+    duneDiscordLinkPanelChannelId:
+      process.env.DUNE_DISCORD_LINK_PANEL_CHANNEL_ID ?? process.env.DUNE_DISCORD_PANEL_CHANNEL_ID,
     duneDiscordBlueprintPanelChannelId: process.env.DUNE_DISCORD_BLUEPRINT_PANEL_CHANNEL_ID,
     duneDiscordAuditChannelId: process.env.DUNE_DISCORD_AUDIT_CHANNEL_ID,
-    logLevel: process.env.LOG_LEVEL ?? "INFO",
+    logLevel: process.env.LOG_LEVEL ?? 'INFO',
   });
 }
 

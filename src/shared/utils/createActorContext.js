@@ -1,7 +1,8 @@
 function createActorContext(interaction, commandName) {
-  const roleIds = interaction.inGuild() && interaction.member?.roles?.cache
-    ? [...interaction.member.roles.cache.keys()]
-    : [];
+  const roleIds =
+    interaction.inGuild() && interaction.member?.roles?.cache
+      ? [...interaction.member.roles.cache.keys()]
+      : [];
 
   return {
     guildId: interaction.guildId ?? null,

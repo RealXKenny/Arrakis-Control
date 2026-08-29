@@ -1,5 +1,5 @@
-const { DuneConsoleClient } = require("./core/DuneConsoleClient");
-const { loadEndpointCatalog, resolveRoute } = require("./reference/endpointCatalog");
+const { DuneConsoleClient } = require('./core/DuneConsoleClient');
+const { loadEndpointCatalog, resolveRoute } = require('./reference/endpointCatalog');
 
 class DuneApi extends DuneConsoleClient {
   constructor(baseUrl) {
@@ -7,9 +7,11 @@ class DuneApi extends DuneConsoleClient {
     this.endpoints = loadEndpointCatalog();
   }
 
-  findEndpoints(search = "") {
+  findEndpoints(search = '') {
     const term = search.toLowerCase();
-    return this.endpoints.filter(({ method, route, description }) => `${method} ${route} ${description}`.toLowerCase().includes(term));
+    return this.endpoints.filter(({ method, route, description }) =>
+      `${method} ${route} ${description}`.toLowerCase().includes(term),
+    );
   }
 
   async call(method, route, options = {}) {

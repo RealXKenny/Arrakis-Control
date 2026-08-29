@@ -2,14 +2,17 @@ function formatPlayers(response, status) {
   const rows = getPlayerRows(response);
   const total = getPlayerTotal(response, rows);
 
-  const listedPlayers = rows.slice(0, 20).map(formatPlayer).join("\n");
+  const listedPlayers = rows.slice(0, 20).map(formatPlayer).join('\n');
   const shown = Math.min(rows.length, 20);
   const remaining = Math.max(0, total - shown);
 
   return {
-    heading: `${status === "online" ? "Online" : "Offline"} Players (${total.toLocaleString()})`,
-    content: listedPlayers || "No players found.",
-    truncated: remaining > 0 ? `Showing ${shown.toLocaleString()} of ${total.toLocaleString()} players.` : null,
+    heading: `${status === 'online' ? 'Online' : 'Offline'} Players (${total.toLocaleString()})`,
+    content: listedPlayers || 'No players found.',
+    truncated:
+      remaining > 0
+        ? `Showing ${shown.toLocaleString()} of ${total.toLocaleString()} players.`
+        : null,
     count: total,
   };
 }
@@ -39,7 +42,14 @@ function getPlayerRows(response) {
 }
 
 function getPlayerTotal(response, rows) {
-  const values = [response?.total, response?.totalCount, response?.totalPlayers, response?.count, response?.pagination?.total, response?.meta?.total];
+  const values = [
+    response?.total,
+    response?.totalCount,
+    response?.totalPlayers,
+    response?.count,
+    response?.pagination?.total,
+    response?.meta?.total,
+  ];
 
   const total = values.find((value) => Number.isFinite(Number(value)));
 
@@ -47,21 +57,42 @@ function getPlayerTotal(response, rows) {
 }
 
 function formatPlayer(player, index) {
-  if (!player || typeof player !== "object") {
+  if (!player || typeof player !== 'object') {
     return `${index + 1}. **Unknown player**`;
   }
 
-  const name = player.character_name ?? player.characterName ?? player.name ?? player.playerName ?? player.display_name ?? player.displayName ?? "Unknown player";
+  const name =
+    player.character_name ??
+    player.characterName ??
+    player.name ??
+    player.playerName ??
+    player.display_name ??
+    player.displayName ??
+    'Unknown player';
 
-  const id = player.player_id ?? player.playerId ?? player.id ?? player.player_controller_id ?? player.playerControllerId;
+  const id =
+    player.player_id ??
+    player.playerId ??
+    player.id ??
+    player.player_controller_id ??
+    player.playerControllerId;
 
-  const playtime = player.total_playtime_seconds ?? player.totalPlaytimeSeconds ?? player.playtime_seconds ?? player.playtimeSeconds;
+  const playtime =
+    player.total_playtime_seconds ??
+    player.totalPlaytimeSeconds ??
+    player.playtime_seconds ??
+    player.playtimeSeconds;
 
-  const details = [id !== undefined && id !== null ? `ID: \`${escapeMarkdown(String(id))}\`` : null, playtime !== undefined && playtime !== null ? formatPlaytime(playtime) : null].filter(Boolean).join(" · ");
+  const details = [
+    id !== undefined && id !== null ? `ID: \`${escapeMarkdown(String(id))}\`` : null,
+    playtime !== undefined && playtime !== null ? formatPlaytime(playtime) : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   const safeName = escapeMarkdown(String(name));
 
-  return `${index + 1}. **${safeName}**${details ? ` — ${details}` : ""}`;
+  return `${index + 1}. **${safeName}**${details ? ` — ${details}` : ''}`;
 }
 
 function formatPlaytime(seconds) {
@@ -83,7 +114,7 @@ function formatPlaytime(seconds) {
 }
 
 function escapeMarkdown(value) {
-  return value.replace(/([\\`*_{}[\]()#+\-.!|>])/g, "\\$1");
+  return value.replace(/([\\`*_{}[\]()#+\-.!|>])/g, '\\$1');
 }
 
 module.exports = {

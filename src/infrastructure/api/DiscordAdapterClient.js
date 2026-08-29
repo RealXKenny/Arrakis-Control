@@ -30,30 +30,51 @@ class DiscordAdapterClient {
 
   async request(route, body) {
     const startedAt = Date.now();
-    logger.debug(`POST ${route} requested.`, { bodyFields: Object.keys(body ?? {}), hasActor: Boolean(body?.actor), userId: body?.actor?.userId ?? null, commandName: body?.actor?.commandName ?? null });
+    logger.debug(`POST ${route} requested.`, {
+      bodyFields: Object.keys(body ?? {}),
+      hasActor: Boolean(body?.actor),
+      userId: body?.actor?.userId ?? null,
+      commandName: body?.actor?.commandName ?? null,
+    });
     let response;
     try {
       response = await fetch(new URL(route, this.baseUrl), {
         method: 'POST',
-        headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${this.token}` },
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.token}`,
+        },
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(30_000),
       });
     } catch (error) {
-      logger.error(`POST ${route} network request failed after ${Date.now() - startedAt}ms.`, error);
-      throw new DiscordAdapterError(`Discord Adapter network request failed: ${error.message}`, 0, { cause: error.code ?? error.name });
+      logger.error(
+        `POST ${route} network request failed after ${Date.now() - startedAt}ms.`,
+        error,
+      );
+      throw new DiscordAdapterError(`Discord Adapter network request failed: ${error.message}`, 0, {
+        cause: error.code ?? error.name,
+      });
     }
     const data = await readResponse(response);
 
     if (!response.ok) {
-      logger.warn(`POST ${route} failed with HTTP ${response.status} after ${Date.now() - startedAt}ms.`);
-      throw new DiscordAdapterError(data?.error ?? data?.reason ?? `Adapter request failed with HTTP ${response.status}.`, response.status, data);
+      logger.warn(
+        `POST ${route} failed with HTTP ${response.status} after ${Date.now() - startedAt}ms.`,
+      );
+      throw new DiscordAdapterError(
+        data?.error ?? data?.reason ?? `Adapter request failed with HTTP ${response.status}.`,
+        response.status,
+        data,
+      );
     }
 
-    logger.debug(`POST ${route} completed with HTTP ${response.status} in ${Date.now() - startedAt}ms.`);
+    logger.debug(
+      `POST ${route} completed with HTTP ${response.status} in ${Date.now() - startedAt}ms.`,
+    );
     return data;
   }
-
 }
 
 async function readResponse(response) {
