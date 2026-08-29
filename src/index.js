@@ -22,10 +22,13 @@ function createShardManager(config) {
     ? Number(process.env.DISCORD_TOTAL_SHARDS)
     : "auto";
 
-  return new ShardingManager(path.join(__dirname, "shard.js"), {
-    token: config.discordToken,
-    totalShards,
-  });
+  return new ShardingManager(
+    path.join(__dirname, "infrastructure", "core", "shard.js"),
+    {
+      token: config.discordToken,
+      totalShards,
+    },
+  );
 }
 
 function registerShardEvents(shardManager, shardLogger) {

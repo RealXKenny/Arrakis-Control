@@ -1,8 +1,6 @@
-const { loadEnvironment } = require("./infrastructure/config/environment");
-const {
-  createBotApplication,
-} = require("./infrastructure/core/BotApplication");
-const { createLogger } = require("./infrastructure/core/logger");
+const { loadEnvironment } = require("../config/environment");
+const { createBotApplication } = require("./BotApplication");
+const { createLogger } = require("./logger");
 
 const REQUIRED_ENVIRONMENT = [
   "DISCORD_TOKEN",
