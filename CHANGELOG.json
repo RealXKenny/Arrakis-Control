@@ -108,6 +108,10 @@
         },
         {
           "type": "maintenance",
+          "description": "Added Dependabot updates for npm dependencies, GitHub Actions, and Docker base images with grouped pull requests."
+        },
+        {
+          "type": "maintenance",
           "description": "Cleaned up .env.example into grouped Discord, Console, channel, and diagnostics sections and removed the legacy panel-channel fallback."
         },
         {
