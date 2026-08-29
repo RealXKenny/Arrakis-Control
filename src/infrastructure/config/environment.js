@@ -1,5 +1,5 @@
 function loadEnvironment(requiredKeys = []) {
-  require("dotenv").config();
+  require("dotenv").config({ quiet: true });
 
   const missingKeys = requiredKeys.filter((key) => !process.env[key]);
   if (missingKeys.length > 0) {

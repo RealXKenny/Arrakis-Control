@@ -33,10 +33,8 @@ function createShardManager(config) {
 
 function registerShardEvents(shardManager, shardLogger) {
   shardManager.on("shardCreate", (shard) => {
-    shardLogger.info(`Launched Discord shard ${shard.id}.`);
-
     shard.on("ready", () => {
-      shardLogger.info(`Discord shard ${shard.id} is ready.`);
+      shardLogger.info(`Launched Discord shard ${shard.id}; shard is ready.`);
     });
 
     shard.on("reconnecting", () => {
