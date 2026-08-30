@@ -18,7 +18,7 @@ const { loadEvents } = require("../loaders/eventLoader");
 const { createLogger } = require("./logger");
 
 function createBotApplication(config) {
-  process.stdout.write("\x1Bc");
+  // process.stdout.write("\x1Bc");
   const logger = createLogger("BOT", config.logLevel);
   logger.header("ARRAKIS CONTROL", "Dune: Awakening Discord control bot");
   const client = createClient(config);

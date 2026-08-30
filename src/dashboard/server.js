@@ -55,10 +55,7 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(port, async () => {
-  await duneClient.login(process.env.CONSOLE_PASSWORD);
-  console.log(`Owner dashboard listening on http://localhost:${port}`);
-});
+server.listen(port, async () => { await duneClient.login(process.env.CONSOLE_PASSWORD); logger.info(`Owner dashboard listening on http://localhost:${port}`); });
 
 for (const signal of ["SIGINT", "SIGTERM", "SIGBREAK"]) {
   process.once(signal, async () => {

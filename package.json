@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node src/scripts/build-dashboard.js && node src/index.js",
+    "start:dev": "node src/index.js",
     "dashboard": "node src/dashboard/server.js",
     "dev": "node --watch src/index.js",
     "lint": "node src/scripts/check-syntax.js",
