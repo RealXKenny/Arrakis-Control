@@ -13,6 +13,7 @@ const COLORS = Object.freeze({
   brightYellow: "\u001B[93m",
   brightMagenta: "\u001B[95m",
   brightBlue: "\u001B[94m",
+  brightOrange: "\u001B[38;5;208m",
   white: "\u001B[37m",
 });
 const LEVEL_COLORS = Object.freeze({
@@ -35,6 +36,7 @@ const SCOPE_COLORS = Object.freeze({
   "DISCORD ADAPTER": COLORS.brightCyan,
   "DISCORD AUDIT": COLORS.brightGreen,
   "DISCORD AUDIT LOG": COLORS.brightMagenta,
+  DASHBOARD: COLORS.brightOrange,
   default: COLORS.white,
 });
 
