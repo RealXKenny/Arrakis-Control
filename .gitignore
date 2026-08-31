@@ -8,3 +8,4 @@ package-lock.json.*
 /src/dashboard/.next
 /src/dashboard/node_modules
 /src/dashboard/package-lock.json
+/Bot/dist

@@ -1,5 +1,5 @@
 {
-  "name": "arrakis-control",
+  "name": "Arrakis-Control-Bot",
   "version": "1.1.8",
   "description": "A modular Discord.js v14 bot.",
   "main": "src/index.js",

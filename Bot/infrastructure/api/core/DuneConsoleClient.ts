@@ -12,7 +12,21 @@ type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTION
 interface RequestOptions {
   authenticate?: boolean;
   includeCsrf?: boolean;
-  query?: Record<string, string | number | boolean | null | undefined>;
+
+  /**
+   * Parameters used to replace {parameterName} values
+   * in the API route.
+   */
+  routeParams?: Record<
+    string,
+    string | number | boolean
+  >;
+
+  query?: Record<
+    string,
+    string | number | boolean | null | undefined
+  >;
+
   body?: unknown;
   captureSession?: boolean;
   retryAuth?: boolean;

@@ -1,7 +1,6 @@
 import {
   ChatInputCommandInteraction,
   ContainerBuilder,
-  MessageFlags,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
   SeparatorSpacingSize,
@@ -147,10 +146,17 @@ module.exports = {
 
     if (!playerId) {
       await interaction.editReply({
-        content: "Your linked Dune character does not have a valid player ID.",
+        content:
+          "Your linked Dune character does not have a valid player ID.",
       });
       return;
     }
+
+    logger.debug(`Profile player ID: ${playerId}`);
+
+    // -----------------------------------------------------------------------
+    // Load guilds
+    // -----------------------------------------------------------------------
 
     const guildResponse = await interaction.client.duneApi.call(
       "GET",
@@ -170,6 +176,10 @@ module.exports = {
 
     const guildRows = getGuildRows(guildResponse);
 
+    // -----------------------------------------------------------------------
+    // Load guild members
+    // -----------------------------------------------------------------------
+
     const guildMembers = await Promise.all(
       guildRows.map(
         async (
@@ -181,6 +191,10 @@ module.exports = {
             guildRow.id;
 
           if (!guildId) {
+            logger.warn(
+              "Guild row did not contain a valid guild ID:",
+              JSON.stringify(guildRow),
+            );
             return null;
           }
 
@@ -190,7 +204,7 @@ module.exports = {
                 "GET",
                 "/api/guilds/{guildId}/members",
                 {
-                  params: {
+                  routeParams: {
                     guildId,
                   },
                 },
@@ -233,6 +247,10 @@ module.exports = {
       validGuildMembers,
     );
 
+    // -----------------------------------------------------------------------
+    // Load player profile endpoints
+    // -----------------------------------------------------------------------
+
     const endpointNames = [
       "currency",
       "solaris-coin",
@@ -250,7 +268,7 @@ module.exports = {
             "GET",
             `/api/players/{playerId}/${endpoint}`,
             {
-              params: {
+              routeParams: {
                 playerId,
               },
             },
@@ -278,6 +296,10 @@ module.exports = {
     );
 
     const data = Object.fromEntries(responses) as ProfileData;
+
+    // -----------------------------------------------------------------------
+    // Build Discord response
+    // -----------------------------------------------------------------------
 
     const card = new ContainerBuilder()
       .setAccentColor(0xc58b45)
@@ -512,9 +534,11 @@ function formatVitals(
     `Health **${formatNumber(
       value.currentHealth,
     )} / ${formatNumber(value.maxHealth)}**`,
+
     `Hydration **${formatNumber(
       value.hydration,
     )} / ${formatNumber(value.maxHydration)}**`,
+
     `Spice addiction **${formatNumber(
       value.spiceAddictionLevel,
     )} / ${formatNumber(
