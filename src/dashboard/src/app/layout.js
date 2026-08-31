@@ -1,6 +1,6 @@
-// Import global dashboard stylesheets
-import '../frontend/site.css';
-import '../frontend/src/styles.css';
+// Correctly step up out of /app/ to reach the frontend assets directory folder
+import '../../frontend/site.css';
+import '../../frontend/src/styles.css';
 
 export const metadata = {
   title: 'Arrakis Control Dashboard',

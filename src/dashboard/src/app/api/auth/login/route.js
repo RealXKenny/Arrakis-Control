@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   try {
-    const clientId = process.env.DISCORD_CLIENT_ID ?? process.env.CLIENT_ID;
-    const port = Number(process.env.DASHBOARD_PORT ?? 8787);
-    const redirectUri = process.env.DISCORd_REDIRECT_URI ?? `http://localhost:${port}/auth/callback`;
+    const clientId = "1543343276927484037";
+    const port = Number(process.env.DASHBOARD_PORT ?? 3000);
+    const redirectUri = process.env.DISCORD_REDIRECT_URI ?? `http://localhost:${port}/auth/callback`;
 
     if (!clientId) {
       console.error("Missing Discord Client ID configuration in environment variables.");
@@ -18,7 +18,8 @@ export async function GET(request) {
       scope: "identify guilds.members.read",
     });
 
-    const discordAuthUrl = `https://discord.com{params.toString()}`;
+    // Restored your exact working legacy OAuth address pattern using Next.js template literals
+    const discordAuthUrl = `https://discord.com/oauth2/authorize?${params.toString()}`;
 
     // Perform an immediate server-side HTTP 302 redirect to Discord's gateway
     return NextResponse.redirect(discordAuthUrl);

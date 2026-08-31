@@ -1,0 +1,17 @@
+{
+  "name": "arrakis-control-dashboard",
+  "version": "1.1.6",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "dotenv": "^16.4.5"
+  }
+}
