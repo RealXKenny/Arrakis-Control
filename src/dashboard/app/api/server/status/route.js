@@ -1,33 +1,15 @@
 import { NextResponse } from 'next/server';
 
-import fs from 'node:fs';
-import path from 'node:path';
+import { getDuneClient } from '../../dune/route';
 
-import dotenv from 'dotenv';
-
-import { duneClient } from '../../dune/route';
-
-// Find the .env file in the project tree
-let currentDir = process.cwd();
-let envPath = null;
-
-while (currentDir && currentDir !== path.parse(currentDir).root) {
-  const checkPath = path.join(currentDir, '.env');
-
-  if (fs.existsSync(checkPath)) {
-    envPath = checkPath;
-    break;
-  }
-
-  currentDir = path.dirname(currentDir);
-}
-
-if (envPath) {
-  dotenv.config({ path: envPath });
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   try {
+    // Initialize the Dune client only when the request runs.
+    const duneClient = getDuneClient();
+
     // Fetch both Dune endpoints through duneClient.
     const [serverStatus, playersData] = await Promise.all([
       duneClient.request(
@@ -68,6 +50,9 @@ export async function GET() {
       },
       {
         status: 200,
+        headers: {
+          'Cache-Control': 'no-store',
+        },
       }
     );
   } catch (error) {
@@ -86,6 +71,9 @@ export async function GET() {
       },
       {
         status: 500,
+        headers: {
+          'Cache-Control': 'no-store',
+        },
       }
     );
   }

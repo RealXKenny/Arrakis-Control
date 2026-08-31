@@ -1,34 +1,15 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'node:fs';
-import path from 'node:path';
-import dotenv from 'dotenv';
-import { duneClient } from '../dune/route';
 
-let currentDir = process.cwd();
-let envPath = null;
+import { getDuneClient } from '../dune/route';
 
-while (
-  currentDir &&
-  currentDir !== path.parse(currentDir).root
-) {
-  const checkPath = path.join(currentDir, '.env');
-
-  if (fs.existsSync(checkPath)) {
-    envPath = checkPath;
-    break;
-  }
-
-  currentDir = path.dirname(currentDir);
-}
-
-if (envPath) {
-  dotenv.config({ path: envPath });
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 /**
  * Helpers
  */
+
 function firstNumber(...values) {
   for (const value of values) {
     const number = Number(value);
@@ -65,24 +46,6 @@ function clampPercent(value) {
 
 /**
  * Normalize currency.
- *
- * API response:
- *
- * {
- *   capabilities: { currency: true },
- *   rows: [
- *     {
- *       currency_id: 0,
- *       balance: '12537085',
- *       label: 'Solari Credit'
- *     },
- *     {
- *       currency_id: 1,
- *       balance: 0,
- *       label: 'Scrip'
- *     }
- *   ]
- * }
  */
 function normalizeCurrency(currency) {
   if (!currency) {
@@ -130,11 +93,9 @@ function normalizeCurrency(currency) {
 
   return {
     ...currency,
-
     available:
       currency?.capabilities?.currency === true ||
       normalizedRows.length > 0,
-
     rows: normalizedRows,
 
     // Convenient values for the frontend.
@@ -147,7 +108,7 @@ function normalizeCurrency(currency) {
 }
 
 /**
- * Extract base ID
+ * Extract base ID.
  */
 function getBaseId(base) {
   return firstValue(
@@ -159,7 +120,7 @@ function getBaseId(base) {
 }
 
 /**
- * Normalize base inventory storage
+ * Normalize base inventory storage.
  */
 function normalizeBaseStorage(inventory) {
   if (!inventory) {
@@ -216,14 +177,13 @@ function normalizeBaseStorage(inventory) {
     storage.maxSlots
   );
 
-  const containers =
-    Array.isArray(inventory.containers)
-      ? inventory.containers
-      : Array.isArray(inventory.rows)
-        ? inventory.rows
-        : Array.isArray(inventory.data)
-          ? inventory.data
-          : [];
+  const containers = Array.isArray(inventory.containers)
+    ? inventory.containers
+    : Array.isArray(inventory.rows)
+      ? inventory.rows
+      : Array.isArray(inventory.data)
+        ? inventory.data
+        : [];
 
   let containerUsed = null;
   let containerMax = null;
@@ -231,9 +191,9 @@ function normalizeBaseStorage(inventory) {
   for (const container of containers) {
     const type = String(
       container?.type ||
-      container?.containerType ||
-      container?.category ||
-      ''
+        container?.containerType ||
+        container?.category ||
+        ''
     ).toLowerCase();
 
     const isStorage =
@@ -321,7 +281,7 @@ function normalizeBaseStorage(inventory) {
 }
 
 /**
- * Normalize water
+ * Normalize water.
  */
 function normalizeBaseWater(water) {
   if (!water) {
@@ -337,16 +297,15 @@ function normalizeBaseWater(water) {
     };
   }
 
-  const containers =
-    Array.isArray(water)
-      ? water
-      : Array.isArray(water?.containers)
-        ? water.containers
-        : Array.isArray(water?.rows)
-          ? water.rows
-          : Array.isArray(water?.data)
-            ? water.data
-            : [];
+  const containers = Array.isArray(water)
+    ? water
+    : Array.isArray(water?.containers)
+      ? water.containers
+      : Array.isArray(water?.rows)
+        ? water.rows
+        : Array.isArray(water?.data)
+          ? water.data
+          : [];
 
   const directVolume = firstNumber(
     water.volume,
@@ -514,7 +473,6 @@ function normalizeBaseWater(water) {
       containers.length > 0 ||
       volume !== null ||
       maxVolume !== null,
-
     containers: containers.length,
     volume,
     maxVolume,
@@ -526,9 +484,9 @@ function normalizeBaseWater(water) {
 }
 
 /**
- * Load one base's additional telemetry
+ * Load one base's additional telemetry.
  */
-async function loadBaseTelemetry(base) {
+async function loadBaseTelemetry(base, duneClient) {
   const baseId = getBaseId(base);
 
   if (!baseId) {
@@ -552,8 +510,9 @@ async function loadBaseTelemetry(base) {
     };
   }
 
-  const encodedBaseId =
-    encodeURIComponent(String(baseId));
+  const encodedBaseId = encodeURIComponent(
+    String(baseId)
+  );
 
   const waterEndpoint =
     `/api/bases/${encodedBaseId}/water`;
@@ -596,11 +555,13 @@ async function loadBaseTelemetry(base) {
     );
   }
 
-  const storage =
-    normalizeBaseStorage(inventory);
+  const storage = normalizeBaseStorage(
+    inventory
+  );
 
-  const normalizedWater =
-    normalizeBaseWater(water);
+  const normalizedWater = normalizeBaseWater(
+    water
+  );
 
   return {
     ...base,
@@ -620,10 +581,15 @@ async function loadBaseTelemetry(base) {
  */
 export async function GET(request) {
   try {
+    // Create/get the Dune client only when the request runs.
+    const duneClient = getDuneClient();
+
     const cookieStore = await cookies();
 
     const sessionId =
-      cookieStore.get('dashboard_session')?.value;
+      cookieStore.get(
+        'dashboard_session'
+      )?.value;
 
     if (!sessionId) {
       return NextResponse.json(
@@ -637,7 +603,9 @@ export async function GET(request) {
     }
 
     const session =
-      global.dashboardSessions?.get(sessionId);
+      global.dashboardSessions?.get(
+        sessionId
+      );
 
     if (
       !session ||
@@ -666,6 +634,18 @@ export async function GET(request) {
         `dashboard-${Date.now()}`,
       commandName: 'portal',
     };
+
+    if (!process.env.CONSOLE_URL) {
+      throw new Error(
+        'CONSOLE_URL is not configured'
+      );
+    }
+
+    if (!process.env.ADAPTER_TOKEN) {
+      throw new Error(
+        'ADAPTER_TOKEN is not configured'
+      );
+    }
 
     const endpoint =
       `${process.env.CONSOLE_URL}/api/integrations/discord/players/me`;
@@ -723,7 +703,7 @@ export async function GET(request) {
     }
 
     /**
-     * Core player endpoints
+     * Core player endpoints.
      */
     const coreEndpoints = [
       'currency',
@@ -755,28 +735,32 @@ export async function GET(request) {
              * Bases
              */
             if (name === 'bases') {
-              const bases =
-                Array.isArray(resData)
-                  ? resData
+              const bases = Array.isArray(
+                resData
+              )
+                ? resData
+                : Array.isArray(
+                    resData?.rows
+                  )
+                  ? resData.rows
                   : Array.isArray(
-                      resData?.rows
+                      resData?.data
                     )
-                    ? resData.rows
+                    ? resData.data
                     : Array.isArray(
-                        resData?.data
+                        resData?.bases
                       )
-                      ? resData.data
-                      : Array.isArray(
-                          resData?.bases
-                        )
-                        ? resData.bases
-                        : [];
+                      ? resData.bases
+                      : [];
 
               const enrichedBases =
                 await Promise.all(
                   bases.map(
                     async (base) =>
-                      loadBaseTelemetry(base)
+                      loadBaseTelemetry(
+                        base,
+                        duneClient
+                      )
                   )
                 );
 
@@ -842,7 +826,7 @@ export async function GET(request) {
     );
 
     /**
-     * Final response
+     * Final response.
      */
     const responseData = {
       ...data,

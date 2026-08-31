@@ -1,4 +1,4 @@
-import { duneClient } from '../../dune/route';
+import { getDuneClient } from '../../dune/route';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -93,6 +93,9 @@ export async function GET(request) {
   const started = Date.now();
 
   try {
+    // Initialize the Dune client only when the request actually runs.
+    const duneClient = getDuneClient();
+
     const url = new URL(request.url);
     const mapName = url.searchParams.get('map')?.trim();
 
