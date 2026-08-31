@@ -2,6 +2,7 @@ FROM node:26-alpine
 
 WORKDIR /app
 
+# Native dependencies required by canvas / Next.js dependencies
 RUN apk add --no-cache \
     python3 \
     make \
@@ -20,21 +21,56 @@ RUN apk add --no-cache \
 
 RUN fc-cache -f
 
-COPY package.json ./
+# ============================================================
+# Root / Bot dependencies
+# ============================================================
 
-RUN npm install --omit=dev
+COPY package.json package-lock.json ./
+
+RUN npm ci --omit=dev
+
+
+# ============================================================
+# Next.js Dashboard dependencies
+# ============================================================
+
+COPY src/dashboard/package.json \
+     src/dashboard/package-lock.json \
+     ./src/dashboard/
+
+RUN npm --prefix src/dashboard ci
+
+
+# ============================================================
+# Application source
+# ============================================================
 
 COPY src ./src
-RUN if [ -f src/dashboard/frontend/package.json ]; then cd src/dashboard/frontend && npm install --no-audit --no-fund && npm run build; fi
+
 COPY docs ./docs
 COPY VERSION ./VERSION
 COPY CHANGELOG.json ./CHANGELOG.json
 
+
+# ============================================================
+# Build Next.js dashboard
+# ============================================================
+
+RUN npm run dashboard:build
+
+
+# ============================================================
+# Runtime configuration
+# ============================================================
+
 ARG BOT_VERSION
 
 ENV BOT_VERSION=${BOT_VERSION}
+ENV NODE_ENV=production
 
 LABEL org.opencontainers.image.title="Arrakis Control" \
       org.opencontainers.image.version="${BOT_VERSION}"
 
-CMD ["node", "src/index.js"]
+EXPOSE 3000
+
+CMD ["npm", "start"]

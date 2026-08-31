@@ -1,6 +1,6 @@
 {
   "name": "arrakis-control",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A modular Discord.js v14 bot.",
   "main": "src/index.js",
   "private": true,
@@ -8,10 +8,17 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node src/scripts/build-dashboard.js && node src/index.js",
-    "start:dev": "node src/index.js",
+    "start": "concurrently --kill-others --names bot,dashboard \"node src/index.js\" \"npm run dashboard:start\"",
+    "start:dev": "concurrently --kill-others --names bot,dashboard \"node src/index.js\" \"npm run dashboard:dev\"",
+
     "dashboard": "node src/dashboard/server.js",
     "dev": "node --watch src/index.js",
+
+    "dashboard:dev": "npm --prefix src/dashboard run dev",
+    "dashboard:build": "npm --prefix src/dashboard run build",
+    "dashboard:start": "npm --prefix src/dashboard run start",
+    "dashboard:lint": "npm --prefix src/dashboard run lint",
+
     "lint": "node src/scripts/check-syntax.js",
     "version:check": "node src/scripts/version.js check",
     "version:sync": "node src/scripts/version.js sync",
@@ -19,6 +26,7 @@
   },
   "dependencies": {
     "canvas": "^3.2.3",
+    "concurrently": "^10.0.5",
     "discord.js": "^14.25.1",
     "dotenv": "^17.4.2"
   },
