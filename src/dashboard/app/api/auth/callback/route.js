@@ -40,7 +40,7 @@ export async function GET(request) {
 
     // User denied/cancelled Discord authorization.
     if (oauthError) {
-      console.error('Discord OAuth error:', oauthError);
+      console.error('Discord OAuth error received during callback');
 
       const appUrl =
         process.env.APP_URL || new URL(request.url).origin;
