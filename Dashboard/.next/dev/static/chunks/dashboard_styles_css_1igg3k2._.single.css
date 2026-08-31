@@ -1,0 +1,127 @@
+/* [project]/dashboard/styles.css [app-client] (css) */
+:root {
+  color: #f3d39b;
+  background: #160d08;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(circle at top, #70401f, #160d08 70%);
+  place-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px;
+  display: grid;
+}
+
+.landing {
+  text-align: center;
+  background: #211109e8;
+  border: 1px solid #a86f38;
+  border-radius: 24px;
+  width: min(720px, 100%);
+  padding: 72px;
+  box-shadow: 0 30px 100px #000b;
+}
+
+.eyebrow {
+  color: #d2a85a;
+  letter-spacing: .28em;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+h1 {
+  color: #ffe2a9;
+  margin: 12px 0;
+  font: 700 clamp(38px, 8vw, 64px) / 1.05 Georgia, serif;
+}
+
+.subtitle {
+  color: #dbc19a;
+  max-width: 500px;
+  margin: 18px auto 30px;
+  line-height: 1.6;
+}
+
+.status {
+  text-align: left;
+  background: #4caf5014;
+  border: 1px solid #4caf5044;
+  border-radius: 14px;
+  align-items: center;
+  gap: 14px;
+  margin: 28px 0;
+  padding: 16px;
+  display: flex;
+}
+
+.dot {
+  background: #72d572;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
+
+.status b, .status small {
+  display: block;
+}
+
+.status small {
+  color: #b9a185;
+  margin-top: 4px;
+}
+
+.features {
+  color: #dbc19a;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin: 28px 0;
+  display: flex;
+}
+
+.button {
+  color: #160d08;
+  background: #c58b45;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-block;
+}
+
+@media (max-width: 520px) {
+  .landing {
+    padding: 40px 24px;
+  }
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #5a4028 #080604;
+}
+
+html::-webkit-scrollbar {
+  width: 9px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #080604;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #4d3623;
+  border: 2px solid #080604;
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #765331;
+}
+
+/*# sourceMappingURL=dashboard_styles_css_1igg3k2._.single.css.map*/

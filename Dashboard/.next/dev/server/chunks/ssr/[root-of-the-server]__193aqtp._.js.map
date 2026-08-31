@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 9, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":""}},
+    {"offset": {"line": 13, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/RealXKenny/Documents/GitHub/Arrakis-Control/src/dashboard/app/dashboard/page.js"],"sourcesContent":["import { redirect } from 'next/navigation';\r\nimport { isOwner } from '@/lib/auth';\r\nimport OwnerDashboard from './OwnerDashboard';\r\n\r\nexport default async function DashboardPage() {\r\n  const owner = await isOwner();\r\n\r\n  console.log('[DASHBOARD] Owner access:', owner);\r\n\r\n  if (!owner) {\r\n    redirect('/portal');\r\n  }\r\n\r\n  return <OwnerDashboard />;\r\n}"],"names":["DashboardPage","owner","isOwner","console","log"],"mappings":";;;;;AAAA;AAAA;;;;;;AAEA;;;;;AAEe,eAAeA;IAC5B,MAAMC,QAAQ,MAAMC;IAEpBC,QAAQC,GAAG,CAAC,6BAA6BH;IAEzC,IAAI,CAACA,OAAO;QACV,IAAA,8MAAQ,EAAC;IACX;IAEA,qBAAO,2PAAC,0JAAc;;;;;AACxB"}},
+    {"offset": {"line": 53, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/RealXKenny/Documents/GitHub/Arrakis-Control/src/dashboard/app/favicon.ico.mjs%20(structured%20image%20object)"],"sourcesContent":["import src from \"IMAGE\";\nexport default { src, width: 32, height: 32 }\n"],"names":["src","width","height"],"mappings":";;;;AAAA;;uCACe;IAAEA,KAAAA,gJAAG;IAAEC,OAAO;IAAIC,QAAQ;AAAG"}}]
+}
