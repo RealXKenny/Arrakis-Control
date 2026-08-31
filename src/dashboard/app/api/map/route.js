@@ -1,35 +1,27 @@
-import { DuneConsoleClient } from '../../../../infrastructure/api/core/DuneConsoleClient';
+import { DuneClient } from '../dune/route';
 
 export const dynamic = 'force-dynamic';
+
 export const revalidate = 0;
 
 let duneClient = null;
+
 let initialized = false;
 
-/*
- * ============================================================
- * DUNE CLIENT
- * ============================================================
- */
+// ============================================================
+// DUNE CLIENT
+// ============================================================
 
 async function getDuneClient() {
   if (!duneClient) {
-    duneClient = new DuneConsoleClient(
+    duneClient = new DuneClient(
       process.env.CONSOLE_URL
     );
   }
 
-  /*
-   * Your old dashboard logged into the Dune Console when
-   * the server started:
-   *
-   * await duneClient.login(process.env.CONSOLE_PASSWORD)
-   *
-   * Do the same here, but only once.
-   */
-
+  // Your old dashboard logged into the Dune Console when
+  // the server started. Do the same here, but only once.
   if (!initialized) {
-
     await duneClient.login(
       process.env.CONSOLE_PASSWORD
     );
@@ -40,40 +32,32 @@ async function getDuneClient() {
   return duneClient;
 }
 
-/*
- * ============================================================
- * GET /api/map
- * ============================================================
- */
+// ============================================================
+// GET /api/map
+// ============================================================
 
 export async function GET() {
   const requestStarted = Date.now();
 
   try {
-    /*
-     * --------------------------------------------------------
-     * GET DUNE CLIENT
-     * --------------------------------------------------------
-     */
+    // --------------------------------------------------------
+    // GET DUNE CLIENT
+    // --------------------------------------------------------
 
     const client = await getDuneClient();
 
-    /*
-     * --------------------------------------------------------
-     * REQUEST BASES
-     * --------------------------------------------------------
-     */
+    // --------------------------------------------------------
+    // REQUEST BASES
+    // --------------------------------------------------------
 
     const bases = await client.request(
       'GET',
       '/api/bases'
     );
 
-    /*
-     * --------------------------------------------------------
-     * FULL RAW RESPONSE
-     * --------------------------------------------------------
-     */
+    // --------------------------------------------------------
+    // FULL RAW RESPONSE
+    // --------------------------------------------------------
 
     console.dir(
       bases,
@@ -83,11 +67,12 @@ export async function GET() {
       }
     );
 
-    /*
-     * Also print JSON.
-     */
-
+    // Also print JSON.
     try {
+      console.log(
+        '[MAP API] Bases JSON:',
+        JSON.stringify(bases, null, 2)
+      );
     } catch (jsonError) {
       console.warn(
         '[MAP API] Could not stringify bases:',
@@ -95,27 +80,22 @@ export async function GET() {
       );
     }
 
-    /*
-     * --------------------------------------------------------
-     * DETECT BASE ROWS
-     * --------------------------------------------------------
-     *
-     * The API may return:
-     *
-     * {
-     *   rows: [...]
-     * }
-     *
-     * or:
-     *
-     * {
-     *   bases: [...]
-     * }
-     *
-     * or:
-     *
-     * [...]
-     */
+    // --------------------------------------------------------
+    // DETECT BASE ROWS
+    // --------------------------------------------------------
+    //
+    // The API may return:
+    //
+    // { rows: [...] }
+    //
+    // or:
+    //
+    // { bases: [...] }
+    //
+    // or:
+    //
+    // [...]
+    // --------------------------------------------------------
 
     let baseRows = [];
 
@@ -139,11 +119,9 @@ export async function GET() {
       baseRows = bases.data.rows;
     }
 
-    /*
-     * --------------------------------------------------------
-     * PRINT EVERY BASE
-     * --------------------------------------------------------
-     */
+    // --------------------------------------------------------
+    // PRINT EVERY BASE
+    // --------------------------------------------------------
 
     baseRows.forEach(
       (base, _index) => {
@@ -157,24 +135,18 @@ export async function GET() {
       }
     );
 
-    /*
-     * --------------------------------------------------------
-     * BUILD RESPONSE
-     * --------------------------------------------------------
-     */
+    // --------------------------------------------------------
+    // BUILD RESPONSE
+    // --------------------------------------------------------
 
     const responseData = {
       ok: true,
 
-      /*
-       * Keep the original API response.
-       */
+      // Keep the original API response.
       bases,
 
-      /*
-       * Also provide a normalized array so the React map
-       * can easily consume it.
-       */
+      // Also provide a normalized array so the React map
+      // can easily consume it.
       markers: baseRows.map(
         (base, index) => {
           const x =
@@ -224,9 +196,9 @@ export async function GET() {
         Date.now() - requestStarted,
     };
 
-    /*
-     * Print normalized markers.
-     */
+    // --------------------------------------------------------
+    // PRINT NORMALIZED MARKERS
+    // --------------------------------------------------------
 
     console.dir(
       responseData.markers,
@@ -248,13 +220,12 @@ export async function GET() {
       }
     );
   } catch (error) {
-    /*
-     * --------------------------------------------------------
-     * ERROR DEBUG
-     * --------------------------------------------------------
-     */
+    // --------------------------------------------------------
+    // ERROR DEBUG
+    // --------------------------------------------------------
 
     console.error('');
+
     console.error(
       '============================================================'
     );

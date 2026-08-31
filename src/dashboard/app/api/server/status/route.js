@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import dotenv from 'dotenv';
 
-import { duneClient } from '../../../duneClient';
+import { duneClient } from '../../dune/route';
 
 // Find the .env file in the project tree
 let currentDir = process.cwd();

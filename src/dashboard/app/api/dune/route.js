@@ -1,4 +1,4 @@
-const { DuneConsoleClient } = require('../../infrastructure/api/core/DuneConsoleClient');
+const { DuneConsoleClient } = require('../../../../infrastructure/api/core/DuneConsoleClient');
 
 if (!global.duneConsoleClientInstance) {
   global.duneConsoleClientInstance = new DuneConsoleClient(

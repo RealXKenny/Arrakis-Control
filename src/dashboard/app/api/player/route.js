@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import { duneClient } from '../../duneClient';
+import { duneClient } from '../dune/route';
 
 let currentDir = process.cwd();
 let envPath = null;

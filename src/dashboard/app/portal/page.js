@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import PortalTabs from '../components/PortalTabs';
+import PortalTabs from '../components/tabs/PortalTabs';
 
 export default function PlayerPortal() {
   const [player, setPlayer] = useState(null);

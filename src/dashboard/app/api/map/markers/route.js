@@ -1,25 +1,24 @@
-import { DuneConsoleClient } from '../../../../../infrastructure/api/core/DuneConsoleClient';
+import { DuneClient } from '../../dune/route';
 
 export const dynamic = 'force-dynamic';
+
 export const revalidate = 0;
 
 let duneClient = null;
+
 let initialized = false;
 
 async function getDuneClient() {
   if (!duneClient) {
-
-    duneClient = new DuneConsoleClient(
+    duneClient = new DuneClient(
       process.env.CONSOLE_URL
     );
   }
 
   if (!initialized) {
-
     await duneClient.login(
       process.env.CONSOLE_PASSWORD
     );
-
     initialized = true;
   }
 
@@ -98,8 +97,7 @@ export async function GET(request) {
 
     const url = new URL(request.url);
 
-    const mapName =
-      url.searchParams.get('map');
+    const mapName = url.searchParams.get('map');
 
     const endpoint = mapName
       ? `/api/map/markers?map=${encodeURIComponent(mapName)}`
@@ -111,7 +109,6 @@ export async function GET(request) {
     );
 
     const allMarkers = extractRows(data);
-
     const map = extractMapConfig(data);
 
     // ============================================================
@@ -141,17 +138,16 @@ export async function GET(request) {
 
       count: markers.length,
 
-      timestamp:
-        new Date().toISOString(),
+      timestamp: new Date().toISOString(),
 
-      durationMs:
-        Date.now() - started,
+      durationMs: Date.now() - started,
     };
 
     return Response.json(
       responseData,
       {
         status: 200,
+
         headers: {
           'Cache-Control':
             'no-store, no-cache, must-revalidate',
@@ -160,13 +156,10 @@ export async function GET(request) {
     );
   } catch (error) {
     console.error('');
-
     console.error(
       '============================================================'
     );
-
     console.error('[MAP API] ERROR');
-
     console.error(
       '============================================================'
     );
@@ -199,11 +192,9 @@ export async function GET(request) {
 
         count: 0,
 
-        timestamp:
-          new Date().toISOString(),
+        timestamp: new Date().toISOString(),
 
-        durationMs:
-          Date.now() - started,
+        durationMs: Date.now() - started,
       },
       {
         status: 500,
