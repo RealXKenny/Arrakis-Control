@@ -16,3 +16,9 @@
 - For reading large structural layouts over 1,500 lines, use the `search_grep` tool to isolate specific line blocks first. Do not read massive files blindly from top to bottom.
 - When generating string patch boundaries with `replace_in_file`, use clear, unique code anchors to prevent regex execution loops.
 - Keep all conversational filler or explanations minimal; prioritize immediate and accurate file modifications.
+
+## 4. File Path Integrity & Target Directory Safety
+- CRITICAL PATH CHECK: You must always use the explicit backslash or forward slash path schema for navigating folders. 
+- NEVER combine distinct directory blocks using a dot character (e.g., do NOT generate strings like `src/dashboard.src/app/`). It MUST be written as `src/dashboard/src/app/`.
+- DOUBLE CHECK TYPOS: Always cross-verify target filename strings with our active project directory tree before triggering tools. Double-check that you write `player/route.js` and never introduce typos like `plater/route.js`.
+- Target files inside the new Next.js structure must exist strictly under the unified app matrix folder: `src/dashboard/src/app/`.
