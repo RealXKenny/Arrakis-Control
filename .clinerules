@@ -22,3 +22,8 @@
 - NEVER combine distinct directory blocks using a dot character (e.g., do NOT generate strings like `src/dashboard.src/app/`). It MUST be written as `src/dashboard/src/app/`.
 - DOUBLE CHECK TYPOS: Always cross-verify target filename strings with our active project directory tree before triggering tools. Double-check that you write `player/route.js` and never introduce typos like `plater/route.js`.
 - Target files inside the new Next.js structure must exist strictly under the unified app matrix folder: `src/dashboard/src/app/`.
+
+## 5. File Path Integrity & Strict Scope Restriction
+- CRITICAL SCOPE BOUNDARY: You are ONLY allowed to read and write files within the `src/dashboard/src/` folder tree. Treat this folder as your root directory.
+- NEVER create files directly in `src/dashboard/` or merge folder boundaries with dot suffixes like `src/dashboard.src/app/`. 
+- Every automated tool invocation targeting file creation MUST start exactly with: `src/dashboard/src/app/`
