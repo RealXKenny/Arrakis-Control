@@ -1,29 +1,27 @@
 const path = require("node:path");
-const { fork } = require("node:child_process");
+
 const { ShardingManager } = require("discord.js");
+
 const { loadEnvironment } = require("./infrastructure/config/environment");
+
 const { createLogger } = require("./infrastructure/core/logger");
 
-const REQUIRED_ENVIRONMENT = [
-  "TOKEN",
-  "CONSOLE_URL",
-  "CONSOLE_PASSWORD",
-];
+const REQUIRED_ENVIRONMENT = ["TOKEN"];
 
 const environment = loadEnvironment(REQUIRED_ENVIRONMENT);
+
 const logger = createLogger("SHARD MANAGER", environment.logLevel);
 
 const manager = createShardManager(environment);
 
-let dashboard = null;
 let isStopping = false;
-let dashboardStarted = false;
 
 for (const signal of ["SIGINT", "SIGTERM", "SIGBREAK"]) {
   process.once(signal, () => stopAll(signal));
 }
 
 registerShardEvents(manager, logger);
+
 startShardManager(manager, logger);
 
 function createShardManager(config) {
@@ -46,16 +44,6 @@ function registerShardEvents(shardManager, shardLogger) {
       shardLogger.info(
         `Launched Discord shard ${shard.id}; shard is ready.`,
       );
-
-      /*
-       * Start the dashboard only after Discord is ready.
-       * This guarantees the dashboard startup log appears
-       * after the Discord Ready log.
-       */
-      if (!dashboardStarted) {
-        dashboardStarted = true;
-        dashboard = startDashboard();
-      }
     });
 
     shard.on("death", () => {
@@ -81,8 +69,6 @@ function stopAll(signal) {
 
   logger.info(`Received ${signal}; stopping Discord shards.`);
 
-  dashboard?.kill(signal);
-
   for (const shard of manager.shards.values()) {
     shard.kill();
   }
@@ -93,21 +79,6 @@ function stopAll(signal) {
 function startShardManager(shardManager, shardLogger) {
   shardManager.spawn().catch((error) => {
     shardLogger.error("Unable to spawn Discord shards.", error);
-
-    dashboard?.kill();
     process.exitCode = 1;
   });
-}
-
-function startDashboard() {
-  if (process.env.DASHBOARD_ENABLED !== "true") {
-    return null;
-  }
-
-  return fork(
-    path.join(__dirname, "dashboard", "server.js"),
-    {
-      stdio: "inherit",
-    },
-  );
 }
