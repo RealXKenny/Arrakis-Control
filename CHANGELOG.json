@@ -3,6 +3,49 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.1.7",
+      "date": "2026-08-31",
+      "summary": "Fixed production Discord OAuth authentication and improved dashboard session handling.",
+      "changes": [
+        {
+          "type": "fix",
+          "description": "Fixed the production Discord OAuth callback to use the configured DISCORD_REDIRECT_URI consistently during authorization-code exchange."
+        },
+        {
+          "type": "fix",
+          "description": "Added robust Discord OAuth callback handling for missing authorization codes, denied authorization, invalid token responses, and failed Discord user lookups."
+        },
+        {
+          "type": "fix",
+          "description": "Improved Discord OAuth token-exchange diagnostics so Discord error responses are logged instead of being reduced to an ambiguous HTTP 400 error."
+        },
+        {
+          "type": "fix",
+          "description": "Corrected Discord OAuth authorization URL construction and removed the production dependency on a localhost redirect URI fallback."
+        },
+        {
+          "type": "enhancement",
+          "description": "Added explicit validation for required Discord OAuth, guild, and session configuration before processing authenticated requests."
+        },
+        {
+          "type": "enhancement",
+          "description": "Improved Discord guild membership and owner-role detection during OAuth authentication."
+        },
+        {
+          "type": "security",
+          "description": "Changed dashboard authentication to use cryptographically random session identifiers stored in HTTP-only cookies instead of exposing Discord user identifiers as session credentials."
+        },
+        {
+          "type": "enhancement",
+          "description": "Added secure production cookie handling with HTTP-only, SameSite, Secure, path, and expiration settings for dashboard sessions."
+        },
+        {
+          "type": "maintenance",
+          "description": "Improved OAuth callback logging while avoiding sensitive OAuth tokens and authorization codes in diagnostic output."
+        }
+      ]
+    },
+    {
       "version": "1.1.6",
       "date": "2026-08-30",
       "summary": "Improved shard management, dashboard startup, and subsystem-specific console logging.",

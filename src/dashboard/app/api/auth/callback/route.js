@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
 
+// Load .env from the project/parent directory when available.
 let currentDir = process.cwd();
 let envPath = null;
 
@@ -23,6 +24,7 @@ if (envPath) {
   dotenv.config({ path: envPath });
 }
 
+// In-memory session store.
 if (!global.dashboardSessions) {
   global.dashboardSessions = new Map();
 }
@@ -31,23 +33,71 @@ const sessions = global.dashboardSessions;
 
 export async function GET(request) {
   try {
-    const { searchParams, origin } = new URL(request.url);
+    const { searchParams } = new URL(request.url);
+
     const code = searchParams.get('code');
+    const oauthError = searchParams.get('error');
+
+    // User denied/cancelled Discord authorization.
+    if (oauthError) {
+      console.error('Discord OAuth error:', oauthError);
+
+      return NextResponse.redirect(
+        new URL('/?error=discord_denied', request.url)
+      );
+    }
 
     if (!code) {
-      return NextResponse.redirect(new URL('/', request.url));
+      console.error('Discord callback missing authorization code');
+
+      return NextResponse.json(
+        { error: 'Missing Discord authorization code' },
+        { status: 400 }
+      );
     }
 
     const clientId =
       process.env.DISCORD_CLIENT_ID ?? process.env.CLIENT_ID;
-    const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+
+    const clientSecret =
+      process.env.DISCORD_CLIENT_SECRET ?? process.env.CLIENT_SECRET;
+
     const guildId = process.env.GUILD_ID;
     const ownerRoleId = process.env.OWNER_ROLE_ID;
-    const redirectUri = `${origin}/auth/callback`;
 
+    // IMPORTANT:
+    // Use the exact same redirect URI configured for Discord OAuth.
+    const redirectUri = process.env.DISCORD_REDIRECT_URI;
+
+    if (!clientId || !clientSecret || !redirectUri) {
+      console.error('Missing Discord OAuth configuration:', {
+        hasClientId: Boolean(clientId),
+        hasClientSecret: Boolean(clientSecret),
+        redirectUri,
+      });
+
+      return NextResponse.json(
+        {
+          error:
+            'Server misconfigured: Missing Discord OAuth credentials',
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!guildId) {
+      console.error('Missing GUILD_ID');
+
+      return NextResponse.json(
+        { error: 'Server misconfigured: Missing GUILD_ID' },
+        { status: 500 }
+      );
+    }
+
+    // Exchange Discord authorization code for an access token.
     const bodyParams = new URLSearchParams({
-      client_id: clientId || '',
-      client_secret: clientSecret || '',
+      client_id: clientId,
+      client_secret: clientSecret,
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUri,
@@ -57,53 +107,112 @@ export async function GET(request) {
       'https://discord.com/api/oauth2/token',
       {
         method: 'POST',
-        body: bodyParams,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
+        body: bodyParams,
+        cache: 'no-store',
       }
     );
 
     const responseText = await tokenResponse.text();
 
-    if (!tokenResponse.ok) {
+    let tokenData;
+
+    try {
+      tokenData = JSON.parse(responseText);
+    } catch {
+      console.error(
+        'Discord returned non-JSON token response:',
+        responseText
+      );
+
       return NextResponse.json(
-        { error: 'OAuth2 code validation failure.' },
+        { error: 'Invalid response from Discord token endpoint' },
+        { status: 502 }
+      );
+    }
+
+    if (!tokenResponse.ok) {
+      console.error('Discord OAuth token exchange failed:', {
+        status: tokenResponse.status,
+        response: tokenData,
+        redirectUri,
+      });
+
+      return NextResponse.json(
+        {
+          error: 'OAuth2 code validation failure.',
+          discord: tokenData,
+        },
         { status: 400 }
       );
     }
 
-    const tokenData = JSON.parse(responseText);
+    if (!tokenData.access_token) {
+      console.error('Discord token response contained no access token');
 
+      return NextResponse.json(
+        { error: 'Discord did not return an access token' },
+        { status: 400 }
+      );
+    }
+
+    // Get the authenticated Discord user.
     const userResponse = await fetch(
       'https://discord.com/api/users/@me',
       {
         headers: {
           Authorization: `Bearer ${tokenData.access_token}`,
         },
+        cache: 'no-store',
       }
     );
 
     const userData = await userResponse.json();
 
-    const memberUrl = `https://discord.com/api/guilds/${guildId}/members/@me`;
+    if (!userResponse.ok) {
+      console.error('Discord user lookup failed:', {
+        status: userResponse.status,
+        response: userData,
+      });
+
+      return NextResponse.json(
+        { error: 'Failed to retrieve Discord user' },
+        { status: 400 }
+      );
+    }
+
+    // Get the user's membership in your Discord guild.
+    const memberUrl =
+      `https://discord.com/api/guilds/${guildId}/members/@me`;
 
     const memberResponse = await fetch(memberUrl, {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
       },
+      cache: 'no-store',
     });
 
-    const memberData = memberResponse.ok
-      ? await memberResponse.json()
-      : {};
+    let memberData = {};
+
+    if (memberResponse.ok) {
+      memberData = await memberResponse.json();
+    } else {
+      console.error('Discord guild membership lookup failed:', {
+        status: memberResponse.status,
+        response: await memberResponse.text(),
+      });
+    }
 
     const rolesArray = Array.isArray(memberData.roles)
       ? memberData.roles
       : [];
 
-    const isOwner = rolesArray.includes(ownerRoleId);
+    const isOwner =
+      Boolean(ownerRoleId) && rolesArray.includes(ownerRoleId);
 
+    // Generate a cryptographically random application session ID.
     const sessionId = crypto.randomBytes(32).toString('hex');
 
     sessions.set(sessionId, {
@@ -114,19 +223,38 @@ export async function GET(request) {
       expiresAt: Date.now() + 86400000,
     });
 
+    // Store only the random session ID in the browser.
     const cookieStore = await cookies();
 
     cookieStore.set('dashboard_session', sessionId, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 86400,
       path: '/',
     });
 
+    console.log('Discord authentication successful:', {
+      userId: userData.id,
+      username: userData.username,
+      guildId,
+      roleCount: rolesArray.length,
+      isOwner,
+    });
+
+    // Owners go to dashboard; other authenticated members go to portal.
     return NextResponse.redirect(
-      new URL(isOwner ? '/dashboard' : '/portal', request.url)
+      new URL(
+        isOwner ? '/dashboard' : '/portal',
+        request.url
+      )
     );
   } catch (error) {
+    console.error(
+      'Internal Discord OAuth callback error:',
+      error
+    );
+
     return NextResponse.json(
       { error: 'Internal server token processing error' },
       { status: 500 }
