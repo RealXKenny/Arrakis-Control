@@ -1,36 +1,48 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
-let currentDir = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-// Dynamically search backwards to find the root workspace directory containing the .env file
+// Dashboard: src/dashboard/src
+// Workspace: Arrakis-Control
+const workspaceRoot = path.resolve(__dirname, '../../../');
+
+// Locate the workspace .env file.
+let currentDir = workspaceRoot;
 let envPath = null;
+
 while (currentDir !== path.parse(currentDir).root) {
   const checkPath = path.join(currentDir, '.env');
+
   if (fs.existsSync(checkPath)) {
     envPath = checkPath;
     break;
   }
+
   currentDir = path.dirname(currentDir);
 }
 
-// Load the dynamically discovered environment configuration file if found
+// Load the workspace environment variables.
 if (envPath) {
   dotenv.config({ path: envPath });
-} else {
-  console.warn("⚠️ Next.js dynamic search failed to locate a root project .env configuration file.");
 }
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  // Safely sets tracing boundaries relative to our dynamically discovered workspace root
-  outputFileTracingRoot: envPath ? path.dirname(envPath) : undefined,
-  
+
+  // Keep Next.js file tracing rooted at the workspace.
+  outputFileTracingRoot: workspaceRoot,
+
+  // Allow imports from outside the dashboard directory.
+  experimental: {
+    externalDir: true,
+  },
+
   async rewrites() {
     return [
       {
@@ -44,7 +56,7 @@ const nextConfig = {
       {
         source: '/auth/logout',
         destination: '/api/auth/logout',
-      }
+      },
     ];
   },
 };

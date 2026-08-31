@@ -1,11 +1,27 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import fs from 'node:fs';
+import path from 'node:path';
+import dotenv from 'dotenv';
+import { duneClient } from '../../duneClient';
 
-// Mocking session memory map lookup mirror matching legacy core memory array.
-// Note: In a fully scaled multi-instance layout, this maps via shared Redis/Database stores.
-const sessions = new Map(); 
+let currentDir = process.cwd();
+let envPath = null;
 
-export async function GET(_request) {
+while (currentDir && currentDir !== path.parse(currentDir).root) {
+  const checkPath = path.join(currentDir, '.env');
+  if (fs.existsSync(checkPath)) {
+    envPath = checkPath;
+    break;
+  }
+  currentDir = path.dirname(currentDir);
+}
+
+if (envPath) {
+  dotenv.config({ path: envPath });
+}
+
+export async function GET(request) {
   try {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('dashboard_session')?.value;
@@ -14,26 +30,25 @@ export async function GET(_request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Pulling the memory session context block matching our original authentication mapping
-    const session = sessions.get(sessionId);
+    const session = global.dashboardSessions?.get(sessionId);
     if (!session || session.expiresAt < Date.now()) {
       return NextResponse.json({ error: 'Session expired or invalid' }, { status: 401 });
     }
 
+    // Initialize the target actor configuration exactly matching our legacy engine architecture
     const actor = {
       guildId: session.guildId,
       channelId: "dashboard",
       userId: session.user.id,
       username: session.user.username,
-      roleIds: [
-        ...(session.roleIds || []),
-        process.env.VERIFIED_MEMBER_ROLE_ID,
-      ].filter(Boolean),
+      roleIds: [...(session.roleIds || []), process.env.VERIFIED_MEMBER_ROLE_ID].filter(Boolean),
       interactionId: `dashboard-${Date.now()}`,
       commandName: "portal",
     };
 
     const endpoint = `${process.env.CONSOLE_URL}/api/integrations/discord/players/me`;
+    
+    // Resolve Discord profile link data via our target Adapter token handshake
     const resAdapter = await fetch(endpoint, {
       method: "POST",
       body: JSON.stringify({ actor }),
@@ -45,7 +60,7 @@ export async function GET(_request) {
     });
 
     if (!resAdapter.ok) {
-      throw new Error(`Adapter HTTP Error: ${resAdapter.status}`);
+      throw new Error(`Discord Adapter request failed with status: ${resAdapter.status}`);
     }
 
     const data = await resAdapter.json();
@@ -54,32 +69,25 @@ export async function GET(_request) {
     }
 
     const playerId = data.pawnId ?? data.controllerId;
-    const endpoints = ["currency", "solaris-coin", "factions", "intel", "specs", "progression", "vitals"];
+    const coreEndpoints = ["currency", "solaris-coin", "factions", "intel", "specs", "progression", "vitals"];
     
-    const details = await Promise.all(endpoints.map(async (name) => {
+    // Concurrently fetch player traits from our global duneClient session singleton instance
+    const details = await Promise.all(coreEndpoints.map(async (name) => {
       try {
-        // Fetching individual telemetry variables directly from Dune Console Client
-        const resConsole = await fetch(`${process.env.CONSOLE_URL}/api/players/${encodeURIComponent(playerId)}/${name}`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${process.env.ADAPTER_TOKEN}` // Update with duneClient auth scheme if needed
-          }
-        });
-        return [name, resConsole.ok ? await resConsole.json() : null];
+        const resData = await duneClient.request("GET", `/api/players/${encodeURIComponent(playerId)}/${name}`);
+        return [name, resData];
       } catch (error) {
         return [name, null];
       }
     }));
 
-    const finalResult = { 
+    return NextResponse.json({ 
       ...data, 
       details: Object.fromEntries(details) 
-    };
-
-    return NextResponse.json(finalResult, { status: 200 });
+    }, { status: 200 });
 
   } catch (error) {
-    console.error("Unable to load player profile from the Discord Adapter:", error);
+    console.error("Error inside player route telemetry processor:", error);
     return NextResponse.json({
       ok: false,
       linked: false,
