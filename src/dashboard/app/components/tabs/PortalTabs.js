@@ -16,6 +16,10 @@ export default function PortalTabs() {
       name: 'Live Map',
       href: '/map',
     },
+    {
+      name: 'Admin Control Center',
+      href: '/dashboard',
+    },
   ];
 
   return (
