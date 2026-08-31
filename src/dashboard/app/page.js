@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function LandingPage() {
   const [activePlayers, setActivePlayers] = useState(null);
@@ -14,32 +14,22 @@ export default function LandingPage() {
       });
 
       if (!res.ok) {
-        throw new Error(
-          `Server telemetry request failed: ${res.status}`
-        );
+        throw new Error(`Server telemetry request failed: ${res.status}`);
       }
 
       const data = await res.json();
 
       setActivePlayers(
-        data.activePlayers !== null
-          ? Number(data.activePlayers)
-          : null
+        data.activePlayers !== null ? Number(data.activePlayers) : null
       );
 
       setTotalPlayers(
-        data.totalPlayers !== null
-          ? Number(data.totalPlayers)
-          : null
+        data.totalPlayers !== null ? Number(data.totalPlayers) : null
       );
 
       setServerStatusError(false);
     } catch (err) {
-      console.error(
-        'Failed to fetch server telemetry:',
-        err
-      );
-
+      console.error('Failed to fetch server telemetry:', err);
       setServerStatusError(true);
       setActivePlayers(null);
       setTotalPlayers(null);
@@ -49,10 +39,7 @@ export default function LandingPage() {
   useEffect(() => {
     loadTelemetry();
 
-    const interval = setInterval(
-      loadTelemetry,
-      15000
-    );
+    const interval = setInterval(loadTelemetry, 15000);
 
     return () => clearInterval(interval);
   }, []);
@@ -78,7 +65,6 @@ export default function LandingPage() {
         overflow: 'hidden',
       }}
     >
-      {/* Ambient glow */}
       <div
         style={{
           position: 'absolute',
@@ -93,7 +79,6 @@ export default function LandingPage() {
         }}
       />
 
-      {/* Horizon */}
       <div
         style={{
           position: 'absolute',
@@ -115,7 +100,6 @@ export default function LandingPage() {
           maxWidth: '1000px',
         }}
       >
-        {/* Header */}
         <header
           style={{
             textAlign: 'center',
@@ -129,11 +113,9 @@ export default function LandingPage() {
               gap: '9px',
               padding: '7px 14px',
               marginBottom: '18px',
-              border:
-                '1px solid rgba(205,162,107,0.22)',
+              border: '1px solid rgba(205,162,107,0.22)',
               borderRadius: '999px',
-              backgroundColor:
-                'rgba(29,18,12,0.65)',
+              backgroundColor: 'rgba(29,18,12,0.65)',
               backdropFilter: 'blur(10px)',
               color: '#a08568',
               fontSize: '0.7rem',
@@ -148,11 +130,9 @@ export default function LandingPage() {
                 height: '7px',
                 borderRadius: '50%',
                 backgroundColor: '#52fa7c',
-                boxShadow:
-                  '0 0 12px rgba(82,250,124,0.8)',
+                boxShadow: '0 0 12px rgba(82,250,124,0.8)',
               }}
             />
-
             Arrakis Control
           </div>
 
@@ -162,13 +142,11 @@ export default function LandingPage() {
               color: '#ffe2a9',
               fontFamily:
                 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-              fontSize:
-                'clamp(2.5rem, 7vw, 4.6rem)',
+              fontSize: 'clamp(2.5rem, 7vw, 4.6rem)',
               fontWeight: '750',
               lineHeight: 1,
               letterSpacing: '-3px',
-              textShadow:
-                '0 5px 35px rgba(0,0,0,0.55)',
+              textShadow: '0 5px 35px rgba(0,0,0,0.55)',
             }}
           >
             Dune: Awakening
@@ -178,8 +156,7 @@ export default function LandingPage() {
             style={{
               marginTop: '12px',
               color: '#cda26b',
-              fontSize:
-                'clamp(0.7rem, 2vw, 0.9rem)',
+              fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
               fontWeight: '600',
               letterSpacing: '5px',
               textTransform: 'uppercase',
@@ -197,13 +174,11 @@ export default function LandingPage() {
               lineHeight: '1.8',
             }}
           >
-            Secure access gateway for character
-            telemetry, Discord infrastructure, and live
-            server intelligence across Arrakis.
+            Secure access gateway for character telemetry, Discord
+            infrastructure, and live server intelligence across Arrakis.
           </p>
         </header>
 
-        {/* Main Panel */}
         <section
           style={{
             position: 'relative',
@@ -211,8 +186,7 @@ export default function LandingPage() {
             gridTemplateColumns: '1fr 1fr',
             background:
               'linear-gradient(135deg, rgba(29,18,12,0.94), rgba(14,8,5,0.97))',
-            border:
-              '1px solid rgba(205,162,107,0.18)',
+            border: '1px solid rgba(205,162,107,0.18)',
             borderRadius: '18px',
             overflow: 'hidden',
             boxShadow:
@@ -220,7 +194,6 @@ export default function LandingPage() {
             backdropFilter: 'blur(16px)',
           }}
         >
-          {/* Player Statistics */}
           <div
             style={{
               padding: '55px 45px',
@@ -229,21 +202,17 @@ export default function LandingPage() {
               justifyContent: 'center',
               alignItems: 'center',
               textAlign: 'center',
-              borderRight:
-                '1px solid rgba(205,162,107,0.10)',
+              borderRight: '1px solid rgba(205,162,107,0.10)',
               background:
                 'radial-gradient(circle at center, rgba(205,162,107,0.055), transparent 65%)',
             }}
           >
-            {/* Server status */}
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '9px',
-                color: serverOnline
-                  ? '#9d8468'
-                  : '#b56d61',
+                color: serverOnline ? '#9d8468' : '#b56d61',
                 fontSize: '0.68rem',
                 fontWeight: '800',
                 textTransform: 'uppercase',
@@ -255,32 +224,24 @@ export default function LandingPage() {
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  backgroundColor: serverOnline
-                    ? '#52fa7c'
-                    : '#ff4a4a',
+                  backgroundColor: serverOnline ? '#52fa7c' : '#ff4a4a',
                   boxShadow: serverOnline
                     ? '0 0 14px rgba(82,250,124,0.85)'
                     : '0 0 14px rgba(255,74,74,0.75)',
                 }}
               />
-
-              {serverOnline
-                ? 'Server Systems Online'
-                : 'Status Unavailable'}
+              {serverOnline ? 'Server Systems Online' : 'Status Unavailable'}
             </div>
 
-            {/* Active Players */}
             <div
               style={{
                 marginTop: '22px',
                 color: '#ffe2a9',
-                fontSize:
-                  'clamp(4rem, 10vw, 6.5rem)',
+                fontSize: 'clamp(4rem, 10vw, 6.5rem)',
                 lineHeight: 0.95,
                 fontWeight: '800',
                 letterSpacing: '-5px',
-                textShadow:
-                  '0 0 45px rgba(205,162,107,0.12)',
+                textShadow: '0 0 45px rgba(205,162,107,0.12)',
               }}
             >
               {serverStatusError
@@ -303,7 +264,6 @@ export default function LandingPage() {
               Active Players
             </div>
 
-            {/* Divider */}
             <div
               style={{
                 width: '100%',
@@ -315,7 +275,6 @@ export default function LandingPage() {
               }}
             />
 
-            {/* Total Players */}
             <div
               style={{
                 color: '#f3d39b',
@@ -362,12 +321,10 @@ export default function LandingPage() {
                 fontSize: '0.62rem',
               }}
             >
-              Live telemetry • Refreshes every 15
-              seconds
+              Live telemetry • Refreshes every 15 seconds
             </div>
           </div>
 
-          {/* Authentication */}
           <div
             style={{
               padding: '55px 45px',
@@ -386,14 +343,12 @@ export default function LandingPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '20px',
-                border:
-                  '1px solid #49301c',
+                border: '1px solid #49301c',
                 borderRadius: '12px',
                 backgroundColor: '#160d08',
                 color: '#cda26b',
                 fontSize: '1.15rem',
-                boxShadow:
-                  '0 8px 25px rgba(0,0,0,0.25)',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.25)',
               }}
             >
               ◈
@@ -433,9 +388,8 @@ export default function LandingPage() {
                 lineHeight: '1.75',
               }}
             >
-              Authenticate with Discord to access your
-              character telemetry, player portal, and
-              authorized Arrakis systems.
+              Authenticate with Discord to access your character telemetry,
+              player portal, and authorized Arrakis systems.
             </p>
 
             <a
@@ -456,36 +410,25 @@ export default function LandingPage() {
                 textDecoration: 'none',
                 fontSize: '0.88rem',
                 fontWeight: '800',
-                boxShadow:
-                  '0 10px 30px rgba(0,0,0,0.35)',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
                 transition:
                   'transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease',
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.transform =
-                  'translateY(-2px)';
-                e.currentTarget.style.filter =
-                  'brightness(1.08)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.filter = 'brightness(1.08)';
                 e.currentTarget.style.boxShadow =
                   '0 14px 35px rgba(0,0,0,0.45)';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.transform =
-                  'translateY(0)';
-                e.currentTarget.style.filter =
-                  'brightness(1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.filter = 'brightness(1)';
                 e.currentTarget.style.boxShadow =
                   '0 10px 30px rgba(0,0,0,0.35)';
               }}
             >
               <span>Continue with Discord</span>
-              <span
-                style={{
-                  fontSize: '1.1rem',
-                }}
-              >
-                →
-              </span>
+              <span style={{ fontSize: '1.1rem' }}>→</span>
             </a>
 
             <div
@@ -499,7 +442,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Bottom accent */}
           <div
             style={{
               position: 'absolute',
@@ -513,7 +455,6 @@ export default function LandingPage() {
           />
         </section>
 
-        {/* Footer */}
         <footer
           style={{
             marginTop: '25px',
@@ -548,8 +489,7 @@ export default function LandingPage() {
 
           section > div:first-child {
             border-right: none !important;
-            border-bottom: 1px solid
-              rgba(205, 162, 107, 0.1);
+            border-bottom: 1px solid rgba(205, 162, 107, 0.1);
           }
         }
 
