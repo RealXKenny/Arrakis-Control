@@ -13,7 +13,7 @@ const DEFAULT_ZOOM = 0.1;
 const MAX_ZOOM = 2;
 const REFRESH_INTERVAL = 30_000;
 
-const IMAGE_SRC = '/images/maps/hagga-basin.png';
+const IMAGE_SRC = '/maps/hagga-basin.png';
 
 const styles = {
   terminal: {
@@ -1908,7 +1908,7 @@ export default function HaggaBasinMap() {
                           }}
                         >
                           <img
-                            src="/map-icons/Base.webp"
+                            src="/maps/Base.webp"
                             alt={name}
                             draggable={
                               false

@@ -14,8 +14,6 @@ let initialized = false;
 
 async function getDuneClient() {
   if (!duneClient) {
-    console.log('[MAP API] Creating DuneConsoleClient...');
-
     duneClient = new DuneConsoleClient(
       process.env.CONSOLE_URL
     );
@@ -31,17 +29,12 @@ async function getDuneClient() {
    */
 
   if (!initialized) {
-    console.log('[MAP API] Logging into Dune Console...');
 
     await duneClient.login(
       process.env.CONSOLE_PASSWORD
     );
 
     initialized = true;
-
-    console.log(
-      '[MAP API] Dune Console login successful.'
-    );
   }
 
   return duneClient;
@@ -56,38 +49,7 @@ async function getDuneClient() {
 export async function GET() {
   const requestStarted = Date.now();
 
-  console.log('');
-  console.log(
-    '============================================================'
-  );
-  console.log(
-    '[MAP API] GET /api/map'
-  );
-  console.log(
-    '============================================================'
-  );
-
   try {
-    /*
-     * --------------------------------------------------------
-     * ENVIRONMENT DEBUG
-     * --------------------------------------------------------
-     */
-
-    console.log(
-      '[MAP API] CONSOLE_URL:',
-      process.env.CONSOLE_URL
-        ? process.env.CONSOLE_URL
-        : 'NOT SET'
-    );
-
-    console.log(
-      '[MAP API] CONSOLE_PASSWORD:',
-      process.env.CONSOLE_PASSWORD
-        ? 'SET'
-        : 'NOT SET'
-    );
-
     /*
      * --------------------------------------------------------
      * GET DUNE CLIENT
@@ -96,24 +58,11 @@ export async function GET() {
 
     const client = await getDuneClient();
 
-    console.log(
-      '[MAP API] Dune client ready.'
-    );
-
     /*
      * --------------------------------------------------------
      * REQUEST BASES
      * --------------------------------------------------------
      */
-
-    console.log('');
-    console.log(
-      '[MAP API] Calling Dune endpoint:'
-    );
-
-    console.log(
-      '[MAP API] GET /api/bases'
-    );
 
     const bases = await client.request(
       'GET',
@@ -126,19 +75,6 @@ export async function GET() {
      * --------------------------------------------------------
      */
 
-    console.log('');
-    console.log(
-      '============================================================'
-    );
-
-    console.log(
-      '[MAP API] FULL /api/bases RESPONSE'
-    );
-
-    console.log(
-      '============================================================'
-    );
-
     console.dir(
       bases,
       {
@@ -147,26 +83,11 @@ export async function GET() {
       }
     );
 
-    console.log(
-      '============================================================'
-    );
-
     /*
      * Also print JSON.
      */
 
     try {
-      console.log(
-        '[MAP API] /api/bases JSON:'
-      );
-
-      console.log(
-        JSON.stringify(
-          bases,
-          null,
-          2
-        )
-      );
     } catch (jsonError) {
       console.warn(
         '[MAP API] Could not stringify bases:',
@@ -218,12 +139,6 @@ export async function GET() {
       baseRows = bases.data.rows;
     }
 
-    console.log('');
-    console.log(
-      '[MAP API] BASE ROW COUNT:',
-      baseRows.length
-    );
-
     /*
      * --------------------------------------------------------
      * PRINT EVERY BASE
@@ -231,83 +146,13 @@ export async function GET() {
      */
 
     baseRows.forEach(
-      (base, index) => {
-        console.log('');
-        console.log(
-          '------------------------------------------------------------'
-        );
-
-        console.log(
-          `[MAP API] BASE #${index + 1}`
-        );
-
-        console.log(
-          '------------------------------------------------------------'
-        );
-
+      (base, _index) => {
         console.dir(
           base,
           {
             depth: null,
             colors: true,
           }
-        );
-
-        console.log(
-          '[MAP API] Base keys:',
-          Object.keys(base || {})
-        );
-
-        /*
-         * Try every coordinate field we know about.
-         */
-
-        const x =
-          base?.x ??
-          base?.pos_x ??
-          base?.longitude ??
-          base?.position?.x ??
-          base?.coordinates?.x ??
-          null;
-
-        const y =
-          base?.y ??
-          base?.pos_y ??
-          base?.latitude ??
-          base?.position?.y ??
-          base?.coordinates?.y ??
-          null;
-
-        console.log(
-          '[MAP API] Detected X:',
-          x
-        );
-
-        console.log(
-          '[MAP API] Detected Y:',
-          y
-        );
-
-        console.log(
-          '[MAP API] Base ID:',
-          base?.id ??
-          base?.base_id ??
-          'UNKNOWN'
-        );
-
-        console.log(
-          '[MAP API] Base name:',
-          base?.name ??
-          base?.base_name ??
-          'UNKNOWN'
-        );
-
-        console.log(
-          '[MAP API] Owner:',
-          base?.owner_name ??
-          base?.character_name ??
-          base?.owner_id ??
-          'UNKNOWN'
         );
       }
     );
@@ -380,41 +225,6 @@ export async function GET() {
     };
 
     /*
-     * --------------------------------------------------------
-     * FINAL DEBUG
-     * --------------------------------------------------------
-     */
-
-    console.log('');
-    console.log(
-      '============================================================'
-    );
-
-    console.log(
-      '[MAP API] FINAL RESPONSE'
-    );
-
-    console.log(
-      '[MAP API] Bases:',
-      baseRows.length
-    );
-
-    console.log(
-      '[MAP API] Markers:',
-      responseData.markers.length
-    );
-
-    console.log(
-      '[MAP API] Duration:',
-      responseData.durationMs,
-      'ms'
-    );
-
-    console.log(
-      '============================================================'
-    );
-
-    /*
      * Print normalized markers.
      */
 
@@ -424,10 +234,6 @@ export async function GET() {
         depth: null,
         colors: true,
       }
-    );
-
-    console.log(
-      '============================================================'
     );
 
     return Response.json(

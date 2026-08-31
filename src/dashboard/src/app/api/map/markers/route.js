@@ -125,11 +125,6 @@ export async function GET(request) {
           .toLowerCase() === 'base'
     );
 
-    console.log(
-      '[MAP API] Base markers:',
-      markers.length
-    );
-
     if (!map) {
       console.warn(
         '[MAP API] WARNING: No map configuration returned.'
