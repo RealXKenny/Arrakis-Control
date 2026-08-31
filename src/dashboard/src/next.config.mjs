@@ -1,19 +1,36 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let currentDir = path.dirname(__filename);
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+// Dynamically search backwards to find the root workspace directory containing the .env file
+let envPath = null;
+while (currentDir !== path.parse(currentDir).root) {
+  const checkPath = path.join(currentDir, '.env');
+  if (fs.existsSync(checkPath)) {
+    envPath = checkPath;
+    break;
+  }
+  currentDir = path.dirname(currentDir);
+}
+
+// Load the dynamically discovered environment configuration file if found
+if (envPath) {
+  dotenv.config({ path: envPath });
+} else {
+  console.warn("⚠️ Next.js dynamic search failed to locate a root project .env configuration file.");
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  outputFileTracingRoot: path.join(__dirname, '../../'),
+  // Safely sets tracing boundaries relative to our dynamically discovered workspace root
+  outputFileTracingRoot: envPath ? path.dirname(envPath) : undefined,
   
-  // Maps legacy routing calls directly into your Next.js directory tree
   async rewrites() {
     return [
       {

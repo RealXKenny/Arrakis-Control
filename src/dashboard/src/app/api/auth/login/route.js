@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   try {
-    const clientId = "1543343276927484037";
-    const port = Number(process.env.DASHBOARD_PORT ?? 3000);
+    // Dynamically pull the Client ID from the loaded .env configuration variable keys
+    const clientId = process.env.DISCORD_CLIENT_ID ?? process.env.CLIENT_ID;
+    const port = Number(process.env.DASHBOARD_PORT ?? 8787);
     const redirectUri = process.env.DISCORD_REDIRECT_URI ?? `http://localhost:${port}/auth/callback`;
 
     if (!clientId) {
