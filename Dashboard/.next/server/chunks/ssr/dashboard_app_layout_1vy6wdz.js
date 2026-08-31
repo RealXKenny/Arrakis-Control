@@ -1,3 +1,0 @@
-module.exports=[33257,a=>{"use strict";var b=a.i(31696);a.s(["default",0,function({children:a}){return(0,b.jsxs)("html",{lang:"en",children:[(0,b.jsxs)("head",{children:[(0,b.jsx)("meta",{charSet:"utf-8"}),(0,b.jsx)("meta",{name:"viewport",content:"width=device-width, initial-scale=1"}),(0,b.jsx)("meta",{name:"referrer",content:"same-origin"}),(0,b.jsx)("meta",{httpEquiv:"X-Content-Type-Options",content:"nosniff"})]}),(0,b.jsx)("body",{style:{backgroundColor:"#120a06",color:"#f3d39b",margin:0,padding:0},children:a})]})},"metadata",0,{title:"Arrakis Control Dashboard",description:"Modular Discord bot interface for the Dune: Awakening Console"}])},64290,function(a){a.n(a.i(33257))}];
-
-//# sourceMappingURL=dashboard_app_layout_1vy6wdz.js.map

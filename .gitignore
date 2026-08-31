@@ -1,11 +1,22 @@
+# Dependencies
 node_modules/
+
+# Environment variables
 .env
 .env.*
 !.env.example
+
+# npm logs
 npm-debug.log*
-package-lock.json
-package-lock.json.*
-/src/dashboard/.next
-/src/dashboard/node_modules
-/src/dashboard/package-lock.json
-/Bot/dist
+
+# Lock files
+package-lock.json*
+
+# Next.js
+/Dashboard/.next/
+
+# Bot build output
+/Bot/dist/
+
+# Dashboard build output
+/Dashboard/.next/

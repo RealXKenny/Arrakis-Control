@@ -1,5 +1,5 @@
-import '../site.css';
-import '../styles.css';
+import '../css/site.css';
+import '../css/styles.css';
 
 export const metadata = {
   title: 'Arrakis Control Dashboard',
