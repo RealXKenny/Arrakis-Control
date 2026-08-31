@@ -1,27 +1,46 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+push:
+branches: [main]
+pull_request:
+branches: [main]
 
 permissions:
-  contents: read
+contents: read
 
 jobs:
-  verify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24
-      - name: Install dependencies
-        run: npm install
-      - name: Validate bot version
-        run: npm run version:check
-      - name: Check JavaScript syntax
-        run: npm run lint
+verify:
+runs-on: ubuntu-latest
+  steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: npm
+        cache-dependency-path: |
+          Bot/package-lock.json
+          Dashboard/package-lock.json
+
+    - name: Install Bot dependencies
+      working-directory: Bot
+      run: npm ci
+
+    - name: Install Dashboard dependencies
+      working-directory: Dashboard
+      run: npm ci
+
+    - name: Validate Bot version
+      working-directory: Bot
+      run: npm run version:check
+
+    - name: Check Bot JavaScript syntax
+      working-directory: Bot
+      run: npm run lint
+
+    - name: Check Dashboard
+      working-directory: Dashboard
+      run: npm run lint
