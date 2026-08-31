@@ -42,8 +42,11 @@ export async function GET(request) {
     if (oauthError) {
       console.error('Discord OAuth error:', oauthError);
 
+      const appUrl =
+        process.env.APP_URL || new URL(request.url).origin;
+
       return NextResponse.redirect(
-        new URL('/?error=discord_denied', request.url)
+        new URL('/?error=discord_denied', appUrl)
       );
     }
 
@@ -65,9 +68,12 @@ export async function GET(request) {
     const guildId = process.env.GUILD_ID;
     const ownerRoleId = process.env.OWNER_ROLE_ID;
 
-    // IMPORTANT:
     // Use the exact same redirect URI configured for Discord OAuth.
     const redirectUri = process.env.DISCORD_REDIRECT_URI;
+
+    // Public application URL used for redirects after authentication.
+    const appUrl =
+      process.env.APP_URL || new URL(request.url).origin;
 
     if (!clientId || !clientSecret || !redirectUri) {
       console.error('Missing Discord OAuth configuration:', {
@@ -128,7 +134,10 @@ export async function GET(request) {
       );
 
       return NextResponse.json(
-        { error: 'Invalid response from Discord token endpoint' },
+        {
+          error:
+            'Invalid response from Discord token endpoint',
+        },
         { status: 502 }
       );
     }
@@ -150,10 +159,15 @@ export async function GET(request) {
     }
 
     if (!tokenData.access_token) {
-      console.error('Discord token response contained no access token');
+      console.error(
+        'Discord token response contained no access token'
+      );
 
       return NextResponse.json(
-        { error: 'Discord did not return an access token' },
+        {
+          error:
+            'Discord did not return an access token',
+        },
         { status: 400 }
       );
     }
@@ -210,7 +224,8 @@ export async function GET(request) {
       : [];
 
     const isOwner =
-      Boolean(ownerRoleId) && rolesArray.includes(ownerRoleId);
+      Boolean(ownerRoleId) &&
+      rolesArray.includes(ownerRoleId);
 
     // Generate a cryptographically random application session ID.
     const sessionId = crypto.randomBytes(32).toString('hex');
@@ -246,7 +261,7 @@ export async function GET(request) {
     return NextResponse.redirect(
       new URL(
         isOwner ? '/dashboard' : '/portal',
-        request.url
+        appUrl
       )
     );
   } catch (error) {
@@ -256,7 +271,10 @@ export async function GET(request) {
     );
 
     return NextResponse.json(
-      { error: 'Internal server token processing error' },
+      {
+        error:
+          'Internal server token processing error',
+      },
       { status: 500 }
     );
   }

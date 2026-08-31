@@ -3,6 +3,45 @@
   "formatVersion": 1,
   "releases": [
     {
+      "version": "1.1.8",
+      "date": "2026-08-31",
+      "summary": "Fixed production application redirects and completed Discord OAuth session flow improvements.",
+      "changes": [
+        {
+          "type": "fix",
+          "description": "Fixed post-login redirects so authenticated users are sent to the production application domain instead of falling back to localhost:3000."
+        },
+        {
+          "type": "fix",
+          "description": "Added APP_URL-based application redirects for authenticated dashboard and portal destinations in production deployments."
+        },
+        {
+          "type": "fix",
+          "description": "Updated the Discord OAuth login route to use the configured DISCORD_REDIRECT_URI consistently when constructing the Discord authorization URL."
+        },
+        {
+          "type": "fix",
+          "description": "Updated the OAuth callback to use the configured DISCORD_REDIRECT_URI consistently during authorization-code exchange."
+        },
+        {
+          "type": "fix",
+          "description": "Updated logout handling to redirect users to the configured production APP_URL instead of deriving the destination from the incoming request host."
+        },
+        {
+          "type": "security",
+          "description": "Applied secure production cookie handling consistently across authentication and logout, including HTTP-only, SameSite, Secure, expiration, and path settings."
+        },
+        {
+          "type": "enhancement",
+          "description": "Added explicit validation and diagnostics for missing DISCORD_REDIRECT_URI and related OAuth configuration."
+        },
+        {
+          "type": "maintenance",
+          "description": "Removed unnecessary localhost production fallback behavior from the Discord authentication flow while retaining localhost support as a development fallback where appropriate."
+        }
+      ]
+    },
+    {
       "version": "1.1.7",
       "date": "2026-08-31",
       "summary": "Fixed production Discord OAuth authentication and improved dashboard session handling.",
