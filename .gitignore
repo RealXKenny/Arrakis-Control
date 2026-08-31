@@ -5,4 +5,7 @@ node_modules/
 npm-debug.log*
 package-lock.json
 package-lock.json.*
+/src/dashboard/node_modules
+/src/dashboard/package-lock.json
+/src/dashboard/package-lock.json.*
 /src/dashboard/.next
