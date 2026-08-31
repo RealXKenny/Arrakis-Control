@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export function middleware(request) {
+export function proxy(request) {
   const pathname = request.nextUrl.pathname;
   const sessionToken = request.cookies.get('dashboard_session')?.value;
 
