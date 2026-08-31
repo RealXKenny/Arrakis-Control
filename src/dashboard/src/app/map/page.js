@@ -13,19 +13,22 @@ const DEFAULT_ZOOM = 0.1;
 const MAX_ZOOM = 2;
 const REFRESH_INTERVAL = 30_000;
 
+const IMAGE_SRC = '/images/maps/hagga-basin.png';
+
 const styles = {
   terminal: {
     position: 'fixed',
-    background: '#0c0c0c',
-    border: '1px solid #3a3a3a',
+    background: '#17110b',
+    border: '1px solid #6f4e2d',
     boxShadow:
-      '0 25px 70px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.025)',
-    color: '#d4d4d4',
+      '0 25px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(218,178,116,.08)',
+    color: '#e5d2b3',
     fontFamily:
       '"Cascadia Code", "Cascadia Mono", Consolas, "Courier New", monospace',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
+    borderRadius: 8,
   },
 
   titleBar: {
@@ -33,15 +36,16 @@ const styles = {
     minHeight: 38,
     display: 'flex',
     alignItems: 'center',
-    background: '#181818',
-    borderBottom: '1px solid #303030',
+    background:
+      'linear-gradient(180deg, #332416 0%, #24180f 100%)',
+    borderBottom: '1px solid #6b4929',
     userSelect: 'none',
   },
 
   titleIcon: {
-    width: 40,
+    width: 42,
     textAlign: 'center',
-    color: '#4ec9b0',
+    color: '#d8a75f',
     fontSize: 15,
     fontWeight: 'bold',
   },
@@ -50,18 +54,18 @@ const styles = {
     flex: 1,
     minWidth: 0,
     fontSize: 12,
-    color: '#d4d4d4',
+    color: '#ead8ba',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
 
   windowButton: {
-    width: 46,
+    width: 44,
     height: '100%',
     border: 0,
     background: 'transparent',
-    color: '#aaa',
+    color: '#bda987',
     cursor: 'pointer',
     fontFamily: 'inherit',
     fontSize: 15,
@@ -69,37 +73,42 @@ const styles = {
   },
 
   toolbar: {
-    height: 34,
-    minHeight: 34,
+    height: 36,
+    minHeight: 36,
     display: 'flex',
     alignItems: 'center',
     gap: 6,
-    padding: '0 8px',
-    background: '#101010',
-    borderBottom: '1px solid #292929',
+    padding: '0 9px',
+    background: '#1d140c',
+    borderBottom: '1px solid #4b331e',
+    overflow: 'hidden',
   },
 
   terminalButton: {
-    height: 24,
-    background: '#111',
-    border: '1px solid #333',
-    color: '#c8c8c8',
+    height: 25,
+    background: '#24180e',
+    border: '1px solid #624324',
+    color: '#d9c19c',
     padding: '0 9px',
     cursor: 'pointer',
     fontFamily: 'inherit',
     fontSize: 11,
+    borderRadius: 3,
+    flexShrink: 0,
   },
 
   statusBar: {
-    height: 25,
-    minHeight: 25,
+    height: 26,
+    minHeight: 26,
     display: 'flex',
     alignItems: 'center',
     padding: '0 10px',
-    background: '#181818',
-    borderTop: '1px solid #303030',
-    color: '#777',
+    background: '#21160d',
+    borderTop: '1px solid #4b331e',
+    color: '#806d55',
     fontSize: 10,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   },
 };
 
@@ -184,29 +193,7 @@ function getMapConfig(data) {
   return null;
 }
 
-function getMapDimensions(mapConfig, imageSize) {
-  const imageWidth = Number(imageSize?.width);
-  const imageHeight = Number(imageSize?.height);
-
-  if (
-    Number.isFinite(imageWidth) &&
-    Number.isFinite(imageHeight) &&
-    imageWidth > 0 &&
-    imageHeight > 0
-  ) {
-    return {
-      width: imageWidth,
-      height: imageHeight,
-    };
-  }
-
-  return {
-    width: Number(mapConfig?.width) || 0,
-    height: Number(mapConfig?.height) || 0,
-  };
-}
-
-function worldToMapPoint(marker, map, mapWidth, mapHeight) {
+function worldToMapPoint(marker, map) {
   const x = getCoordinate(marker, 'x');
   const y = getCoordinate(marker, 'y');
 
@@ -218,16 +205,20 @@ function worldToMapPoint(marker, map, mapWidth, mapHeight) {
     return null;
   }
 
+  const width = Number(map.width);
+  const height = Number(map.height);
+
   const minX = Number(map.minX);
   const maxX = Number(map.maxX);
+
   const minY = Number(map.minY);
   const maxY = Number(map.maxY);
 
   if (
-    !Number.isFinite(mapWidth) ||
-    !Number.isFinite(mapHeight) ||
-    mapWidth <= 0 ||
-    mapHeight <= 0 ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0 ||
     !Number.isFinite(minX) ||
     !Number.isFinite(maxX) ||
     !Number.isFinite(minY) ||
@@ -248,37 +239,38 @@ function worldToMapPoint(marker, map, mapWidth, mapHeight) {
     normalizedY = 1 - normalizedY;
   }
 
-  const px = normalizedX * mapWidth;
-  const py = normalizedY * mapHeight;
-
   return {
-    px,
-    py,
+    px: normalizedX * width,
+    py: normalizedY * height,
     x,
     y,
     inBounds:
-      px >= 0 &&
-      px <= mapWidth &&
-      py >= 0 &&
-      py <= mapHeight,
+      normalizedX >= 0 &&
+      normalizedX <= 1 &&
+      normalizedY >= 0 &&
+      normalizedY <= 1,
   };
 }
 
-function mapPointToWorld(px, py, map, mapWidth, mapHeight) {
+function mapPointToWorld(px, py, map) {
   if (!map) {
     return null;
   }
 
+  const width = Number(map.width);
+  const height = Number(map.height);
+
   const minX = Number(map.minX);
   const maxX = Number(map.maxX);
+
   const minY = Number(map.minY);
   const maxY = Number(map.maxY);
 
   if (
-    !Number.isFinite(mapWidth) ||
-    !Number.isFinite(mapHeight) ||
-    mapWidth <= 0 ||
-    mapHeight <= 0 ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0 ||
     !Number.isFinite(minX) ||
     !Number.isFinite(maxX) ||
     !Number.isFinite(minY) ||
@@ -289,7 +281,7 @@ function mapPointToWorld(px, py, map, mapWidth, mapHeight) {
     return null;
   }
 
-  let normalizedY = py / mapHeight;
+  let normalizedY = py / height;
 
   if (map.flipY) {
     normalizedY = 1 - normalizedY;
@@ -298,37 +290,14 @@ function mapPointToWorld(px, py, map, mapWidth, mapHeight) {
   return {
     x:
       minX +
-      (px / mapWidth) * (maxX - minX),
+      (px / width) *
+        (maxX - minX),
 
     y:
       minY +
-      normalizedY * (maxY - minY),
+      normalizedY *
+        (maxY - minY),
   };
-}
-
-function getMinimumZoom(mapWidth, mapHeight, frame) {
-  if (
-    !frame ||
-    !mapWidth ||
-    !mapHeight
-  ) {
-    return DEFAULT_ZOOM;
-  }
-
-  const availableWidth = frame.clientWidth;
-  const availableHeight = frame.clientHeight;
-
-  if (
-    availableWidth <= 0 ||
-    availableHeight <= 0
-  ) {
-    return DEFAULT_ZOOM;
-  }
-
-  return Math.min(
-    availableWidth / mapWidth,
-    availableHeight / mapHeight
-  );
 }
 
 function clampZoom(value, minimum) {
@@ -353,11 +322,6 @@ function markerKey(marker, index) {
 export default function HaggaBasinMap() {
   const [mapConfig, setMapConfig] = useState(null);
   const [markers, setMarkers] = useState([]);
-  const [imageSize, setImageSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -367,8 +331,8 @@ export default function HaggaBasinMap() {
   const [drag, setDrag] = useState(null);
 
   const [windowState, setWindowState] = useState({
-    x: 70,
-    y: 55,
+    x: 0,
+    y: 0,
     width: 1100,
     height: 700,
     minimized: false,
@@ -381,17 +345,11 @@ export default function HaggaBasinMap() {
   const canvasRef = useRef(null);
   const zoomAnchorRef = useRef(null);
 
-  const mapDimensions = useMemo(
-    () =>
-      getMapDimensions(
-        mapConfig,
-        imageSize
-      ),
-    [mapConfig, imageSize]
-  );
-
-  const mapWidth = mapDimensions.width;
-  const mapHeight = mapDimensions.height;
+  /*
+   * --------------------------------------------------
+   * LOAD MAP
+   * --------------------------------------------------
+   */
 
   const loadMap = useCallback(
     async (signal) => {
@@ -452,6 +410,12 @@ export default function HaggaBasinMap() {
     []
   );
 
+  /*
+   * --------------------------------------------------
+   * LIVE REFRESH
+   * --------------------------------------------------
+   */
+
   useEffect(() => {
     let active = true;
     let controller;
@@ -462,6 +426,7 @@ export default function HaggaBasinMap() {
       }
 
       controller?.abort();
+
       controller = new AbortController();
 
       void loadMap(controller.signal);
@@ -476,80 +441,229 @@ export default function HaggaBasinMap() {
 
     return () => {
       active = false;
+
       controller?.abort();
+
       window.clearInterval(interval);
     };
   }, [loadMap]);
 
-  const fitMap = useCallback(() => {
-    const frame = frameRef.current;
+  /*
+   * --------------------------------------------------
+   * RESPONSIVE TERMINAL SIZE
+   *
+   * The important fix:
+   * terminal size is calculated from the map
+   * aspect ratio instead of using 1100x700.
+   * --------------------------------------------------
+   */
+
+  const resizeTerminal = useCallback(() => {
+    if (!mapConfig || windowState.maximized) {
+      return;
+    }
+
+    const mapWidth = Number(mapConfig.width);
+    const mapHeight = Number(mapConfig.height);
 
     if (
-      !frame ||
-      !mapWidth ||
-      !mapHeight
+      !Number.isFinite(mapWidth) ||
+      !Number.isFinite(mapHeight) ||
+      mapWidth <= 0 ||
+      mapHeight <= 0
     ) {
       return;
     }
 
-    const next = getMinimumZoom(
-      mapWidth,
-      mapHeight,
-      frame
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const horizontalPadding =
+      viewportWidth <= 600 ? 16 : 36;
+
+    const verticalPadding =
+      viewportHeight <= 600 ? 16 : 36;
+
+    const maxWidth =
+      viewportWidth - horizontalPadding;
+
+    const maxHeight =
+      viewportHeight - verticalPadding;
+
+    /*
+     * Chrome inside terminal:
+     *
+     * title = 38
+     * toolbar = 36
+     * status = 26
+     */
+    const chromeHeight = 100;
+
+    const mapRatio =
+      mapWidth / mapHeight;
+
+    /*
+     * Start by fitting the map to the available
+     * screen width.
+     */
+    let terminalWidth = maxWidth;
+
+    let mapAreaHeight =
+      terminalWidth / mapRatio;
+
+    let terminalHeight =
+      mapAreaHeight + chromeHeight;
+
+    /*
+     * If that is too tall, calculate from height.
+     */
+    if (terminalHeight > maxHeight) {
+      terminalHeight = maxHeight;
+
+      mapAreaHeight =
+        terminalHeight - chromeHeight;
+
+      terminalWidth =
+        mapAreaHeight * mapRatio;
+    }
+
+    /*
+     * Keep sensible minimum dimensions.
+     */
+    terminalWidth = Math.max(
+      Math.min(terminalWidth, maxWidth),
+      Math.min(320, maxWidth)
     );
 
-    zoomAnchorRef.current = null;
-    setZoom(next);
+    terminalHeight = Math.max(
+      Math.min(
+        terminalHeight,
+        maxHeight
+      ),
+      Math.min(260, maxHeight)
+    );
 
-    requestAnimationFrame(() => {
-      const currentFrame = frameRef.current;
-
-      if (!currentFrame) {
-        return;
-      }
-
-      const scaledWidth =
-        mapWidth * next;
-
-      const scaledHeight =
-        mapHeight * next;
-
-      currentFrame.scrollLeft = Math.max(
-        0,
-        (scaledWidth -
-          currentFrame.clientWidth) /
-          2
-      );
-
-      currentFrame.scrollTop = Math.max(
-        0,
-        (scaledHeight -
-          currentFrame.clientHeight) /
-          2
-      );
-    });
-  }, [mapWidth, mapHeight]);
+    setWindowState((current) => ({
+      ...current,
+      width: Math.round(terminalWidth),
+      height: Math.round(terminalHeight),
+    }));
+  }, [
+    mapConfig,
+    windowState.maximized,
+  ]);
 
   useEffect(() => {
-    if (
-      !mapWidth ||
-      !mapHeight
-    ) {
+    resizeTerminal();
+
+    window.addEventListener(
+      'resize',
+      resizeTerminal
+    );
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        resizeTerminal
+      );
+    };
+  }, [resizeTerminal]);
+
+  /*
+   * --------------------------------------------------
+   * CENTER TERMINAL
+   * --------------------------------------------------
+   */
+
+  useEffect(() => {
+    if (windowState.maximized) {
       return;
     }
 
-    const updateMinimumZoom = () => {
-      const frame = frameRef.current;
+    const center = () => {
+      setWindowState((current) => ({
+        ...current,
+        x: Math.max(
+          8,
+          Math.round(
+            (window.innerWidth -
+              current.width) /
+              2
+          )
+        ),
+        y: Math.max(
+          8,
+          Math.round(
+            (window.innerHeight -
+              current.height) /
+              2
+          )
+        ),
+      }));
+    };
 
-      if (!frame) {
-        return;
-      }
+    center();
 
-      const minimum = getMinimumZoom(
-        mapWidth,
-        mapHeight,
-        frame
+    window.addEventListener(
+      'resize',
+      center
+    );
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        center
       );
+    };
+  }, [
+    windowState.width,
+    windowState.height,
+    windowState.maximized,
+  ]);
+
+  /*
+   * --------------------------------------------------
+   * FIT ZOOM
+   * --------------------------------------------------
+   */
+
+  const getMinimumZoom = useCallback(() => {
+    const frame = frameRef.current;
+
+    if (!frame || !mapConfig) {
+      return DEFAULT_ZOOM;
+    }
+
+    const width = Number(mapConfig.width);
+    const height = Number(mapConfig.height);
+
+    if (
+      !Number.isFinite(width) ||
+      !Number.isFinite(height) ||
+      width <= 0 ||
+      height <= 0
+    ) {
+      return DEFAULT_ZOOM;
+    }
+
+    /*
+     * Because the terminal itself follows the image
+     * aspect ratio, these two values should normally
+     * be almost identical.
+     */
+    return Math.min(
+      frame.clientWidth / width,
+      frame.clientHeight / height
+    );
+  }, [mapConfig]);
+
+  useEffect(() => {
+    if (!mapConfig) {
+      return;
+    }
+
+    const updateZoom = () => {
+      const minimum = getMinimumZoom();
 
       setZoom((current) =>
         current < minimum
@@ -558,25 +672,33 @@ export default function HaggaBasinMap() {
       );
     };
 
-    updateMinimumZoom();
+    updateZoom();
 
     window.addEventListener(
       'resize',
-      updateMinimumZoom
+      updateZoom
     );
 
     return () => {
       window.removeEventListener(
         'resize',
-        updateMinimumZoom
+        updateZoom
       );
     };
-  }, [mapWidth, mapHeight]);
+  }, [
+    mapConfig,
+    getMinimumZoom,
+  ]);
+
+  /*
+   * --------------------------------------------------
+   * CENTER IMAGE ON LOAD
+   * --------------------------------------------------
+   */
 
   useLayoutEffect(() => {
     if (
-      !mapWidth ||
-      !mapHeight ||
+      !mapConfig ||
       !frameRef.current
     ) {
       return;
@@ -586,62 +708,48 @@ export default function HaggaBasinMap() {
 
     const centerMap = () => {
       const width =
-        mapWidth * zoom;
+        Number(mapConfig.width) *
+        zoom;
 
       const height =
-        mapHeight * zoom;
+        Number(mapConfig.height) *
+        zoom;
 
       frame.scrollLeft = Math.max(
         0,
-        (width - frame.clientWidth) / 2
+        (width -
+          frame.clientWidth) /
+          2
       );
 
       frame.scrollTop = Math.max(
         0,
-        (height - frame.clientHeight) / 2
+        (height -
+          frame.clientHeight) /
+          2
       );
     };
 
     requestAnimationFrame(centerMap);
-  }, [mapWidth, mapHeight]);
+  }, [mapConfig]);
 
-  useLayoutEffect(() => {
-    const frame = frameRef.current;
-    const anchor = zoomAnchorRef.current;
-
-    if (!frame || !anchor) {
-      return;
-    }
-
-    frame.scrollLeft =
-      anchor.mapX * zoom -
-      anchor.viewportX;
-
-    frame.scrollTop =
-      anchor.mapY * zoom -
-      anchor.viewportY;
-
-    zoomAnchorRef.current = null;
-  }, [zoom]);
+  /*
+   * --------------------------------------------------
+   * ZOOM
+   * --------------------------------------------------
+   */
 
   const setZoomAround = useCallback(
     (nextZoom, anchor) => {
       const frame = frameRef.current;
       const canvas = canvasRef.current;
 
-      if (
-        !frame ||
-        !mapWidth ||
-        !mapHeight
-      ) {
+      if (!frame || !mapConfig) {
         return;
       }
 
-      const minimum = getMinimumZoom(
-        mapWidth,
-        mapHeight,
-        frame
-      );
+      const minimum =
+        getMinimumZoom();
 
       const next = clampZoom(
         nextZoom,
@@ -659,11 +767,13 @@ export default function HaggaBasinMap() {
         canvas?.getBoundingClientRect();
 
       const viewportX = anchor
-        ? anchor.clientX - frameRect.left
+        ? anchor.clientX -
+          frameRect.left
         : frame.clientWidth / 2;
 
       const viewportY = anchor
-        ? anchor.clientY - frameRect.top
+        ? anchor.clientY -
+          frameRect.top
         : frame.clientHeight / 2;
 
       const mapX =
@@ -693,8 +803,43 @@ export default function HaggaBasinMap() {
 
       setZoom(next);
     },
-    [mapWidth, mapHeight, zoom]
+    [
+      mapConfig,
+      zoom,
+      getMinimumZoom,
+    ]
   );
+
+  /*
+   * --------------------------------------------------
+   * PRESERVE ZOOM POSITION
+   * --------------------------------------------------
+   */
+
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    const anchor = zoomAnchorRef.current;
+
+    if (!frame || !anchor) {
+      return;
+    }
+
+    frame.scrollLeft =
+      anchor.mapX * zoom -
+      anchor.viewportX;
+
+    frame.scrollTop =
+      anchor.mapY * zoom -
+      anchor.viewportY;
+
+    zoomAnchorRef.current = null;
+  }, [zoom]);
+
+  /*
+   * --------------------------------------------------
+   * WHEEL ZOOM
+   * --------------------------------------------------
+   */
 
   useEffect(() => {
     const frame = frameRef.current;
@@ -704,12 +849,14 @@ export default function HaggaBasinMap() {
     }
 
     const handleWheel = (event) => {
-      if (!canvasRef.current) {
+      const canvas = canvasRef.current;
+
+      if (!canvas) {
         return;
       }
 
       const rect =
-        canvasRef.current.getBoundingClientRect();
+        canvas.getBoundingClientRect();
 
       const inside =
         event.clientX >= rect.left &&
@@ -747,7 +894,16 @@ export default function HaggaBasinMap() {
         handleWheel
       );
     };
-  }, [zoom, setZoomAround]);
+  }, [
+    zoom,
+    setZoomAround,
+  ]);
+
+  /*
+   * --------------------------------------------------
+   * MAP DRAG
+   * --------------------------------------------------
+   */
 
   const handleMouseDown = (event) => {
     if (event.button !== 0) {
@@ -797,12 +953,16 @@ export default function HaggaBasinMap() {
     setDrag(null);
   };
 
+  /*
+   * --------------------------------------------------
+   * DOUBLE CLICK TARGET
+   * --------------------------------------------------
+   */
+
   const handleDoubleClick = (event) => {
     if (
       !mapConfig ||
-      !canvasRef.current ||
-      !mapWidth ||
-      !mapHeight
+      !canvasRef.current
     ) {
       return;
     }
@@ -819,20 +979,20 @@ export default function HaggaBasinMap() {
       canvasRef.current.getBoundingClientRect();
 
     const px =
-      (event.clientX - rect.left) /
+      (event.clientX -
+        rect.left) /
       zoom;
 
     const py =
-      (event.clientY - rect.top) /
+      (event.clientY -
+        rect.top) /
       zoom;
 
     const world =
       mapPointToWorld(
         px,
         py,
-        mapConfig,
-        mapWidth,
-        mapHeight
+        mapConfig
       );
 
     if (world) {
@@ -840,7 +1000,71 @@ export default function HaggaBasinMap() {
     }
   };
 
-  const handleWindowMouseDown = (event) => {
+  /*
+   * --------------------------------------------------
+   * FIT MAP
+   * --------------------------------------------------
+   */
+
+  const fitMap = useCallback(() => {
+    if (
+      !mapConfig ||
+      !frameRef.current
+    ) {
+      return;
+    }
+
+    const next =
+      getMinimumZoom();
+
+    zoomAnchorRef.current = null;
+
+    setZoom(next);
+
+    requestAnimationFrame(() => {
+      const frame =
+        frameRef.current;
+
+      if (!frame) {
+        return;
+      }
+
+      const width =
+        Number(mapConfig.width) *
+        next;
+
+      const height =
+        Number(mapConfig.height) *
+        next;
+
+      frame.scrollLeft = Math.max(
+        0,
+        (width -
+          frame.clientWidth) /
+          2
+      );
+
+      frame.scrollTop = Math.max(
+        0,
+        (height -
+          frame.clientHeight) /
+          2
+      );
+    });
+  }, [
+    mapConfig,
+    getMinimumZoom,
+  ]);
+
+  /*
+   * --------------------------------------------------
+   * TERMINAL DRAG
+   * --------------------------------------------------
+   */
+
+  const handleWindowMouseDown = (
+    event
+  ) => {
     if (event.button !== 0) {
       return;
     }
@@ -905,13 +1129,26 @@ export default function HaggaBasinMap() {
     };
   }, [windowDrag]);
 
+  /*
+   * --------------------------------------------------
+   * MAXIMIZE
+   * --------------------------------------------------
+   */
+
   const toggleMaximize = () => {
     setWindowState((current) => ({
       ...current,
-      maximized: !current.maximized,
+      maximized:
+        !current.maximized,
       minimized: false,
     }));
   };
+
+  /*
+   * --------------------------------------------------
+   * KEYBOARD
+   * --------------------------------------------------
+   */
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -949,14 +1186,16 @@ export default function HaggaBasinMap() {
       }
 
       if (
-        event.key.toLowerCase() === 'f'
+        event.key.toLowerCase() ===
+        'f'
       ) {
         event.preventDefault();
         fitMap();
       }
 
       if (
-        event.key.toLowerCase() === 'r'
+        event.key.toLowerCase() ===
+        'r'
       ) {
         event.preventDefault();
 
@@ -987,12 +1226,14 @@ export default function HaggaBasinMap() {
     loadMap,
   ]);
 
+  /*
+   * --------------------------------------------------
+   * MARKERS
+   * --------------------------------------------------
+   */
+
   const plottedMarkers = useMemo(() => {
-    if (
-      !mapConfig ||
-      !mapWidth ||
-      !mapHeight
-    ) {
+    if (!mapConfig) {
       return [];
     }
 
@@ -1000,12 +1241,11 @@ export default function HaggaBasinMap() {
       .map((marker, index) => ({
         marker,
         index,
-        point: worldToMapPoint(
-          marker,
-          mapConfig,
-          mapWidth,
-          mapHeight
-        ),
+        point:
+          worldToMapPoint(
+            marker,
+            mapConfig
+          ),
       }))
       .filter(
         ({ point }) =>
@@ -1014,35 +1254,39 @@ export default function HaggaBasinMap() {
   }, [
     markers,
     mapConfig,
-    mapWidth,
-    mapHeight,
   ]);
+
+  /*
+   * --------------------------------------------------
+   * TARGET
+   * --------------------------------------------------
+   */
 
   const targetPoint = useMemo(() => {
     if (
       !target ||
-      !mapConfig ||
-      !mapWidth ||
-      !mapHeight
+      !mapConfig
     ) {
       return null;
     }
 
     return worldToMapPoint(
       target,
-      mapConfig,
-      mapWidth,
-      mapHeight
+      mapConfig
     );
   }, [
     target,
     mapConfig,
-    mapWidth,
-    mapHeight,
   ]);
 
   const zoomPercent =
     Math.round(zoom * 100);
+
+  /*
+   * --------------------------------------------------
+   * TERMINAL STYLE
+   * --------------------------------------------------
+   */
 
   const terminalStyle = {
     ...styles.terminal,
@@ -1057,19 +1301,25 @@ export default function HaggaBasinMap() {
 
     width: windowState.maximized
       ? '100vw'
-      : `min(${windowState.width}px, calc(100vw - 30px))`,
+      : windowState.width,
 
     height: windowState.maximized
       ? '100vh'
-      : `min(${windowState.height}px, calc(100vh - 30px))`,
+      : windowState.height,
 
     zIndex: 100,
 
     borderRadius:
       windowState.maximized
         ? 0
-        : 6,
+        : 8,
   };
+
+  /*
+   * --------------------------------------------------
+   * RENDER
+   * --------------------------------------------------
+   */
 
   return (
     <main
@@ -1079,15 +1329,21 @@ export default function HaggaBasinMap() {
         width: '100vw',
         height: '100vh',
         overflow: 'hidden',
+
         background:
-          'radial-gradient(circle at center, #151515 0%, #070707 65%, #030303 100%)',
-        color: '#d4d4d4',
+          'radial-gradient(circle at 50% 40%, #392717 0%, #1a1109 45%, #080604 100%)',
+
+        color: '#e5d2b3',
+
         fontFamily:
           '"Cascadia Code", "Cascadia Mono", Consolas, "Courier New", monospace',
       }}
     >
       {!windowState.minimized && (
         <div style={terminalStyle}>
+
+          {/* TITLE BAR */}
+
           <div
             onMouseDown={
               handleWindowMouseDown
@@ -1131,13 +1387,14 @@ export default function HaggaBasinMap() {
                 setWindowState(
                   (current) => ({
                     ...current,
-                    minimized: true,
+                    minimized:
+                      true,
                   })
                 )
               }
               onMouseEnter={(event) => {
                 event.currentTarget.style.background =
-                  '#333';
+                  '#4a311c';
               }}
               onMouseLeave={(event) => {
                 event.currentTarget.style.background =
@@ -1161,7 +1418,7 @@ export default function HaggaBasinMap() {
               }
               onMouseEnter={(event) => {
                 event.currentTarget.style.background =
-                  '#333';
+                  '#4a311c';
               }}
               onMouseLeave={(event) => {
                 event.currentTarget.style.background =
@@ -1176,10 +1433,9 @@ export default function HaggaBasinMap() {
             <button
               type="button"
               title="Close"
-              style={{
-                ...styles.windowButton,
-                color: '#aaa',
-              }}
+              style={
+                styles.windowButton
+              }
               onMouseDown={(event) =>
                 event.stopPropagation()
               }
@@ -1189,31 +1445,31 @@ export default function HaggaBasinMap() {
               }}
               onMouseEnter={(event) => {
                 event.currentTarget.style.background =
-                  '#c42b1c';
-
+                  '#7c2f20';
                 event.currentTarget.style.color =
                   '#fff';
               }}
               onMouseLeave={(event) => {
                 event.currentTarget.style.background =
                   'transparent';
-
                 event.currentTarget.style.color =
-                  '#aaa';
+                  '#bda987';
               }}
             >
               ×
             </button>
           </div>
 
+          {/* TOOLBAR */}
+
           <div
             style={styles.toolbar}
           >
             <span
               style={{
-                color: '#4ec9b0',
+                color: '#d8a75f',
                 fontSize: 11,
-                marginRight: 5,
+                marginRight: 4,
               }}
             >
               C:\HAGGA\MAP&gt;
@@ -1238,7 +1494,7 @@ export default function HaggaBasinMap() {
                 minWidth: 62,
                 textAlign: 'center',
                 fontSize: 10,
-                color: '#7fdbca',
+                color: '#d8a75f',
               }}
             >
               ZOOM {zoomPercent}%
@@ -1286,9 +1542,10 @@ export default function HaggaBasinMap() {
             </button>
 
             <span
+              className="desktop-hints"
               style={{
                 marginLeft: 'auto',
-                color: '#555',
+                color: '#6f5b43',
                 fontSize: 10,
               }}
             >
@@ -1298,6 +1555,8 @@ export default function HaggaBasinMap() {
               ESC=CLOSE
             </span>
           </div>
+
+          {/* MAP FRAME */}
 
           <div
             ref={frameRef}
@@ -1319,70 +1578,116 @@ export default function HaggaBasinMap() {
             }
             style={{
               position: 'relative',
+
+              /*
+               * This is important.
+               *
+               * The map frame occupies exactly the
+               * remaining terminal space.
+               */
               flex: 1,
+
               minHeight: 0,
+              minWidth: 0,
+
               overflow: 'auto',
+
               cursor: drag
                 ? 'grabbing'
                 : 'grab',
-              background: '#050505',
+
+              background: '#0c0804',
+
               scrollbarWidth: 'thin',
               scrollbarColor:
-                '#333 #090909',
+                '#594127 #100b07',
             }}
           >
             {mapConfig ? (
               <div
                 ref={canvasRef}
                 style={{
-                  position: 'relative',
+                  position:
+                    'relative',
 
                   width:
-                    mapWidth * zoom,
+                    Number(
+                      mapConfig.width
+                    ) * zoom,
 
                   height:
-                    mapHeight * zoom,
+                    Number(
+                      mapConfig.height
+                    ) * zoom,
 
                   flexShrink: 0,
+
+                  /*
+                   * NO extra padding.
+                   * NO min-width.
+                   * NO black canvas around
+                   * the actual image.
+                   */
+                  margin: 0,
                 }}
               >
+                {/* MAP IMAGE */}
+
                 <img
-                  src="/images/maps/hagga-basin.png"
+                  src={IMAGE_SRC}
                   alt={
                     mapConfig?.label ||
                     'Hagga Basin'
                   }
                   draggable={false}
-                  onLoad={(event) => {
-                    const img =
-                      event.currentTarget;
-
-                    setImageSize({
-                      width:
-                        img.naturalWidth,
-                      height:
-                        img.naturalHeight,
-                    });
-                  }}
                   style={{
-                    position: 'absolute',
-                    inset: 0,
+                    position:
+                      'absolute',
+
+                    left: 0,
+                    top: 0,
+
                     width: '100%',
                     height: '100%',
+
                     display: 'block',
-                    userSelect: 'none',
-                    pointerEvents: 'none',
+
+                    /*
+                     * fill the exact canvas.
+                     */
                     objectFit: 'fill',
+
+                    userSelect: 'none',
+                    pointerEvents:
+                      'none',
                   }}
                 />
 
+                {/* DUNE GRID */}
+
                 <div
                   style={{
-                    position: 'absolute',
+                    position:
+                      'absolute',
+
                     inset: 0,
-                    pointerEvents: 'none',
+
+                    pointerEvents:
+                      'none',
+
                     backgroundImage:
-                      'linear-gradient(rgba(78,201,176,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(78,201,176,.035) 1px, transparent 1px)',
+                      `
+                      linear-gradient(
+                        rgba(216,167,95,.045) 1px,
+                        transparent 1px
+                      ),
+                      linear-gradient(
+                        90deg,
+                        rgba(216,167,95,.045) 1px,
+                        transparent 1px
+                      )
+                    `,
+
                     backgroundSize:
                       `${Math.max(
                         25,
@@ -1394,10 +1699,13 @@ export default function HaggaBasinMap() {
                   }}
                 />
 
+                {/* TARGET */}
+
                 {targetPoint && (
                   <span
                     style={{
-                      position: 'absolute',
+                      position:
+                        'absolute',
 
                       left:
                         targetPoint.px *
@@ -1414,26 +1722,34 @@ export default function HaggaBasinMap() {
                         'translate(-50%, -50%)',
 
                       border:
-                        '1px solid #4ec9b0',
+                        '1px solid #d8a75f',
 
-                      borderRadius: '50%',
+                      borderRadius:
+                        '50%',
 
                       boxShadow:
-                        '0 0 0 4px rgba(78,201,176,.12), 0 0 18px rgba(78,201,176,.8)',
+                        '0 0 0 4px rgba(216,167,95,.12), 0 0 20px rgba(216,167,95,.75)',
 
-                      pointerEvents: 'none',
+                      pointerEvents:
+                        'none',
+
                       zIndex: 10,
                     }}
                   >
                     <span
                       style={{
-                        position: 'absolute',
+                        position:
+                          'absolute',
+
                         left: '50%',
                         top: -8,
+
                         width: 1,
                         height: 38,
+
                         background:
-                          'rgba(78,201,176,.7)',
+                          'rgba(216,167,95,.7)',
+
                         transform:
                           'translateX(-50%)',
                       }}
@@ -1441,19 +1757,26 @@ export default function HaggaBasinMap() {
 
                     <span
                       style={{
-                        position: 'absolute',
+                        position:
+                          'absolute',
+
                         top: '50%',
                         left: -8,
+
                         width: 38,
                         height: 1,
+
                         background:
-                          'rgba(78,201,176,.7)',
+                          'rgba(216,167,95,.7)',
+
                         transform:
                           'translateY(-50%)',
                       }}
                     />
                   </span>
                 )}
+
+                {/* BASE MARKERS */}
 
                 {plottedMarkers.map(
                   ({
@@ -1473,6 +1796,10 @@ export default function HaggaBasinMap() {
                         index
                       );
 
+                    /*
+                     * Marker remains readable,
+                     * but scales slightly with zoom.
+                     */
                     const iconSize =
                       Math.max(
                         22,
@@ -1487,7 +1814,9 @@ export default function HaggaBasinMap() {
                         key={key}
                         type="button"
                         className="hag-map-marker"
-                        onClick={(event) => {
+                        onClick={(
+                          event
+                        ) => {
                           event.stopPropagation();
 
                           setSelected(
@@ -1514,27 +1843,38 @@ export default function HaggaBasinMap() {
                           transform:
                             'translate(-50%, -50%)',
 
-                          width: Math.max(
-                            100,
-                            iconSize + 20
-                          ),
+                          width:
+                            Math.max(
+                              100,
+                              iconSize +
+                                20
+                            ),
 
                           minHeight:
-                            iconSize + 24,
+                            iconSize +
+                            24,
 
                           padding: 0,
                           margin: 0,
+
                           border: 0,
                           outline: 'none',
 
                           background:
                             'transparent',
 
-                          color: '#d4d4d4',
-                          cursor: 'pointer',
-                          textAlign: 'center',
+                          color:
+                            '#e5d2b3',
 
-                          display: 'flex',
+                          cursor:
+                            'pointer',
+
+                          textAlign:
+                            'center',
+
+                          display:
+                            'flex',
+
                           flexDirection:
                             'column',
 
@@ -1555,7 +1895,8 @@ export default function HaggaBasinMap() {
                             height:
                               iconSize,
 
-                            display: 'flex',
+                            display:
+                              'flex',
 
                             alignItems:
                               'center',
@@ -1569,7 +1910,9 @@ export default function HaggaBasinMap() {
                           <img
                             src="/map-icons/Base.webp"
                             alt={name}
-                            draggable={false}
+                            draggable={
+                              false
+                            }
                             style={{
                               width:
                                 iconSize,
@@ -1577,7 +1920,8 @@ export default function HaggaBasinMap() {
                               height:
                                 iconSize,
 
-                              display: 'block',
+                              display:
+                                'block',
 
                               objectFit:
                                 'contain',
@@ -1596,31 +1940,37 @@ export default function HaggaBasinMap() {
 
                         <span
                           style={{
-                            display: 'block',
-                            maxWidth: 180,
-                            overflow: 'hidden',
+                            display:
+                              'block',
+
+                            maxWidth:
+                              180,
+
+                            overflow:
+                              'hidden',
+
                             textOverflow:
                               'ellipsis',
 
                             background:
-                              'rgba(8,8,8,.94)',
+                              'rgba(23,14,7,.94)',
 
                             border:
-                              '1px solid #3a3a3a',
-
-                            borderRadius: 0,
+                              '1px solid #6f4e2d',
 
                             padding:
                               '2px 6px',
 
                             marginTop: 2,
 
-                            color: '#d4d4d4',
+                            color:
+                              '#ead8ba',
 
                             fontSize:
                               '0.7rem',
 
-                            lineHeight: '1.1',
+                            lineHeight:
+                              '1.1',
 
                             whiteSpace:
                               'nowrap',
@@ -1641,7 +1991,8 @@ export default function HaggaBasinMap() {
                               display:
                                 'block',
 
-                              maxWidth: 180,
+                              maxWidth:
+                                180,
 
                               overflow:
                                 'hidden',
@@ -1651,7 +2002,8 @@ export default function HaggaBasinMap() {
 
                               marginTop: 1,
 
-                              color: '#777',
+                              color:
+                                '#9b8468',
 
                               fontSize:
                                 '0.6rem',
@@ -1679,23 +2031,34 @@ export default function HaggaBasinMap() {
             ) : (
               <div
                 style={{
-                  position: 'absolute',
+                  position:
+                    'absolute',
+
                   inset: 0,
+
                   display: 'grid',
-                  placeItems: 'center',
-                  color: '#666',
+
+                  placeItems:
+                    'center',
+
+                  color: '#806d55',
+
                   fontSize: 12,
                 }}
               >
                 <div
                   style={{
-                    textAlign: 'center',
+                    textAlign:
+                      'center',
                   }}
                 >
                   <div
                     style={{
-                      color: '#4ec9b0',
-                      marginBottom: 8,
+                      color:
+                        '#d8a75f',
+
+                      marginBottom:
+                        8,
                     }}
                   >
                     C:\HAGGA\MAP&gt;
@@ -1709,38 +2072,65 @@ export default function HaggaBasinMap() {
             )}
           </div>
 
+          {/* SELECTED BASE */}
+
           {selected && (
             <div
               style={{
-                position: 'absolute',
+                position:
+                  'absolute',
+
                 right: 14,
-                bottom: 39,
+                bottom: 40,
+
                 width: 285,
+
+                maxWidth:
+                  'calc(100% - 28px)',
+
                 background:
-                  'rgba(12,12,12,.97)',
-                border: '1px solid #444',
+                  'rgba(23,14,7,.97)',
+
+                border:
+                  '1px solid #765333',
+
                 boxShadow:
                   '0 10px 30px rgba(0,0,0,.8)',
+
                 zIndex: 30,
-                fontFamily: 'inherit',
+
+                fontFamily:
+                  'inherit',
               }}
             >
               <div
                 style={{
                   height: 30,
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '0 8px',
-                  background: '#1b1b1b',
+
+                  display:
+                    'flex',
+
+                  alignItems:
+                    'center',
+
+                  padding:
+                    '0 8px',
+
+                  background:
+                    '#2a1b0f',
+
                   borderBottom:
-                    '1px solid #333',
+                    '1px solid #543a21',
                 }}
               >
                 <span
                   style={{
                     flex: 1,
+
                     fontSize: 11,
-                    color: '#4ec9b0',
+
+                    color:
+                      '#d8a75f',
                   }}
                 >
                   BASE_INFO.EXE
@@ -1753,12 +2143,19 @@ export default function HaggaBasinMap() {
                   }
                   style={{
                     border: 0,
+
                     background:
                       'transparent',
-                    color: '#888',
-                    cursor: 'pointer',
+
+                    color:
+                      '#9b8468',
+
+                    cursor:
+                      'pointer',
+
                     fontFamily:
                       'inherit',
+
                     fontSize: 14,
                   }}
                 >
@@ -1769,15 +2166,21 @@ export default function HaggaBasinMap() {
               <div
                 style={{
                   padding: 12,
+
                   fontSize: 11,
+
                   lineHeight: 1.7,
                 }}
               >
                 <div
                   style={{
-                    color: '#d4d4d4',
+                    color:
+                      '#ead8ba',
+
                     fontSize: 13,
-                    marginBottom: 8,
+
+                    marginBottom:
+                      8,
                   }}
                 >
                   {getMarkerName(
@@ -1789,7 +2192,8 @@ export default function HaggaBasinMap() {
                 <div>
                   <span
                     style={{
-                      color: '#666',
+                      color:
+                        '#765f46',
                     }}
                   >
                     TYPE:
@@ -1801,7 +2205,8 @@ export default function HaggaBasinMap() {
                 <div>
                   <span
                     style={{
-                      color: '#666',
+                      color:
+                        '#765f46',
                     }}
                   >
                     ID:
@@ -1814,7 +2219,8 @@ export default function HaggaBasinMap() {
                 <div>
                   <span
                     style={{
-                      color: '#666',
+                      color:
+                        '#765f46',
                     }}
                   >
                     X:
@@ -1828,7 +2234,8 @@ export default function HaggaBasinMap() {
                 <div>
                   <span
                     style={{
-                      color: '#666',
+                      color:
+                        '#765f46',
                     }}
                   >
                     Y:
@@ -1842,7 +2249,8 @@ export default function HaggaBasinMap() {
                 <div>
                   <span
                     style={{
-                      color: '#666',
+                      color:
+                        '#765f46',
                     }}
                   >
                     OWNER:
@@ -1854,20 +2262,33 @@ export default function HaggaBasinMap() {
             </div>
           )}
 
+          {/* ERROR */}
+
           {error && (
             <div
               style={{
-                position: 'absolute',
+                position:
+                  'absolute',
+
                 left: 12,
                 top: 84,
+
                 maxWidth: 400,
-                padding: '7px 10px',
+
+                padding:
+                  '7px 10px',
+
                 background:
-                  'rgba(30,8,8,.95)',
+                  'rgba(45,14,8,.95)',
+
                 border:
-                  '1px solid #632d2d',
-                color: '#e07070',
+                  '1px solid #783b2d',
+
+                color:
+                  '#e09a7a',
+
                 fontSize: 10,
+
                 zIndex: 40,
               }}
             >
@@ -1875,53 +2296,72 @@ export default function HaggaBasinMap() {
             </div>
           )}
 
+          {/* STATUS BAR */}
+
           <div
-            style={styles.statusBar}
+            style={
+              styles.statusBar
+            }
           >
             <span
               style={{
-                color: '#4ec9b0',
+                color:
+                  '#d8a75f',
               }}
             >
               ● LIVE
             </span>
 
             <span
+              className="status-extra"
               style={{
                 marginLeft: 14,
               }}
             >
-              BASES: {markers.length}
+              BASES:{' '}
+              {markers.length}
             </span>
 
             <span
+              className="status-extra"
               style={{
                 marginLeft: 14,
               }}
             >
               MAP:{' '}
-              {mapWidth && mapHeight
-                ? `${mapWidth}×${mapHeight}`
+              {mapConfig
+                ? `${mapConfig.width}×${mapConfig.height}`
                 : '---'}
             </span>
 
             {target && (
               <span
+                className="status-extra"
                 style={{
                   marginLeft: 14,
-                  color: '#7fdbca',
+
+                  color:
+                    '#d8a75f',
                 }}
               >
-                TARGET: X:
-                {Math.round(target.x)}{' '}
+                TARGET:
+                {' '}
+                X:
+                {Math.round(
+                  target.x
+                )}
+                {' '}
                 Y:
-                {Math.round(target.y)}
+                {Math.round(
+                  target.y
+                )}
               </span>
             )}
 
             <span
               style={{
-                marginLeft: 'auto',
+                marginLeft:
+                  'auto',
               }}
             >
               SYNC: 30s
@@ -1930,6 +2370,8 @@ export default function HaggaBasinMap() {
         </div>
       )}
 
+      {/* MINIMIZED TERMINAL */}
+
       {windowState.minimized && (
         <button
           type="button"
@@ -1937,31 +2379,52 @@ export default function HaggaBasinMap() {
             setWindowState(
               (current) => ({
                 ...current,
-                minimized: false,
+                minimized:
+                  false,
               })
             )
           }
           style={{
             position: 'fixed',
+
             left: 15,
             bottom: 15,
+
             zIndex: 200,
-            height: 36,
-            padding: '0 15px',
-            background: '#181818',
-            border: '1px solid #3a3a3a',
-            color: '#d4d4d4',
+
+            height: 38,
+
+            padding:
+              '0 16px',
+
+            background:
+              '#24180e',
+
+            border:
+              '1px solid #6f4e2d',
+
+            color:
+              '#ead8ba',
+
             boxShadow:
               '0 10px 30px rgba(0,0,0,.7)',
-            cursor: 'pointer',
+
+            cursor:
+              'pointer',
+
             fontFamily:
               '"Cascadia Code", Consolas, monospace',
+
             fontSize: 11,
+
+            borderRadius: 5,
           }}
         >
           <span
             style={{
-              color: '#4ec9b0',
+              color:
+                '#d8a75f',
+
               marginRight: 8,
             }}
           >
@@ -1978,14 +2441,24 @@ export default function HaggaBasinMap() {
           margin: 0;
           padding: 0;
           overflow: hidden;
+          width: 100%;
+          height: 100%;
+          background: #080604;
         }
 
-        * {
+        *,
+        *::before,
+        *::after {
           box-sizing: border-box;
         }
 
         button {
           -webkit-tap-highlight-color: transparent;
+        }
+
+        .hag-map-frame {
+          scrollbar-width: thin;
+          scrollbar-color: #594127 #100b07;
         }
 
         .hag-map-frame::-webkit-scrollbar {
@@ -1994,33 +2467,60 @@ export default function HaggaBasinMap() {
         }
 
         .hag-map-frame::-webkit-scrollbar-track {
-          background: #090909;
+          background: #100b07;
         }
 
         .hag-map-frame::-webkit-scrollbar-thumb {
-          background: #333;
-          border: 2px solid #090909;
+          background: #594127;
+          border: 2px solid #100b07;
+          border-radius: 3px;
         }
 
         .hag-map-frame::-webkit-scrollbar-thumb:hover {
-          background: #555;
+          background: #795832;
         }
 
         .hag-map-marker:hover
           span:first-child
           img {
           filter:
-            drop-shadow(
-              0 0 5px
-                rgba(78, 201, 176, 0.8)
-            )
-            drop-shadow(
-              0 2px 5px
-                rgba(0, 0, 0, 0.9)
-            );
+            drop-shadow(0 0 6px rgba(216, 167, 95, 0.9))
+            drop-shadow(0 2px 5px rgba(0, 0, 0, 0.9));
         }
 
         @media (max-width: 700px) {
+          .desktop-hints {
+            display: none !important;
+          }
+
+          .hag-map-frame {
+            cursor: grab;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .status-extra {
+            display: none !important;
+          }
+
+          .hag-map-marker span:nth-child(2) {
+            font-size: 9px !important;
+            max-width: 120px !important;
+          }
+
+          .hag-map-marker span:nth-child(3) {
+            display: none !important;
+          }
+        }
+
+        @media (max-height: 500px) {
+          .hag-map-marker span:nth-child(2),
+          .hag-map-marker span:nth-child(3) {
+            display: none !important;
+          }
+        }
+
+        @media (pointer: coarse) {
           .hag-map-frame {
             cursor: grab;
           }
