@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 // Note: In a fully scaled multi-instance layout, this maps via shared Redis/Database stores.
 const sessions = new Map(); 
 
-export async function GET(request) {
+export async function GET(_request) {
   try {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('dashboard_session')?.value;

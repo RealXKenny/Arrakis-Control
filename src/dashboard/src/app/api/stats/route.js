@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-export async function GET(request) {
+export async function GET(_request) {
   try {
     const cookieStore = await cookies();
     if (!cookieStore.get('dashboard_session')?.value) {
