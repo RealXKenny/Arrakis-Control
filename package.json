@@ -12,6 +12,12 @@
     "start:dev": "node src/index.js",
     "dashboard": "node src/dashboard/server.js",
     "dev": "node --watch src/index.js",
+
+    "dashboard:dev": "npm --prefix src/dashboard run dev",
+    "dashboard:build": "npm --prefix src/dashboard run build",
+    "dashboard:start": "npm --prefix src/dashboard run start",
+    "dashboard:lint": "npm --prefix src/dashboard run lint",
+
     "lint": "node src/scripts/check-syntax.js",
     "version:check": "node src/scripts/version.js check",
     "version:sync": "node src/scripts/version.js sync",
