@@ -21,15 +21,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: |
-            Bot/package-lock.json
-            Dashboard/package-lock.json
 
       - name: Install Bot dependencies
         working-directory: Bot
-        run: npm ci
+        run: npm install
 
       - name: Install Dashboard dependencies
         working-directory: Dashboard
-        run: npm ci
+        run: npm install
