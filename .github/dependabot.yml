@@ -3,7 +3,8 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
+      day: monday
     open-pull-requests-limit: 10
     groups:
       npm-production:
@@ -14,7 +15,8 @@ updates:
   - package-ecosystem: github-actions
     directory: /.github/workflows
     schedule:
-      interval: daily
+      interval: weekly
+      day: monday
     open-pull-requests-limit: 5
     groups:
       github-actions:
