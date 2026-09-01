@@ -1,21 +1,10 @@
-import {
-  ChatInputCommandInteraction,
-  ContainerBuilder,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js";
+import { ChatInputCommandInteraction, ContainerBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-import {
-  reloadCommands,
-} from "../../../infrastructure/loaders/commandLoader";
+import { reloadCommands } from "../../../infrastructure/loaders/commandLoader";
 
-import {
-  reloadComponentHandlers,
-} from "../../../infrastructure/loaders/componentLoader";
+import { reloadComponentHandlers } from "../../../infrastructure/loaders/componentLoader";
 
-import {
-  createV2Response,
-} from "../../../shared/factories/componentFactory";
+import { createV2Response } from "../../../shared/factories/componentFactory";
 
 interface ReloadResults {
   commands?: number;
@@ -25,121 +14,71 @@ interface ReloadResults {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("reload")
-    .setDescription(
-      "Reload bot modules without restarting the process.",
-    )
+    .setDescription("Reload bot modules without restarting the process.")
     .addStringOption((option) =>
-      option
-        .setName("area")
-        .setDescription("Area to reload")
-        .setRequired(true)
-        .addChoices(
-          {
-            name: "Commands",
-            value: "commands",
-          },
-          {
-            name: "Components",
-            value: "components",
-          },
-          {
-            name: "All",
-            value: "all",
-          },
-        ),
+      option.setName("area").setDescription("Area to reload").setRequired(true).addChoices(
+        {
+          name: "Commands",
+          value: "commands",
+        },
+        {
+          name: "Components",
+          value: "components",
+        },
+        {
+          name: "All",
+          value: "all",
+        },
+      ),
     ),
 
-  async execute(
-    interaction: ChatInputCommandInteraction,
-  ): Promise<void> {
-    const ownerRoleId =
-      process.env.OWNER_ROLE_ID;
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    const ownerRoleId = process.env.OWNER_ROLE_ID;
 
     if (!ownerRoleId || !interaction.guild) {
       await interaction.reply({
-        content:
-          "Only the configured owner role can reload bot modules.",
+        content: "Only the configured owner role can reload bot modules.",
         flags: MessageFlags.Ephemeral,
       });
 
       return;
     }
 
-    const member =
-      await interaction.guild.members.fetch(
-        interaction.user.id,
-      );
+    const member = await interaction.guild.members.fetch(interaction.user.id);
 
     if (!member.roles.cache.has(ownerRoleId)) {
       await interaction.reply({
-        content:
-          "Only the configured owner role can reload bot modules.",
+        content: "Only the configured owner role can reload bot modules.",
         flags: MessageFlags.Ephemeral,
       });
 
       return;
     }
 
-    const area = interaction.options.getString(
-      "area",
-      true,
-    );
+    const area = interaction.options.getString("area", true);
 
-    const duneColors: number[] = [
-      0xc58b45,
-      0xd2a85a,
-      0xa96832,
-      0x8f542c,
-      0x70452c,
-      0xb87333,
-      0x9c6b3c,
-    ];
+    const duneColors: number[] = [0xc58b45, 0xd2a85a, 0xa96832, 0x8f542c, 0x70452c, 0xb87333, 0x9c6b3c];
 
-    const accentColor =
-      duneColors[
-        Math.floor(
-          Math.random() * duneColors.length,
-        )
-      ];
+    const accentColor = duneColors[Math.floor(Math.random() * duneColors.length)];
 
     const results: ReloadResults = {};
 
-    if (
-      area === "commands" ||
-      area === "all"
-    ) {
-      results.commands =
-        reloadCommands(
-          interaction.client,
-        ).loaded;
+    if (area === "commands" || area === "all") {
+      results.commands = reloadCommands(interaction.client).loaded;
     }
 
-    if (
-      area === "components" ||
-      area === "all"
-    ) {
-      results.components =
-        reloadComponentHandlers(
-          interaction.client,
-        ).loaded;
+    if (area === "components" || area === "all") {
+      results.components = reloadComponentHandlers(interaction.client).loaded;
     }
 
-    const infoCard =
-      new ContainerBuilder()
-        .setAccentColor(accentColor)
-        .addTextDisplayComponents(
-          (text) =>
-            text.setContent(
-              `Reloaded ${
-                results.commands ?? 0
-              } commands and ${
-                results.components ?? 0
-              } component handlers.`,
-            ),
-        );
+    const infoCard = new ContainerBuilder()
+      .setAccentColor(accentColor)
+      .addTextDisplayComponents((text) =>
+        text.setContent(
+          `Reloaded ${results.commands ?? 0} commands and ${results.components ?? 0} component handlers.`,
+        ),
+      );
 
-    await interaction.reply(
-      createV2Response([infoCard]),
-    );
+    await interaction.reply(createV2Response([infoCard]));
   },
 };

@@ -1,5 +1,4 @@
 import { URL } from "node:url";
-
 import { createLogger } from "../core/logger";
 
 const logger = createLogger("CONVOY API");
@@ -50,11 +49,7 @@ class ConvoyClient {
 
     if (binary) {
       if (!response.ok) {
-        throw new ConvoyApiError(
-          `Convoy request failed with HTTP ${response.status}`,
-          response.status,
-          await response.text(),
-        );
+        throw new ConvoyApiError(`Convoy request failed with HTTP ${response.status}`, response.status, await response.text());
       }
 
       return Buffer.from(await response.arrayBuffer());

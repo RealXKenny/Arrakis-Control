@@ -7,80 +7,47 @@ interface EndpointDefinition {
   description: string;
 }
 
-type HttpMethod =
-  | "GET"
-  | "POST"
-  | "PUT"
-  | "PATCH"
-  | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-type RouteParameters = Record<
-  string,
-  string | number | boolean
->;
+type RouteParameters = Record<string, string | number | boolean>;
 
-const referencePath = path.resolve(
-  process.cwd(),
-  "docs",
-  "dune-awakening-console-api-reference.md",
-);
+const referencePath = path.resolve(process.cwd(), "docs", "dune-awakening-console-api-reference.md");
 
-const endpointPattern =
-  /^\|\s*(GET|POST|PUT|PATCH|DELETE)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)/;
+const endpointPattern = /^\|\s*(GET|POST|PUT|PATCH|DELETE)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)/;
 
 function loadEndpointCatalog(): EndpointDefinition[] {
   return fs
     .readFileSync(referencePath, "utf8")
     .split(/\r?\n/)
-    .flatMap(
-      (line): EndpointDefinition[] => {
-        const match = line.match(endpointPattern);
+    .flatMap((line): EndpointDefinition[] => {
+      const match = line.match(endpointPattern);
 
-        if (!match) {
-          return [];
-        }
-
-        return [
-          {
-            method: match[1] as HttpMethod,
-            route: match[2],
-            description: match[3].trim(),
-          },
-        ];
-      },
-    );
-}
-
-function resolveRoute(
-  route: string,
-  parameters: RouteParameters = {},
-): string {
-  return route.replace(
-    /\{([^}]+)\}/g,
-    (
-      _,
-      parameterName: string,
-    ): string => {
-      const value = parameters[parameterName];
-
-      if (value === undefined || value === null) {
-        throw new Error(
-          `Missing route parameter: ${parameterName}`,
-        );
+      if (!match) {
+        return [];
       }
 
-      return encodeURIComponent(String(value));
-    },
-  );
+      return [
+        {
+          method: match[1] as HttpMethod,
+          route: match[2],
+          description: match[3].trim(),
+        },
+      ];
+    });
 }
 
-export {
-  loadEndpointCatalog,
-  resolveRoute,
-};
+function resolveRoute(route: string, parameters: RouteParameters = {}): string {
+  return route.replace(/\{([^}]+)\}/g, (_, parameterName: string): string => {
+    const value = parameters[parameterName];
 
-export type {
-  EndpointDefinition,
-  HttpMethod,
-  RouteParameters,
-};
+    if (value === undefined || value === null) {
+      throw new Error(`Missing route parameter: ${parameterName}`);
+    }
+
+    return encodeURIComponent(String(value));
+  });
+}
+
+export { loadEndpointCatalog, resolveRoute };
+
+export type { EndpointDefinition, HttpMethod, RouteParameters };

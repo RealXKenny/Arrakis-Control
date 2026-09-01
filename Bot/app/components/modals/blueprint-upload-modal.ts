@@ -1,18 +1,8 @@
-import {
-  MessageFlags,
-  ModalSubmitInteraction,
-} from "discord.js";
+import { MessageFlags, ModalSubmitInteraction } from "discord.js";
+import { createActorContext } from "../../../shared/utils/createActorContext";
+import { BLUEPRINT_LIMITS } from "../../../infrastructure/config/limits";
 
-import {
-  createActorContext,
-} from "../../../shared/utils/createActorContext";
-
-import {
-  BLUEPRINT_LIMITS,
-} from "../../../infrastructure/config/limits";
-
-const MINIMUM_OFFLINE_MS =
-  BLUEPRINT_LIMITS.minimumOfflineMs;
+const MINIMUM_OFFLINE_MS = BLUEPRINT_LIMITS.minimumOfflineMs;
 
 interface LinkedPlayer {
   linked?: boolean;
@@ -67,224 +57,114 @@ interface PlayerListResponse {
 module.exports = {
   customId: "blueprint-upload-modal",
 
-  async execute(
-    interaction: ModalSubmitInteraction,
-  ): Promise<void> {
+  async execute(interaction: ModalSubmitInteraction): Promise<void> {
     if (!interaction.client.discordAdapter) {
-      throw new Error(
-        "Discord Adapter integration is not configured.",
-      );
+      throw new Error("Discord Adapter integration is not configured.");
     }
 
     await interaction.deferReply({
       flags: MessageFlags.Ephemeral,
     });
 
-    const actor = createActorContext(
-      interaction,
-      "blueprint-upload",
-    );
+    const actor = createActorContext(interaction, "blueprint-upload");
 
-    const linked =
-      (await interaction.client.discordAdapter.getCurrentPlayer(
-        actor,
-      )) as LinkedPlayer | null;
+    const linked = (await interaction.client.discordAdapter.getCurrentPlayer(actor)) as LinkedPlayer | null;
 
     if (!linked?.linked) {
-      await interaction.editReply(
-        "You must link a Dune character before uploading a blueprint.",
-      );
+      await interaction.editReply("You must link a Dune character before uploading a blueprint.");
       return;
     }
 
     const playerId = linked.pawnId;
 
     if (!playerId) {
-      throw new Error(
-        "The linked character did not provide a player pawn ID.",
-      );
+      throw new Error("The linked character did not provide a player pawn ID.");
     }
 
-    const playerList =
-      (await interaction.client.duneApi.call(
-        "GET",
-        "/api/players",
-        {
-          query: {
-            q: linked.characterName ?? "",
-            status: "all",
-            page: 0,
-            pageSize: 50,
-          },
-        },
-      )) as PlayerListResponse | PlayerProfile[];
+    const playerList = (await interaction.client.duneApi.call("GET", "/api/players", {
+      query: {
+        q: linked.characterName ?? "",
+        status: "all",
+        page: 0,
+        pageSize: 50,
+      },
+    })) as PlayerListResponse | PlayerProfile[];
 
-    const profile = findLinkedPlayer(
-      playerList,
-      linked,
-    );
+    const profile = findLinkedPlayer(playerList, linked);
 
     if (!profile) {
-      await interaction.editReply(
-        "Unable to find your linked character in the Dune Console. Please unlink and link your account again.",
-      );
+      await interaction.editReply("Unable to find your linked character in the Dune Console. Please unlink and link your account again.");
       return;
     }
 
-    if (
-      String(linked.onlineStatus).toLowerCase() ===
-        "online" ||
-      isOnline(profile)
-    ) {
-      await interaction.editReply(
-        "Your linked character must be offline for at least one minute before uploading a blueprint.",
-      );
+    if (String(linked.onlineStatus).toLowerCase() === "online" || isOnline(profile)) {
+      await interaction.editReply("Your linked character must be offline for at least one minute before uploading a blueprint.");
       return;
     }
 
-    const offlineAt = getOfflineTimestamp(
-      linked,
-      profile,
-    );
+    const offlineAt = getOfflineTimestamp(linked, profile);
 
     if (!offlineAt) {
-      await interaction.editReply(
-        "Unable to confirm when your character went offline. Please wait and try again.",
-      );
+      await interaction.editReply("Unable to confirm when your character went offline. Please wait and try again.");
       return;
     }
 
-    const elapsed =
-      Date.now() - offlineAt.getTime();
+    const elapsed = Date.now() - offlineAt.getTime();
 
     if (elapsed < MINIMUM_OFFLINE_MS) {
-      const remaining = Math.ceil(
-        (MINIMUM_OFFLINE_MS - elapsed) / 1000,
-      );
+      const remaining = Math.ceil((MINIMUM_OFFLINE_MS - elapsed) / 1000);
 
-      await interaction.editReply(
-        `Your character must remain offline for ${remaining} more second${
-          remaining === 1 ? "" : "s"
-        } before uploading a blueprint.`,
-      );
+      await interaction.editReply(`Your character must remain offline for ${remaining} more second${remaining === 1 ? "" : "s"} before uploading a blueprint.`);
 
       return;
     }
 
-    const files =
-      interaction.fields.getUploadedFiles(
-        "blueprint-file",
-        true,
-      );
+    const files = interaction.fields.getUploadedFiles("blueprint-file", true);
 
     if (files.size !== 1) {
-      await interaction.editReply(
-        "Upload exactly one blueprint JSON file at a time.",
-      );
+      await interaction.editReply("Upload exactly one blueprint JSON file at a time.");
       return;
     }
 
     const file = files.first();
 
     if (!file) {
-      await interaction.editReply(
-        "Unable to read the uploaded blueprint file.",
-      );
+      await interaction.editReply("Unable to read the uploaded blueprint file.");
       return;
     }
 
-    // Let duneApi.importBlueprint() provide its own
-    // BlueprintImportResult type.
-    const result =
-      await interaction.client.duneApi.importBlueprint(
-        playerId,
-        file,
-      );
+    const result = await interaction.client.duneApi.importBlueprint(playerId, file);
 
-    await interaction.editReply(
-      result.message ??
-        `Blueprint imported for ${
-          linked.characterName ??
-          "your linked character"
-        }.`,
-    );
+    await interaction.editReply(result.message ?? `Blueprint imported for ${linked.characterName ?? "your linked character"}.`);
 
-    await interaction.client.auditLogger?.blueprintImported(
-      interaction,
-      linked,
-      result,
-      file,
-    );
+    await interaction.client.auditLogger?.blueprintImported(interaction, linked, result, file);
   },
 };
 
-function isOnline(
-  profile: PlayerProfile,
-): boolean {
-  const status =
-    profile.status ??
-    profile.onlineStatus ??
-    profile.online_status ??
-    profile.player?.status ??
-    profile.player?.onlineStatus;
+function isOnline(profile: PlayerProfile): boolean {
+  const status = profile.status ?? profile.onlineStatus ?? profile.online_status ?? profile.player?.status ?? profile.player?.onlineStatus;
 
-  return (
-    status === true ||
-    String(status).toLowerCase() === "online"
-  );
+  return status === true || String(status).toLowerCase() === "online";
 }
 
-function findLinkedPlayer(
-  response:
-    | PlayerListResponse
-    | PlayerProfile[]
-    | null
-    | undefined,
-  linked: LinkedPlayer,
-): PlayerProfile | null {
-  const rows =
-    response &&
-    !Array.isArray(response)
-      ? response.rows ??
-        response.players ??
-        response.data ??
-        response.results ??
-        response.items ??
-        []
-      : Array.isArray(response)
-        ? response
-        : [];
+function findLinkedPlayer(response: PlayerListResponse | PlayerProfile[] | null | undefined, linked: LinkedPlayer): PlayerProfile | null {
+  const rows = response && !Array.isArray(response) ? (response.rows ?? response.players ?? response.data ?? response.results ?? response.items ?? []) : Array.isArray(response) ? response : [];
 
   if (!Array.isArray(rows)) {
     return null;
   }
 
-  const linkedName = String(
-    linked.characterName ?? "",
-  )
+  const linkedName = String(linked.characterName ?? "")
     .trim()
     .toLowerCase();
 
-  const controllerId = String(
-    linked.controllerId ?? "",
-  );
+  const controllerId = String(linked.controllerId ?? "");
 
   return (
+    rows.find((player) => String(player.player_controller_id ?? player.playerControllerId ?? "") === controllerId) ??
     rows.find(
       (player) =>
-        String(
-          player.player_controller_id ??
-            player.playerControllerId ??
-            "",
-        ) === controllerId,
-    ) ??
-    rows.find(
-      (player) =>
-        String(
-          player.character_name ??
-            player.characterName ??
-            "",
-        )
+        String(player.character_name ?? player.characterName ?? "")
           .trim()
           .toLowerCase() === linkedName,
     ) ??
@@ -292,13 +172,8 @@ function findLinkedPlayer(
   );
 }
 
-function getOfflineTimestamp(
-  linked: LinkedPlayer,
-  profile: PlayerProfile,
-): Date | null {
-  const values: Array<
-    string | number | Date | null | undefined
-  > = [
+function getOfflineTimestamp(linked: LinkedPlayer, profile: PlayerProfile): Date | null {
+  const values: Array<string | number | Date | null | undefined> = [
     linked.lastLogoutTime,
     linked.last_logout_time,
     linked.lastOfflineTime,
@@ -326,7 +201,5 @@ function getOfflineTimestamp(
 
   const timestamp = new Date(value);
 
-  return Number.isNaN(timestamp.getTime())
-    ? null
-    : timestamp;
+  return Number.isNaN(timestamp.getTime()) ? null : timestamp;
 }

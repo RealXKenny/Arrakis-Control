@@ -1,5 +1,4 @@
 import { URL } from "node:url";
-
 import { createLogger } from "../core/logger";
 
 const logger = createLogger("DISCORD ADAPTER");
@@ -153,5 +152,4 @@ class DiscordAdapterError extends Error {
 }
 
 export { DiscordAdapterClient, DiscordAdapterError };
-
 export type { DiscordAdapterActor, DiscordAdapterRequestBody, DiscordAdapterErrorDetails };

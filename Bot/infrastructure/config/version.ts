@@ -5,11 +5,25 @@ interface PackageJson {
   version?: string;
 }
 
-const versionPaths = [
-  path.join(__dirname, "..", "..", "VERSION"),
-  path.join(process.cwd(), "VERSION"),
-  path.join(__dirname, "..", "..", "VERSION"),
-];
+function findPackageJson(startDir: string): string {
+  let currentDir = path.resolve(startDir);
+
+  while (true) {
+    const packageJsonPath = path.join(currentDir, "package.json");
+
+    if (fs.existsSync(packageJsonPath)) {
+      return packageJsonPath;
+    }
+
+    const parentDir = path.dirname(currentDir);
+
+    if (parentDir === currentDir) {
+      throw new Error("Unable to find package.json.");
+    }
+
+    currentDir = parentDir;
+  }
+}
 
 function getBotVersion(): string {
   const environmentVersion = process.env.BOT_VERSION?.trim();
@@ -18,18 +32,7 @@ function getBotVersion(): string {
     return environmentVersion;
   }
 
-  const versionPath = versionPaths.find((candidate) => fs.existsSync(candidate));
-
-  if (versionPath) {
-    const version = fs.readFileSync(versionPath, "utf8").trim();
-
-    if (version) {
-      return version;
-    }
-  }
-
-  const packageJsonPath = path.join(__dirname, "..", "..", "..", "package.json");
-
+  const packageJsonPath = findPackageJson(__dirname);
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as PackageJson;
 
   if (!packageJson.version) {

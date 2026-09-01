@@ -1,43 +1,14 @@
-import {
-  ActivityType,
-  Events,
-} from "discord.js";
-
+import { ActivityType, Events } from "discord.js";
 import type { BotClient } from "../../../infrastructure/core/BotApplication";
-
 import { createLogger } from "../../../infrastructure/core/logger";
-
-import {
-  ensurePlayerLinkPanel,
-} from "../../../modules/panels/playerLinkPanel";
-
-import {
-  ensureBlueprintUploadPanel,
-} from "../../../modules/panels/blueprintUploadPanel";
-
-import {
-  ensureRolePanel,
-} from "../../../modules/panels/rolePanel";
-
-import {
-  ensureVerificationPanel,
-} from "../../../modules/panels/verificationPanel";
-
-import {
-  ensureRulesPanel,
-} from "../../../modules/panels/rulesPanel";
-
-import {
-  ensureServerInfoPanel,
-} from "../../../modules/panels/serverInfoPanel";
-
-import {
-  announceCurrentVersion,
-} from "../../../modules/panels/versionAnnouncement";
-
-import {
-  startAuditLogForwarder,
-} from "../../../modules/audit/DiscordAuditLogForwarder";
+import { ensurePlayerLinkPanel } from "../../../modules/panels/playerLinkPanel";
+import { ensureBlueprintUploadPanel } from "../../../modules/panels/blueprintUploadPanel";
+import { ensureRolePanel } from "../../../modules/panels/rolePanel";
+import { ensureVerificationPanel } from "../../../modules/panels/verificationPanel";
+import { ensureRulesPanel } from "../../../modules/panels/rulesPanel";
+import { ensureServerInfoPanel } from "../../../modules/panels/serverInfoPanel";
+import { announceCurrentVersion } from "../../../modules/panels/versionAnnouncement";
+import { startAuditLogForwarder } from "../../../modules/audit/DiscordAuditLogForwarder";
 
 const logger = createLogger("DISCORD");
 
@@ -46,41 +17,36 @@ module.exports = {
   once: true,
 
   async execute(client: BotClient): Promise<void> {
-    const serverName =
-      process.env.SERVER_NAME ||
-      "Dune: Awakening Community Server";
+    const serverName = process.env.SERVER_NAME || "Dune: Awakening Community Server";
 
     const statuses: Array<{
       name: string;
       type: ActivityType;
     }> = [
-        {
-          name: "Watching the sands of Arrakis",
-          type: ActivityType.Watching,
-        },
-        {
-          name: `Playing ${serverName}`,
-          type: ActivityType.Playing,
-        },
-        {
-          name: "Watching the spice flow",
-          type: ActivityType.Watching,
-        },
-        {
-          name: "Watching over Arrakis",
-          type: ActivityType.Watching,
-        },
-        {
-          name: "Playing Dune: Awakening",
-          type: ActivityType.Playing,
-        },
-      ];
-
+      {
+        name: "Watching the sands of Arrakis",
+        type: ActivityType.Watching,
+      },
+      {
+        name: `Playing ${serverName}`,
+        type: ActivityType.Playing,
+      },
+      {
+        name: "Watching the spice flow",
+        type: ActivityType.Watching,
+      },
+      {
+        name: "Watching over Arrakis",
+        type: ActivityType.Watching,
+      },
+      {
+        name: "Playing Dune: Awakening",
+        type: ActivityType.Playing,
+      },
+    ];
 
     if (!client.user) {
-      logger.error(
-        "Client reported ready, but no Discord user is available.",
-      );
+      logger.error("Client reported ready, but no Discord user is available.");
       return;
     }
 
@@ -106,84 +72,42 @@ module.exports = {
 
     updatePresence();
 
-    client.presenceInterval = setInterval(
-      updatePresence,
-      30_000,
-    );
+    client.presenceInterval = setInterval(updatePresence, 30_000);
 
-    logger.info(
-      `Ready! Logged in as ${botUser.tag}.`,
-    );
+    logger.info(`Ready! Logged in as ${botUser.tag}.`);
 
-    client.auditLogInterval =
-      startAuditLogForwarder(client);
+    client.auditLogInterval = startAuditLogForwarder(client);
 
     try {
       if (client.discordAdapter) {
-        await ensurePlayerLinkPanel(
-          client,
-          client.discordAdapterLinkPanelChannelId,
-        );
+        await ensurePlayerLinkPanel(client, client.discordAdapterLinkPanelChannelId);
 
-        await ensureBlueprintUploadPanel(
-          client,
-          client.discordAdapterBlueprintPanelChannelId,
-        );
+        await ensureBlueprintUploadPanel(client, client.discordAdapterBlueprintPanelChannelId);
       }
 
-      await ensureRolePanel(
-        client,
-        client.discordRolePanelChannelId,
-      );
+      await ensureRolePanel(client, client.discordRolePanelChannelId);
 
-      await ensureVerificationPanel(
-        client,
-        client.discordVerifyChannelId,
-      );
+      await ensureVerificationPanel(client, client.discordVerifyChannelId);
 
-      await ensureRulesPanel(
-        client,
-        client.discordRulesChannelId,
-      );
+      await ensureRulesPanel(client, client.discordRulesChannelId);
 
-      await ensureServerInfoPanel(
-        client,
-        client.discordServerInfoChannelId,
-      );
+      await ensureServerInfoPanel(client, client.discordServerInfoChannelId);
 
-      await announceCurrentVersion(
-        client,
-        client.discordAnnouncementChannelId,
-      );
+      await announceCurrentVersion(client, client.discordAnnouncementChannelId);
 
       if (client.discordAnnouncementChannelId) {
-        const intervalMinutes = Math.max(
-          Number(
-            client.versionAnnouncementIntervalMinutes,
-          ) || 5,
-          1,
-        );
+        const intervalMinutes = Math.max(Number(client.versionAnnouncementIntervalMinutes) || 5, 1);
 
-        client.versionAnnouncementInterval =
-          setInterval(
-            () =>
-              announceCurrentVersion(
-                client,
-                client.discordAnnouncementChannelId,
-              ).catch((error: unknown) => {
-                logger.error(
-                  "Unable to check for new version announcements.",
-                  error,
-                );
-              }),
-            intervalMinutes * 60_000,
-          );
+        client.versionAnnouncementInterval = setInterval(
+          () =>
+            announceCurrentVersion(client, client.discordAnnouncementChannelId).catch((error: unknown) => {
+              logger.error("Unable to check for new version announcements.", error);
+            }),
+          intervalMinutes * 60_000,
+        );
       }
     } catch (error: unknown) {
-      logger.error(
-        "Unable to publish Discord panels.",
-        error,
-      );
+      logger.error("Unable to publish Discord panels.", error);
     }
   },
 };

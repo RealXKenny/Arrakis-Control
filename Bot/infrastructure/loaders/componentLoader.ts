@@ -1,7 +1,5 @@
 import path from "node:path";
-
 import { Collection, type Client } from "discord.js";
-
 import { createLogger } from "../core/logger";
 import { findJavaScriptFiles } from "./fileLoader";
 

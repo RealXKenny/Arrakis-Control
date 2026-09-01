@@ -1,7 +1,5 @@
 import path from "node:path";
-
 import type { Client } from "discord.js";
-
 import { findJavaScriptFiles } from "./fileLoader";
 import { createLogger } from "../core/logger";
 
@@ -13,18 +11,10 @@ interface EventModule {
   execute: (...args: unknown[]) => unknown;
 }
 
-function loadEvents(
-  client: Client,
-): {
+function loadEvents(client: Client): {
   loaded: number;
 } {
-  const eventsPath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "app",
-    "events",
-  );
+  const eventsPath = path.join(__dirname, "..", "..", "app", "events");
 
   let loaded = 0;
 
@@ -32,13 +22,8 @@ function loadEvents(
     try {
       const event = require(filePath) as Partial<EventModule>;
 
-      if (
-        typeof event.name !== "string" ||
-        typeof event.execute !== "function"
-      ) {
-        logger.warn(
-          `Skipped invalid event module: ${filePath}`,
-        );
+      if (typeof event.name !== "string" || typeof event.execute !== "function") {
+        logger.warn(`Skipped invalid event module: ${filePath}`);
         continue;
       }
 
@@ -56,22 +41,13 @@ function loadEvents(
 
       loaded += 1;
     } catch (error) {
-      logger.error(
-        `Failed to load event module ${filePath}:`,
-        error,
-      );
+      logger.error(`Failed to load event module ${filePath}:`, error);
     }
   }
 
-  logger.info(
-    `Loaded ${loaded} event handler${
-      loaded === 1 ? "" : "s"
-    }.`,
-  );
+  logger.info(`Loaded ${loaded} event handler${loaded === 1 ? "" : "s"}.`);
 
   return { loaded };
 }
 
-export {
-  loadEvents,
-};
+export { loadEvents };

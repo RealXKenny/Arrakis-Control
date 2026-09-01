@@ -1,10 +1,8 @@
 import { URL } from "node:url";
-
 import { createLogger } from "../../core/logger";
 import { MAX_BLUEPRINT_BYTES, validateBlueprintUpload } from "../../../modules/validators/blueprintValidator";
 
 const logger = createLogger("DUNE API");
-
 const RETRYABLE_STATUS_CODES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
@@ -13,19 +11,9 @@ interface RequestOptions {
   authenticate?: boolean;
   includeCsrf?: boolean;
 
-  /**
-   * Parameters used to replace {parameterName} values
-   * in the API route.
-   */
-  routeParams?: Record<
-    string,
-    string | number | boolean
-  >;
+  routeParams?: Record<string, string | number | boolean>;
 
-  query?: Record<
-    string,
-    string | number | boolean | null | undefined
-  >;
+  query?: Record<string, string | number | boolean | null | undefined>;
 
   body?: unknown;
   captureSession?: boolean;
@@ -160,14 +148,7 @@ class DuneConsoleClient {
   }
 
   async request(method: HttpMethod, route: string, options: RequestOptions = {}): Promise<unknown> {
-    const {
-      authenticate = true,
-      includeCsrf = method !== "GET" && method !== "HEAD",
-      query,
-      body,
-      captureSession = false,
-      retryAuth = true,
-    } = options;
+    const { authenticate = true, includeCsrf = method !== "GET" && method !== "HEAD", query, body, captureSession = false, retryAuth = true } = options;
 
     const url = new URL(route, this.baseUrl);
 
@@ -319,9 +300,7 @@ class DuneConsoleClient {
     const data = await this.readResponse(response);
 
     if ((response.status === 401 || response.status === 403) && retryAuth && this.password) {
-      logger.warn(
-        `${method} ${route} lost its Console session during multipart upload; re-authenticating and retrying once.`,
-      );
+      logger.warn(`${method} ${route} lost its Console session during multipart upload; re-authenticating and retrying once.`);
 
       await this.reauthenticate();
 
@@ -348,10 +327,7 @@ class DuneConsoleClient {
       }
     ).getSetCookie;
 
-    const cookies =
-      typeof getSetCookie === "function"
-        ? getSetCookie.call(response.headers)
-        : [response.headers.get("set-cookie")].filter((cookie): cookie is string => Boolean(cookie));
+    const cookies = typeof getSetCookie === "function" ? getSetCookie.call(response.headers) : [response.headers.get("set-cookie")].filter((cookie): cookie is string => Boolean(cookie));
 
     const session = cookies.find((cookie) => cookie.startsWith("asc_session="));
 

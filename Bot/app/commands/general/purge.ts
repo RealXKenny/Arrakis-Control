@@ -1,11 +1,4 @@
-import {
-  ChatInputCommandInteraction,
-  ContainerBuilder,
-  MessageFlags,
-  SeparatorSpacingSize,
-  SlashCommandBuilder,
-} from "discord.js";
-
+import { ChatInputCommandInteraction, ContainerBuilder, MessageFlags, SeparatorSpacingSize, SlashCommandBuilder } from "discord.js";
 import { hasStaffRole } from "../../../shared/utils/staffAccess";
 import { createV2Response } from "../../../shared/factories/componentFactory";
 import { createLogger } from "../../../infrastructure/core/logger";
@@ -16,32 +9,15 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("purge")
     .setDescription("Delete recent messages from this channel.")
-    .addIntegerOption((option) =>
-      option
-        .setName("amount")
-        .setDescription("Number of messages to delete (1–100).")
-        .setMinValue(1)
-        .setMaxValue(100)
-        .setRequired(true),
-    ),
+    .addIntegerOption((option) => option.setName("amount").setDescription("Number of messages to delete (1–100).").setMinValue(1).setMaxValue(100).setRequired(true)),
 
-  async execute(
-    interaction: ChatInputCommandInteraction,
-  ): Promise<void> {
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     if (!interaction.inGuild()) {
       const card = new ContainerBuilder()
         .setAccentColor(0x8f3025)
-        .addTextDisplayComponents((text) =>
-          text.setContent("## ⚠️ Server Only"),
-        )
-        .addSeparatorComponents((separator) =>
-          separator.setSpacing(SeparatorSpacingSize.Small),
-        )
-        .addTextDisplayComponents((text) =>
-          text.setContent(
-            "This command can only be used inside a server.",
-          ),
-        );
+        .addTextDisplayComponents((text) => text.setContent("## ⚠️ Server Only"))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) => text.setContent("This command can only be used inside a server."));
 
       await interaction.reply({
         ...createV2Response([card]),
@@ -62,17 +38,9 @@ module.exports = {
     if (!hasStaffRole(member)) {
       const card = new ContainerBuilder()
         .setAccentColor(0x8f3025)
-        .addTextDisplayComponents((text) =>
-          text.setContent("## 🔒 Permission Denied"),
-        )
-        .addSeparatorComponents((separator) =>
-          separator.setSpacing(SeparatorSpacingSize.Small),
-        )
-        .addTextDisplayComponents((text) =>
-          text.setContent(
-            "You need a configured staff role to use this command.",
-          ),
-        );
+        .addTextDisplayComponents((text) => text.setContent("## 🔒 Permission Denied"))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) => text.setContent("You need a configured staff role to use this command."));
 
       await interaction.reply({
         ...createV2Response([card]),
@@ -86,42 +54,18 @@ module.exports = {
 
     try {
       if (!interaction.channel?.isTextBased()) {
-        throw new Error(
-          "This command can only be used in a text channel.",
-        );
+        throw new Error("This command can only be used in a text channel.");
       }
 
-      // Purge first so the response itself cannot be deleted.
-      const deleted = await interaction.channel.bulkDelete(
-        amount,
-        true,
-      );
+      const deleted = await interaction.channel.bulkDelete(amount, true);
 
       const card = new ContainerBuilder()
         .setAccentColor(0xc58b45)
-        .addTextDisplayComponents((text) =>
-          text.setContent("## 🧹 Messages Purged"),
-        )
-        .addSeparatorComponents((separator) =>
-          separator.setSpacing(SeparatorSpacingSize.Small),
-        )
-        .addTextDisplayComponents((text) =>
-          text.setContent(
-            [
-              "### 📋 Purge Summary",
-              `**Requested:** ${amount}`,
-              `**Deleted:** ${deleted.size}`,
-            ].join("\n"),
-          ),
-        )
-        .addSeparatorComponents((separator) =>
-          separator.setSpacing(SeparatorSpacingSize.Small),
-        )
-        .addTextDisplayComponents((text) =>
-          text.setContent(
-            `-# Purged by ${interaction.user.tag}`,
-          ),
-        );
+        .addTextDisplayComponents((text) => text.setContent("## 🧹 Messages Purged"))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) => text.setContent(["### 📋 Purge Summary", `**Requested:** ${amount}`, `**Deleted:** ${deleted.size}`].join("\n")))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) => text.setContent(`-# Purged by ${interaction.user.tag}`));
 
       await interaction.reply({
         ...createV2Response([card]),
@@ -141,17 +85,9 @@ module.exports = {
 
       const card = new ContainerBuilder()
         .setAccentColor(0x8f3025)
-        .addTextDisplayComponents((text) =>
-          text.setContent("## ❌ Purge Failed"),
-        )
-        .addSeparatorComponents((separator) =>
-          separator.setSpacing(SeparatorSpacingSize.Small),
-        )
-        .addTextDisplayComponents((text) =>
-          text.setContent(
-            "I couldn't delete the requested messages. Make sure I have the required permissions and that this is a supported text channel.",
-          ),
-        );
+        .addTextDisplayComponents((text) => text.setContent("## ❌ Purge Failed"))
+        .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+        .addTextDisplayComponents((text) => text.setContent("I couldn't delete the requested messages. Make sure I have the required permissions and that this is a supported text channel."));
 
       await interaction.reply({
         ...createV2Response([card]),

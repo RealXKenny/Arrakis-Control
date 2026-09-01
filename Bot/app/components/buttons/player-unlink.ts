@@ -1,45 +1,24 @@
-import {
-  ButtonInteraction,
-  MessageFlags,
-} from "discord.js";
-
-import {
-  createActorContext,
-} from "../../../shared/utils/createActorContext";
+import { ButtonInteraction, MessageFlags } from "discord.js";
+import { createActorContext } from "../../../shared/utils/createActorContext";
 
 module.exports = {
   customId: "player-unlink",
 
-  async execute(
-    interaction: ButtonInteraction,
-  ): Promise<void> {
+  async execute(interaction: ButtonInteraction): Promise<void> {
     if (!interaction.client.discordAdapter) {
-      throw new Error(
-        "Discord Adapter integration is not configured.",
-      );
+      throw new Error("Discord Adapter integration is not configured.");
     }
 
     await interaction.deferReply({
       flags: MessageFlags.Ephemeral,
     });
 
-    const result =
-      await interaction.client.discordAdapter.unlinkPlayer(
-        createActorContext(
-          interaction,
-          "player-unlink",
-        ),
-      );
+    const result = await interaction.client.discordAdapter.unlinkPlayer(createActorContext(interaction, "player-unlink"));
 
-    await interaction.editReply(
-      result?.message ??
-        "Your Dune character has been unlinked.",
-    );
+    await interaction.editReply(result?.message ?? "Your Dune character has been unlinked.");
 
     if (result?.ok) {
-      await interaction.client.auditLogger?.playerUnlinked(
-        interaction,
-      );
+      await interaction.client.auditLogger?.playerUnlinked(interaction);
     }
   },
 };

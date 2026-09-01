@@ -3,13 +3,9 @@ import { createBotApplication } from "./BotApplication";
 import { createLogger, type Logger } from "./logger";
 
 const REQUIRED_ENVIRONMENT = ["TOKEN", "CONSOLE_URL", "CONSOLE_PASSWORD"] as const;
-
 const config = loadEnvironment([...REQUIRED_ENVIRONMENT]);
-
 const shardId = process.env.DISCORD_SHARD_ID ?? "0";
-
 const logger = createLogger(`SHARD ${shardId}`, config.logLevel);
-
 const application = createBotApplication(config);
 
 registerProcessHandlers(application, logger);

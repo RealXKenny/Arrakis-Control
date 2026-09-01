@@ -52,36 +52,21 @@ function loadEnvironment(requiredKeys: readonly string[] = []): Readonly<Environ
     discordToken,
     clientId: process.env.CLIENT_ID,
     guildId: process.env.GUILD_ID,
-
     duneConsoleUrl,
-
     advinApiKey: process.env.API_KEY,
-    advinApiUrl: process.env.API_URL ?? "https://vps.advinservers.com",
-
+    advinApiUrl: process.env.API_URL ?? "https://vps.example.com",
     duneConsolePassword,
-
     duneDiscordAdapterToken: process.env.ADAPTER_TOKEN,
-
     duneDiscordLinkPanelChannelId: process.env.LINK_PANEL_CHANNEL_ID,
-
     duneDiscordBlueprintPanelChannelId: process.env.BLUEPRINT_PANEL_CHANNEL_ID,
-
     duneDiscordAuditChannelId: process.env.AUDIT_CHANNEL_ID,
-
     duneDiscordActivityLogChannelId: process.env.ACTIVITY_LOG_CHANNEL_ID,
-
     discordRolePanelChannelId: process.env.ROLE_PANEL_CHANNEL_ID,
-
     discordVerifyChannelId: process.env.VERIFY_CHANNEL_ID,
-
     discordRulesChannelId: process.env.RULES_CHANNEL_ID,
-
     discordServerInfoChannelId: process.env.SERVER_INFO_CHANNEL_ID,
-
     discordAnnouncementChannelId: process.env.ANNOUNCEMENT_CHANNEL_ID,
-
     versionAnnouncementIntervalMinutes,
-
     logLevel: process.env.LOG_LEVEL ?? "INFO",
   });
 }

@@ -72,11 +72,7 @@ function createLogger(scope: string, minimumLevel: string = process.env.LOG_LEVE
 
     const timestamp = formatTimestamp(new Date());
 
-    const output =
-      `${COLORS.dim}[${timestamp}]${COLORS.reset} ` +
-      `${LEVEL_COLORS[level]}[${level}]${COLORS.reset} ` +
-      `${scopeColor}[${scope}]${COLORS.reset} ` +
-      message;
+    const output = `${COLORS.dim}[${timestamp}]${COLORS.reset} ` + `${LEVEL_COLORS[level]}[${level}]${COLORS.reset} ` + `${scopeColor}[${scope}]${COLORS.reset} ` + message;
 
     if (level === "ERROR") {
       if (details === undefined) {
@@ -149,11 +145,7 @@ function formatTimestamp(date: Date): string {
 
   const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
 
-  return (
-    `${values.month}/${values.day}/${values.year} ` +
-    `${values.hour}:${values.minute}:${values.second} ` +
-    `${values.dayPeriod}`
-  );
+  return `${values.month}/${values.day}/${values.year} ` + `${values.hour}:${values.minute}:${values.second} ` + `${values.dayPeriod}`;
 }
 
 export { createLogger, formatTimestamp };

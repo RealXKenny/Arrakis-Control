@@ -1,24 +1,12 @@
-import {
-  ChatInputCommandInteraction,
-  ContainerBuilder,
-  MediaGalleryBuilder,
-  MediaGalleryItemBuilder,
-  SeparatorSpacingSize,
-  SlashCommandBuilder,
-} from "discord.js";
-
+import { ChatInputCommandInteraction, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, SeparatorSpacingSize, SlashCommandBuilder } from "discord.js";
 import { createActorContext } from "../../../shared/utils/createActorContext";
 import { createDuneBanner } from "../../../shared/factories/imageFactory";
 import { createV2Response } from "../../../shared/factories/componentFactory";
 import { createLogger } from "../../../infrastructure/core/logger";
 
 const logger = createLogger("PROFILE");
-
 const IMAGE_NAME = "dune-profile.png";
-
-// Set to true when Smuggler data becomes available in the game API.
 const SHOW_SMUGGLER_FACTION = false;
-
 const unavailable = "Unavailable";
 
 interface PlayerData {
@@ -113,13 +101,9 @@ interface ProfileData {
 }
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("profile")
-    .setDescription("Show your linked Dune player profile."),
+  data: new SlashCommandBuilder().setName("profile").setDescription("Show your linked Dune player profile."),
 
-  async execute(
-    interaction: ChatInputCommandInteraction,
-  ): Promise<void> {
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.deferReply();
 
     if (!interaction.client.discordAdapter) {
@@ -129,15 +113,11 @@ module.exports = {
       return;
     }
 
-    const player = (await interaction.client.discordAdapter.getCurrentPlayer(
-      createActorContext(interaction, "/profile"),
-    )) as PlayerData | null;
+    const player = (await interaction.client.discordAdapter.getCurrentPlayer(createActorContext(interaction, "/profile"))) as PlayerData | null;
 
     if (player?.linked !== true) {
       await interaction.editReply({
-        content:
-          player?.message ??
-          "You do not have a linked Dune character yet.",
+        content: player?.message ?? "You do not have a linked Dune character yet.",
       });
       return;
     }
@@ -146,149 +126,78 @@ module.exports = {
 
     if (!playerId) {
       await interaction.editReply({
-        content:
-          "Your linked Dune character does not have a valid player ID.",
+        content: "Your linked Dune character does not have a valid player ID.",
       });
       return;
     }
 
     logger.debug(`Profile player ID: ${playerId}`);
 
-    // -----------------------------------------------------------------------
-    // Load guilds
-    // -----------------------------------------------------------------------
-
-    const guildResponse = await interaction.client.duneApi.call(
-      "GET",
-      "/api/guilds",
-      {
-        query: {
-          page: 0,
-          pageSize: 100,
-        },
+    const guildResponse = await interaction.client.duneApi.call("GET", "/api/guilds", {
+      query: {
+        page: 0,
+        pageSize: 100,
       },
-    );
+    });
 
-    logger.debug(
-      "Profile guild response:",
-      JSON.stringify(guildResponse, null, 2),
-    );
+    logger.debug("Profile guild response:", JSON.stringify(guildResponse, null, 2));
 
     const guildRows = getGuildRows(guildResponse);
 
-    // -----------------------------------------------------------------------
-    // Load guild members
-    // -----------------------------------------------------------------------
-
     const guildMembers = await Promise.all(
-      guildRows.map(
-        async (
-          guildRow: GuildRow,
-        ): Promise<GuildMembershipResult | null> => {
-          const guildId =
-            guildRow.guild_id ??
-            guildRow.guildId ??
-            guildRow.id;
+      guildRows.map(async (guildRow: GuildRow): Promise<GuildMembershipResult | null> => {
+        const guildId = guildRow.guild_id ?? guildRow.guildId ?? guildRow.id;
 
-          if (!guildId) {
-            logger.warn(
-              "Guild row did not contain a valid guild ID:",
-              JSON.stringify(guildRow),
-            );
-            return null;
-          }
+        if (!guildId) {
+          logger.warn("Guild row did not contain a valid guild ID:", JSON.stringify(guildRow));
+          return null;
+        }
 
-          try {
-            const membersResponse =
-              await interaction.client.duneApi.call(
-                "GET",
-                "/api/guilds/{guildId}/members",
-                {
-                  routeParams: {
-                    guildId,
-                  },
-                },
-              );
+        try {
+          const membersResponse = await interaction.client.duneApi.call("GET", "/api/guilds/{guildId}/members", {
+            routeParams: {
+              guildId,
+            },
+          });
 
-            logger.debug(
-              `Profile guild members response (${guildId}):`,
-              JSON.stringify(membersResponse, null, 2),
-            );
+          logger.debug(`Profile guild members response (${guildId}):`, JSON.stringify(membersResponse, null, 2));
 
-            return {
-              guildRow,
-              membersResponse,
-            };
-          } catch (error: unknown) {
-            const message =
-              error instanceof Error
-                ? error.message
-                : String(error);
+          return {
+            guildRow,
+            membersResponse,
+          };
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : String(error);
 
-            logger.warn(
-              `Unable to load members for guild ${guildId}: ${message}`,
-            );
+          logger.warn(`Unable to load members for guild ${guildId}: ${message}`);
 
-            return null;
-          }
-        },
-      ),
+          return null;
+        }
+      }),
     );
 
-    const validGuildMembers = guildMembers.filter(
-      (
-        value,
-      ): value is GuildMembershipResult => value !== null,
-    );
+    const validGuildMembers = guildMembers.filter((value): value is GuildMembershipResult => value !== null);
 
-    const guild = findGuild(
-      guildResponse,
-      player,
-      validGuildMembers,
-    );
+    const guild = findGuild(guildResponse, player, validGuildMembers);
 
-    // -----------------------------------------------------------------------
-    // Load player profile endpoints
-    // -----------------------------------------------------------------------
-
-    const endpointNames = [
-      "currency",
-      "solaris-coin",
-      "factions",
-      "intel",
-      "specs",
-      "progression",
-      "vitals",
-    ] as const;
+    const endpointNames = ["currency", "solaris-coin", "factions", "intel", "specs", "progression", "vitals"] as const;
 
     const responses = await Promise.all(
       endpointNames.map(async (endpoint) => {
         try {
-          const response = await interaction.client.duneApi.call(
-            "GET",
-            `/api/players/{playerId}/${endpoint}`,
-            {
-              routeParams: {
-                playerId,
-              },
+          const response = await interaction.client.duneApi.call("GET", `/api/players/{playerId}/${endpoint}`, {
+            routeParams: {
+              playerId,
             },
-          );
+          });
 
-          logger.debug(
-            `Profile response ${endpoint}:`,
-            JSON.stringify(response, null, 2),
-          );
+          logger.debug(`Profile response ${endpoint}:`, JSON.stringify(response, null, 2));
 
           return [endpoint, response] as const;
         } catch (error: unknown) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : String(error);
+          const message = error instanceof Error ? error.message : String(error);
 
-          logger.warn(
-            `Profile endpoint ${endpoint} unavailable: ${message}`,
-          );
+          logger.warn(`Profile endpoint ${endpoint} unavailable: ${message}`);
 
           return [endpoint, null] as const;
         }
@@ -297,30 +206,12 @@ module.exports = {
 
     const data = Object.fromEntries(responses) as ProfileData;
 
-    // -----------------------------------------------------------------------
-    // Build Discord response
-    // -----------------------------------------------------------------------
-
     const card = new ContainerBuilder()
       .setAccentColor(0xc58b45)
-      .addMediaGalleryComponents(
-        new MediaGalleryBuilder().addItems(
-          new MediaGalleryItemBuilder()
-            .setURL(`attachment://${IMAGE_NAME}`)
-            .setDescription("Dune character profile"),
-        ),
-      )
-      .addTextDisplayComponents((text) =>
-        text.setContent("## Your Dune Player"),
-      )
-      .addSeparatorComponents((separator) =>
-        separator.setSpacing(SeparatorSpacingSize.Small),
-      )
-      .addTextDisplayComponents((text) =>
-        text.setContent(
-          formatProfile(player, data, guild),
-        ),
-      );
+      .addMediaGalleryComponents(new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL(`attachment://${IMAGE_NAME}`).setDescription("Dune character profile")))
+      .addTextDisplayComponents((text) => text.setContent("## Your Dune Player"))
+      .addSeparatorComponents((separator) => separator.setSpacing(SeparatorSpacingSize.Small))
+      .addTextDisplayComponents((text) => text.setContent(formatProfile(player, data, guild)));
 
     await interaction.editReply(
       createV2Response(
@@ -338,26 +229,14 @@ module.exports = {
   },
 };
 
-function formatProfile(
-  player: PlayerData,
-  data: ProfileData,
-  guild: GuildRow | null,
-): string {
+function formatProfile(player: PlayerData, data: ProfileData, guild: GuildRow | null): string {
   const lines = [
     `### ${player.characterName ?? "Unknown"}`,
     `**Status:** ${player.onlineStatus ?? "Unknown"}`,
-    `**Guild:** ${
-      guild?.guild_name ??
-      guild?.guildName ??
-      guild?.name ??
-      "No guild"
-    }`,
+    `**Guild:** ${guild?.guild_name ?? guild?.guildName ?? guild?.name ?? "No guild"}`,
     "",
     `### Progression\n${formatProgression(data.progression)}`,
-    `### Currency\n${formatCurrency(
-      data.currency,
-      data["solaris-coin"],
-    )}`,
+    `### Currency\n${formatCurrency(data.currency, data["solaris-coin"])}`,
     `### Intel\n${formatIntel(data.intel)}`,
     `### Vitals\n${formatVitals(data.vitals)}`,
     `### Factions\n${formatFactions(data.factions)}`,
@@ -374,91 +253,53 @@ function getGuildRows(response: unknown): GuildRow[] {
 
   const data = response as Record<string, unknown>;
 
-  const rows =
-    data.rows ??
-    data.guilds ??
-    data.data ??
-    data.results;
+  const rows = data.rows ?? data.guilds ?? data.data ?? data.results;
 
-  return Array.isArray(rows)
-    ? (rows as GuildRow[])
-    : [];
+  return Array.isArray(rows) ? (rows as GuildRow[]) : [];
 }
 
-function getGuildMemberRows(
-  response: unknown,
-): GuildMemberRow[] {
+function getGuildMemberRows(response: unknown): GuildMemberRow[] {
   if (!response || typeof response !== "object") {
     return [];
   }
 
   const data = response as Record<string, unknown>;
 
-  const rows =
-    data.rows ??
-    data.members ??
-    data.data ??
-    data.results;
+  const rows = data.rows ?? data.members ?? data.data ?? data.results;
 
-  return Array.isArray(rows)
-    ? (rows as GuildMemberRow[])
-    : [];
+  return Array.isArray(rows) ? (rows as GuildMemberRow[]) : [];
 }
 
-function findGuild(
-  response: unknown,
-  player: PlayerData,
-  guildMembers: GuildMembershipResult[],
-): GuildRow | null {
+function findGuild(response: unknown, player: PlayerData, guildMembers: GuildMembershipResult[]): GuildRow | null {
   const rows = getGuildRows(response);
 
   if (!Array.isArray(rows)) {
     return null;
   }
 
-  const characterName = String(
-    player.characterName ?? "",
-  )
+  const characterName = String(player.characterName ?? "")
     .trim()
     .toLowerCase();
 
-  const controllerId = String(
-    player.controllerId ?? "",
-  );
+  const controllerId = String(player.controllerId ?? "");
 
-  const membership = guildMembers.find(
-    ({ membersResponse }) => {
-      const members =
-        getGuildMemberRows(membersResponse);
+  const membership = guildMembers.find(({ membersResponse }) => {
+    const members = getGuildMemberRows(membersResponse);
 
-      return members.some(
-        (member) =>
-          String(
-            member.player_id ??
-              member.playerId ??
-              "",
-          ) === controllerId ||
-          String(
-            member.character_name ??
-              member.characterName ??
-              member.name ??
-              "",
-          )
-            .trim()
-            .toLowerCase() === characterName,
-      );
-    },
-  );
+    return members.some(
+      (member) =>
+        String(member.player_id ?? member.playerId ?? "") === controllerId ||
+        String(member.character_name ?? member.characterName ?? member.name ?? "")
+          .trim()
+          .toLowerCase() === characterName,
+    );
+  });
 
   return (
     membership?.guildRow ??
     rows.find(
       (guild) =>
-        String(
-          guild.character_name ??
-            guild.characterName ??
-            "",
-        )
+        String(guild.character_name ?? guild.characterName ?? "")
           .trim()
           .toLowerCase() === characterName,
     ) ??
@@ -466,124 +307,65 @@ function findGuild(
   );
 }
 
-function formatNumber(
-  value: unknown,
-): string {
+function formatNumber(value: unknown): string {
   const number = Number(value);
 
-  return Number.isFinite(number)
-    ? Math.round(number).toLocaleString()
-    : unavailable;
+  return Number.isFinite(number) ? Math.round(number).toLocaleString() : unavailable;
 }
 
-function formatCurrency(
-  currency: CurrencyData | null | undefined,
-  coin: SolarisCoinData | null | undefined,
-): string {
-  const currencies =
-    currency?.rows
-      ?.map(
-        (row) =>
-          `${row.label ?? "Currency"}: **${formatNumber(
-            row.balance,
-          )}**`,
-      )
-      .join(" · ") || unavailable;
+function formatCurrency(currency: CurrencyData | null | undefined, coin: SolarisCoinData | null | undefined): string {
+  const currencies = currency?.rows?.map((row) => `${row.label ?? "Currency"}: **${formatNumber(row.balance)}**`).join(" · ") || unavailable;
 
-  return `${currencies} · Solaris Coin: **${formatNumber(
-    coin?.total,
-  )}**`;
+  return `${currencies} · Solaris Coin: **${formatNumber(coin?.total)}**`;
 }
 
-function formatProgression(
-  value: ProgressionData | null | undefined,
-): string {
+function formatProgression(value: ProgressionData | null | undefined): string {
   if (!value) {
     return unavailable;
   }
 
-  return `Level **${formatNumber(
-    value.level,
-  )}** · XP **${formatNumber(
-    value.xp,
-  )}** · Unspent skill points **${formatNumber(
-    value.unspentSkillPoints,
-  )}**`;
+  return `Level **${formatNumber(value.level)}** · XP **${formatNumber(value.xp)}** · Unspent skill points **${formatNumber(value.unspentSkillPoints)}**`;
 }
 
-function formatIntel(
-  value: IntelData | null | undefined,
-): string {
+function formatIntel(value: IntelData | null | undefined): string {
   if (!value) {
     return unavailable;
   }
 
-  return `**${formatNumber(
-    value.intel,
-  )}** / ${formatNumber(value.maxIntel)}`;
+  return `**${formatNumber(value.intel)}** / ${formatNumber(value.maxIntel)}`;
 }
 
-function formatVitals(
-  value: VitalsData | null | undefined,
-): string {
+function formatVitals(value: VitalsData | null | undefined): string {
   if (!value) {
     return unavailable;
   }
 
   return [
-    `Health **${formatNumber(
-      value.currentHealth,
-    )} / ${formatNumber(value.maxHealth)}**`,
+    `Health **${formatNumber(value.currentHealth)} / ${formatNumber(value.maxHealth)}**`,
 
-    `Hydration **${formatNumber(
-      value.hydration,
-    )} / ${formatNumber(value.maxHydration)}**`,
+    `Hydration **${formatNumber(value.hydration)} / ${formatNumber(value.maxHydration)}**`,
 
-    `Spice addiction **${formatNumber(
-      value.spiceAddictionLevel,
-    )} / ${formatNumber(
-      value.maxSpiceAddictionLevel,
-    )}**`,
+    `Spice addiction **${formatNumber(value.spiceAddictionLevel)} / ${formatNumber(value.maxSpiceAddictionLevel)}**`,
   ].join(" · ");
 }
 
-function formatFactions(
-  value: FactionsData | null | undefined,
-): string {
+function formatFactions(value: FactionsData | null | undefined): string {
   if (!value?.rows) {
     return unavailable;
   }
 
   const factions = value.rows
-    .filter(
-      (row) =>
-        SHOW_SMUGGLER_FACTION ||
-        String(row.faction_name ?? "").toLowerCase() !==
-          "smuggler",
-    )
-    .map(
-      (row) =>
-        `${row.faction_name ?? "Faction"}: **${formatNumber(
-          row.reputation_amount,
-        )}** (rank ${formatNumber(
-          row.estimated_rank,
-        )})`,
-    )
+    .filter((row) => SHOW_SMUGGLER_FACTION || String(row.faction_name ?? "").toLowerCase() !== "smuggler")
+    .map((row) => `${row.faction_name ?? "Faction"}: **${formatNumber(row.reputation_amount)}** (rank ${formatNumber(row.estimated_rank)})`)
     .join("\n");
 
   return factions || unavailable;
 }
 
-function formatSpecs(
-  value: SpecsData | null | undefined,
-): string {
+function formatSpecs(value: SpecsData | null | undefined): string {
   if (!value) {
     return unavailable;
   }
 
-  return `Unspent points: **${formatNumber(
-    value.unspentPoints,
-  )}** · Skill modules: **${
-    value.skillModules?.length ?? 0
-  }**`;
+  return `Unspent points: **${formatNumber(value.unspentPoints)}** · Skill modules: **${value.skillModules?.length ?? 0}**`;
 }
