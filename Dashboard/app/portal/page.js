@@ -750,6 +750,772 @@ function getBaseOwner(base) {
   );
 }
 
+function extractVehicles(player) {
+  const response =
+    player?.details?.vehicles;
+
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  // Vehicle data may be nested under rows, vehicles,
+  // data, results, or items.
+  const queue = [response];
+  const seen = new Set();
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+
+    if (!current || typeof current !== 'object') {
+      continue;
+    }
+
+    if (seen.has(current)) {
+      continue;
+    }
+
+    seen.add(current);
+
+    if (Array.isArray(current)) {
+      return current;
+    }
+
+    for (const key of [
+      'rows',
+      'vehicles',
+      'data',
+      'results',
+      'items',
+    ]) {
+      const value = current[key];
+
+      if (Array.isArray(value)) {
+        return value;
+      }
+
+      if (
+        value &&
+        typeof value === 'object'
+      ) {
+        queue.push(value);
+      }
+    }
+  }
+
+  return [];
+}
+
+function getVehicleId(vehicle) {
+  return (
+    vehicle?.id ??
+    vehicle?.vehicle_id ??
+    vehicle?.vehicleId ??
+    vehicle?.uuid ??
+    null
+  );
+}
+
+function getVehicleName(vehicle, index) {
+  return (
+    vehicle?.name ??
+    vehicle?.vehicleName ??
+    vehicle?.vehicle_name ??
+    `Vehicle ${index + 1}`
+  );
+}
+
+function getVehicleType(vehicle) {
+  return (
+    vehicle?.type ??
+    vehicle?.vehicleType ??
+    vehicle?.vehicle_type ??
+    'Unknown'
+  );
+}
+
+function getVehicleOwner(vehicle) {
+  return (
+    vehicle?.owner_name ??
+    vehicle?.ownerName ??
+    vehicle?.owner ??
+    'Unknown'
+  );
+}
+
+function isOwnedVehicle(vehicle, playerName) {
+  const relationship = String(
+    vehicle?.relationship ??
+    vehicle?.relation ??
+    vehicle?.access ??
+    ''
+  )
+    .trim()
+    .toLowerCase();
+
+  if (
+    relationship === 'owner' ||
+    relationship === 'owned' ||
+    relationship === 'self' ||
+    relationship === 'own'
+  ) {
+    return true;
+  }
+
+  if (
+    relationship === 'shared' ||
+    relationship === 'member' ||
+    relationship === 'visitor' ||
+    relationship === 'guest'
+  ) {
+    return false;
+  }
+
+  const normalizedPlayerName =
+    String(playerName ?? '')
+      .trim()
+      .toLowerCase();
+
+  const owner = String(
+    vehicle?.owner_name ??
+    vehicle?.ownerName ??
+    vehicle?.owner ??
+    ''
+  )
+    .trim()
+    .toLowerCase();
+
+  // Explicit owner match = Own.
+  if (
+    owner &&
+    normalizedPlayerName &&
+    owner === normalizedPlayerName
+  ) {
+    return true;
+  }
+
+  // Blank owner = Own.
+  if (!owner) {
+    return true;
+  }
+
+  return false;
+}
+
+function isVehicleAccessible(vehicle, playerName) {
+  const normalizedPlayerName =
+    String(playerName ?? '')
+      .trim()
+      .toLowerCase();
+
+  const owner = String(
+    vehicle?.owner_name ??
+    vehicle?.ownerName ??
+    vehicle?.owner ??
+    ''
+  )
+    .trim()
+    .toLowerCase();
+
+  // Vehicles with no owner are ignored completely.
+  if (!owner) {
+    return false;
+  }
+
+  // Current player owns it.
+  if (
+    normalizedPlayerName &&
+    owner === normalizedPlayerName
+  ) {
+    return true;
+  }
+
+  const relationship = String(
+    vehicle?.relationship ??
+    vehicle?.relation ??
+    vehicle?.access ??
+    ''
+  )
+    .trim()
+    .toLowerCase();
+
+  // Explicit shared/access relationship.
+  if (
+    relationship === 'shared' ||
+    relationship === 'member' ||
+    relationship === 'visitor' ||
+    relationship === 'guest'
+  ) {
+    return true;
+  }
+
+  const sharedWith =
+    Array.isArray(vehicle?.shared_with)
+      ? vehicle.shared_with
+      : Array.isArray(vehicle?.sharedWith)
+        ? vehicle.sharedWith
+        : [];
+
+  return sharedWith.some((person) => {
+    const sharedName = String(
+      person?.name ??
+      person?.username ??
+      person?.characterName ??
+      ''
+    )
+      .trim()
+      .toLowerCase();
+
+    return (
+      sharedName &&
+      normalizedPlayerName &&
+      sharedName === normalizedPlayerName
+    );
+  });
+}
+
+function getVehicleRelationship(
+  vehicle,
+  playerName
+) {
+  return isOwnedVehicle(
+    vehicle,
+    playerName
+  )
+    ? 'Owned'
+    : 'Shared';
+}
+
+function VehicleCard({
+  vehicle,
+  index,
+  playerName,
+}) {
+  const vehicleName =
+    getVehicleName(vehicle, index);
+
+  const vehicleType =
+    getVehicleType(vehicle);
+
+  const owner =
+    getVehicleOwner(vehicle);
+
+  const owned =
+    isOwnedVehicle(
+      vehicle,
+      playerName
+    );
+
+  const relationship =
+    owned
+      ? 'Owned'
+      : 'Shared';
+
+  const condition =
+    getNumber(
+      vehicle?.condition_percent,
+      vehicle?.conditionPercent,
+      vehicle?.condition
+    );
+
+  const fuel =
+    getNumber(
+      vehicle?.fuel_percent,
+      vehicle?.fuelPercent
+    );
+
+  const currentFuel =
+    vehicle?.current_fuel ??
+    vehicle?.currentFuel;
+
+  const accent =
+    owned
+      ? COLORS.gold
+      : COLORS.water;
+
+  return (
+    <article
+      style={{
+        background: `
+          linear-gradient(
+            145deg,
+            rgba(255,255,255,0.025),
+            rgba(255,255,255,0.008)
+          ),
+          ${COLORS.panel}
+        `,
+        border: `1px solid ${
+          owned
+            ? 'rgba(210,168,90,0.22)'
+            : 'rgba(125,184,232,0.18)'
+        }`,
+        borderRadius: 14,
+        padding: 22,
+        minWidth: 0,
+        boxSizing: 'border-box',
+        boxShadow:
+          '0 8px 28px rgba(0,0,0,0.2)',
+        minHeight: 260,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 12,
+          paddingBottom: 16,
+          marginBottom: 17,
+          borderBottom:
+            `1px solid ${COLORS.borderLight}`,
+        }}
+      >
+        <div
+          style={{
+            minWidth: 0,
+            flex: 1,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}
+          >
+            <span
+              className="portal-glow-dot"
+              style={{
+                width: 8,
+                height: 8,
+                flexShrink: 0,
+                borderRadius: '50%',
+                backgroundColor: accent,
+                boxShadow: `
+                  0 0 4px ${accent},
+                  0 0 9px ${accent},
+                  0 0 18px ${accent},
+                  0 0 28px ${accent}
+                `,
+              }}
+            />
+
+            <strong
+              style={{
+                color: COLORS.text,
+                fontSize: '1.05rem',
+                fontWeight: 650,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              title={vehicleName}
+            >
+              {vehicleName}
+            </strong>
+          </div>
+
+          <div
+            style={{
+              color: COLORS.dim,
+              fontSize: '0.72rem',
+              marginTop: 5,
+              paddingLeft: 18,
+            }}
+          >
+            {vehicleType}
+          </div>
+        </div>
+
+        <span
+          style={{
+            flexShrink: 0,
+            padding: '5px 9px',
+            borderRadius: 999,
+            backgroundColor: owned
+              ? 'rgba(210,168,90,0.08)'
+              : 'rgba(125,184,232,0.08)',
+            border: `1px solid ${
+              owned
+                ? 'rgba(210,168,90,0.2)'
+                : 'rgba(125,184,232,0.2)'
+            }`,
+            color: owned
+              ? '#e3c27f'
+              : '#8fc6ee',
+            fontSize: '0.63rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+          }}
+        >
+          {relationship}
+        </span>
+      </div>
+
+      <div
+        style={{
+          marginBottom: 20,
+          padding: '11px 13px',
+          backgroundColor: '#ffffff04',
+          border:
+            `1px solid ${COLORS.borderLight}`,
+          borderRadius: 8,
+        }}
+      >
+        <div
+          style={{
+            color: COLORS.dim,
+            fontSize: '0.62rem',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            marginBottom: 3,
+          }}
+        >
+          Owner
+        </div>
+
+        <div
+          style={{
+            color: COLORS.textSoft,
+            fontSize: '0.8rem',
+          }}
+        >
+          {owner}
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns:
+            'repeat(2, minmax(0, 1fr))',
+          gap: 18,
+        }}
+      >
+        <TelemetryMetric
+          label="Condition"
+          percent={
+            condition === null
+              ? null
+              : clampPercent(condition)
+          }
+          color={
+            condition !== null &&
+            condition <= 25
+              ? COLORS.red
+              : COLORS.gold
+          }
+          value={
+            condition === null
+              ? 'No data'
+              : `${condition.toFixed(0)}%`
+          }
+        />
+
+        <TelemetryMetric
+          label="Fuel"
+          percent={
+            fuel === null
+              ? null
+              : clampPercent(fuel)
+          }
+          color={
+            fuel !== null &&
+              fuel <= 25
+              ? COLORS.red
+              : COLORS.gold
+          }
+          value={
+            currentFuel !== undefined &&
+              currentFuel !== null
+              ? Number(currentFuel).toFixed(2).replace(/\.00$/, '')
+              : fuel === null
+                ? 'No data'
+                : `${fuel.toFixed(0)}%`
+          }
+        />
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns:
+            'repeat(2, minmax(0, 1fr))',
+          gap: 13,
+          marginTop: 18,
+        }}
+      >
+        {[
+        ].map(([label, value]) => (
+          <div
+            key={label}
+            style={{
+              padding: 12,
+              backgroundColor: '#ffffff04',
+              border:
+                `1px solid ${COLORS.borderLight}`,
+              borderRadius: 8,
+              minWidth: 0,
+            }}
+          >
+            <div
+              style={{
+                color: COLORS.dim,
+                fontSize: '0.6rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                marginBottom: 4,
+              }}
+            >
+              {label}
+            </div>
+
+            <div
+              style={{
+                color: COLORS.textSoft,
+                fontSize: '0.72rem',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              title={String(value)}
+            >
+              {String(value)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function VehicleGrid({
+  vehicles,
+  playerName,
+  vehicleTab,
+  setVehicleTab,
+}) {
+  const accessibleVehicles =
+    vehicles.filter((vehicle) =>
+      isVehicleAccessible(
+        vehicle,
+        playerName
+      )
+    );
+
+  const ownedVehicles =
+    accessibleVehicles.filter((vehicle) =>
+      isOwnedVehicle(
+        vehicle,
+        playerName
+      )
+    );
+
+  const sharedVehicles =
+    accessibleVehicles.filter(
+      (vehicle) =>
+        !isOwnedVehicle(
+          vehicle,
+          playerName
+        )
+    );
+
+  const visibleVehicles =
+    vehicleTab === 'owned'
+      ? ownedVehicles
+      : sharedVehicles;
+
+  if (visibleVehicles.length === 0) {
+    return (
+      <div
+        style={{
+          padding: 32,
+          textAlign: 'center',
+          backgroundColor: '#ffffff03',
+          border:
+            `1px solid ${COLORS.borderLight}`,
+          borderRadius: 10,
+        }}
+      >
+        <div
+          style={{
+            color: COLORS.textSoft,
+            fontSize: '0.9rem',
+            marginBottom: 5,
+          }}
+        >
+          No vehicles found
+        </div>
+
+        <div
+          style={{
+            color: COLORS.dim,
+            fontSize: '0.75rem',
+          }}
+        >
+          There are currently no vehicles
+          in this category.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Own / Shared tabs */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns:
+            'repeat(2, minmax(0, 1fr))',
+          gap: 8,
+          padding: 5,
+          marginBottom: 20,
+          backgroundColor: '#0c0805',
+          border:
+            `1px solid ${COLORS.border}`,
+          borderRadius: 10,
+        }}
+      >
+        <button
+          type="button"
+          onClick={() =>
+            setVehicleTab('owned')
+          }
+          style={{
+            appearance: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            borderRadius: 7,
+            padding: '11px 14px',
+            backgroundColor:
+              vehicleTab === 'owned'
+                ? 'rgba(210,168,90,0.12)'
+                : 'transparent',
+            color:
+              vehicleTab === 'owned'
+                ? COLORS.text
+                : COLORS.dim,
+            boxShadow:
+              vehicleTab === 'owned'
+                ? 'inset 0 0 0 1px rgba(210,168,90,0.16)'
+                : 'none',
+            fontSize: '0.76rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.6px',
+          }}
+        >
+          Own Vehicles
+
+          <span
+            style={{
+              marginLeft: 7,
+              color:
+                vehicleTab === 'owned'
+                  ? COLORS.gold
+                  : COLORS.dim,
+            }}
+          >
+            {ownedVehicles.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            setVehicleTab('shared')
+          }
+          style={{
+            appearance: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            borderRadius: 7,
+            padding: '11px 14px',
+            backgroundColor:
+              vehicleTab === 'shared'
+                ? 'rgba(125,184,232,0.1)'
+                : 'transparent',
+            color:
+              vehicleTab === 'shared'
+                ? '#b5d9f2'
+                : COLORS.dim,
+            boxShadow:
+              vehicleTab === 'shared'
+                ? 'inset 0 0 0 1px rgba(125,184,232,0.15)'
+                : 'none',
+            fontSize: '0.76rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.6px',
+          }}
+        >
+          Shared Vehicles
+
+          <span
+            style={{
+              marginLeft: 7,
+              color:
+                vehicleTab === 'shared'
+                  ? COLORS.water
+                  : COLORS.dim,
+            }}
+          >
+            {sharedVehicles.length}
+          </span>
+        </button>
+      </div>
+
+      {/* Vehicle cards */}
+      <div
+        className="vehicle-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns:
+            'repeat(2, minmax(0, 1fr))',
+          gap: 18,
+        }}
+      >
+        {visibleVehicles.map(
+          (vehicle, index) => {
+            const isOddFinalVehicle =
+              visibleVehicles.length % 2 === 1 &&
+              index ===
+              visibleVehicles.length - 1;
+
+            const vehicleId =
+              getVehicleId(vehicle);
+
+            return (
+              <div
+                key={
+                  vehicleId ??
+                  `vehicle-${index}`
+                }
+                style={{
+                  minWidth: 0,
+                  gridColumn:
+                    isOddFinalVehicle
+                      ? '1 / -1'
+                      : 'auto',
+                }}
+              >
+                <VehicleCard
+                  vehicle={vehicle}
+                  index={index}
+                  playerName={playerName}
+                />
+              </div>
+            );
+          }
+        )}
+      </div>
+    </>
+  );
+}
+
 function ProgressBar({ percent, color }) {
   return (
     <div style={styles.progressTrack}>
@@ -1348,6 +2114,9 @@ export default function PlayerPortal() {
   const [baseTab, setBaseTab] =
     useState('owned');
 
+  const [vehicleTab, setVehicleTab] =
+    useState('owned');
+
   async function loadBaseTelemetry(bases) {
     if (
       !Array.isArray(bases) ||
@@ -1783,6 +2552,9 @@ export default function PlayerPortal() {
 
   const bases =
     extractBases(player);
+
+  const vehicles =
+    extractVehicles(player);
 
   const character = {
     name:
@@ -2656,6 +3428,62 @@ const levelProgress =
             telemetry={basesTelemetry}
           />
         </section>
+
+        {/* VEHICLES */}
+        <section
+          style={{
+            ...styles.panel,
+            padding: 24,
+            marginBottom: 20,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              gap: 15,
+              flexWrap: 'wrap',
+              marginBottom: 18,
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  margin: '0 0 5px',
+                  color: COLORS.goldLight,
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '1.5px',
+                }}
+              >
+                Vehicle Network
+              </p>
+
+              <h2 style={styles.sectionTitle}>
+                Vehicles
+              </h2>
+            </div>
+
+            <div
+              style={{
+                color: COLORS.dim,
+                fontSize: '0.72rem',
+              }}
+            >
+              {vehicles.length}{' '}
+              owned / shared
+            </div>
+          </div>
+
+          <VehicleGrid
+            vehicles={vehicles}
+            playerName={character.name}
+            vehicleTab={vehicleTab}
+            setVehicleTab={setVehicleTab}
+          />
+        </section>
       </div>
 
       <style jsx>{`
@@ -2720,6 +3548,19 @@ const levelProgress =
 
           .base-grid-last {
             grid-column: auto !important;
+          }
+        }
+
+        .vehicle-grid {
+          grid-template-columns: repeat(
+            2,
+            minmax(0, 1fr)
+          );
+        }
+
+        @media (max-width: 900px) {
+          .vehicle-grid {
+            grid-template-columns: 1fr !important;
           }
         }
 

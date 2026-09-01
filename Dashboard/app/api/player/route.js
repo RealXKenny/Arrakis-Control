@@ -108,6 +108,59 @@ function normalizeCurrency(currency) {
 }
 
 /**
+ * Extract vehicle rows from common API response wrappers.
+ */
+function extractVehicleRows(response) {
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  const queue = [response];
+  const seen = new Set();
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+
+    if (!current || typeof current !== 'object') {
+      continue;
+    }
+
+    if (seen.has(current)) {
+      continue;
+    }
+
+    seen.add(current);
+
+    if (Array.isArray(current)) {
+      return current;
+    }
+
+    for (const key of [
+      'rows',
+      'vehicles',
+      'data',
+      'results',
+      'items',
+    ]) {
+      const value = current[key];
+
+      if (Array.isArray(value)) {
+        return value;
+      }
+
+      if (
+        value &&
+        typeof value === 'object'
+      ) {
+        queue.push(value);
+      }
+    }
+  }
+
+  return [];
+}
+
+/**
  * Extract base ID.
  */
 function getBaseId(base) {
@@ -705,31 +758,51 @@ export async function GET(request) {
     /**
      * Core player endpoints.
      */
-    const coreEndpoints = [
-      'currency',
-      'solaris-coin',
-      'factions',
-      'intel',
-      'specs',
-      'progression',
-      'vitals',
-      'bases',
-    ];
+      const coreEndpoints = [
+        'currency',
+        'solaris-coin',
+        'factions',
+        'intel',
+        'specs',
+        'progression',
+        'vitals',
+        'bases',
+        'vehicles',
+      ];
 
     const details = await Promise.all(
       coreEndpoints.map(
         async (name) => {
           try {
             const playerEndpoint =
-              `/api/players/${encodeURIComponent(
-                playerId
-              )}/${name}`;
+              name === 'vehicles'
+                ? '/api/vehicles'
+                : `/api/players/${encodeURIComponent(
+                  playerId
+                )}/${name}`;
 
             const resData =
               await duneClient.request(
                 'GET',
                 playerEndpoint
               );
+
+            if (name === 'vehicles') {
+              const allVehicles = Array.isArray(
+                resData?.rows
+              )
+                ? resData.rows
+                : [];
+
+              return [
+                name,
+                {
+                  ...resData,
+                  rows: allVehicles,
+                  totalCount: allVehicles.length,
+                },
+              ];
+            }
 
             /**
              * Bases
@@ -805,7 +878,7 @@ export async function GET(request) {
                 result,
               ];
             }
-
+            
             return [
               name,
               resData,
