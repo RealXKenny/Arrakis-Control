@@ -14,10 +14,12 @@ export default function LandingPage() {
       });
 
       if (!res.ok) {
-        throw new Error(`Server telemetry request failed: ${res.status}`);
+        throw new Error(`Server telemetry request failed: ${res.status} `);
       }
 
       const data = await res.json();
+
+      console.log('[LANDING PAGE] TELEMETRY RESPONSE:', data);
 
       setActivePlayers(
         data.activePlayers !== null ? Number(data.activePlayers) : null

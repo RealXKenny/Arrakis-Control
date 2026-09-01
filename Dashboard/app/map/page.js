@@ -123,15 +123,15 @@ function getCoordinate(marker, axis) {
   const value =
     axis === 'x'
       ? marker.x ??
-        marker.pos_x ??
-        marker.longitude ??
-        marker.position?.x ??
-        marker.coordinates?.x
+      marker.pos_x ??
+      marker.longitude ??
+      marker.position?.x ??
+      marker.coordinates?.x
       : marker.y ??
-        marker.pos_y ??
-        marker.latitude ??
-        marker.position?.y ??
-        marker.coordinates?.y;
+      marker.pos_y ??
+      marker.latitude ??
+      marker.position?.y ??
+      marker.coordinates?.y;
 
   return toNumber(value);
 }
@@ -156,12 +156,17 @@ function getMarkerArray(data) {
     return data;
   }
 
-  if (Array.isArray(data?.rows)) {
-    return data.rows;
-  }
-
   return [];
 }
+
+function getMarkerRelationship(marker) {
+  return String(marker?.relationship || '')
+    .trim()
+    .toLowerCase() === 'owner'
+    ? 'Owned'
+    : 'Shared';
+}
+
 
 function getMapConfig(data) {
   if (data?.map) {
@@ -295,8 +300,8 @@ function clampZoom(value, minimum) {
 function markerKey(marker, index) {
   return String(
     marker?.base_id ??
-      marker?.id ??
-      `base-${index}`
+    marker?.id ??
+    `base-${index}`
   );
 }
 
@@ -336,7 +341,7 @@ export default function HaggaBasinMap() {
       setLoading(true);
 
       const response = await fetch(
-        '/api/map/markers?map=HaggaBasin',
+        '/api/map?map=HaggaBasin',
         {
           method: 'GET',
           cache: 'no-store',
@@ -347,23 +352,31 @@ export default function HaggaBasinMap() {
         }
       );
 
+      if (response.status === 401) {
+        window.location.href = '/auth/login';
+        return;
+      }
+
       if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+
         throw new Error(
+          errorData?.error ||
           `Map API returned ${response.status}`
         );
       }
 
       const data = await response.json();
 
+      if (!data?.ok) {
+        throw new Error(
+          data?.error ||
+          'Map API returned an error.'
+        );
+      }
+
       const map = getMapConfig(data);
       const rows = getMarkerArray(data);
-
-      const baseRows = rows.filter(
-        (marker) =>
-          String(marker?.type || '')
-            .trim()
-            .toLowerCase() === 'base'
-      );
 
       if (!map) {
         throw new Error(
@@ -372,7 +385,7 @@ export default function HaggaBasinMap() {
       }
 
       setMapConfig(map);
-      setMarkers(baseRows);
+      setMarkers(rows);
       setError('');
     } catch (err) {
       if (err?.name === 'AbortError') {
@@ -380,7 +393,8 @@ export default function HaggaBasinMap() {
       }
 
       setError(
-        err?.message || 'Failed to load map'
+        err?.message ||
+        'Failed to load map'
       );
     } finally {
       setLoading(false);
@@ -711,13 +725,13 @@ export default function HaggaBasinMap() {
         anchor && canvasRect
           ? (anchor.clientX - canvasRect.left) / zoom
           : (frame.scrollLeft + frame.clientWidth / 2) /
-            zoom;
+          zoom;
 
       const mapY =
         anchor && canvasRect
           ? (anchor.clientY - canvasRect.top) / zoom
           : (frame.scrollTop + frame.clientHeight / 2) /
-            zoom;
+          zoom;
 
       zoomAnchorRef.current = {
         mapX,
@@ -797,9 +811,9 @@ export default function HaggaBasinMap() {
 
       setZoomAround(
         zoom *
-          (event.deltaY < 0
-            ? 1.12
-            : 0.88),
+        (event.deltaY < 0
+          ? 1.12
+          : 0.88),
         {
           clientX: event.clientX,
           clientY: event.clientY,
@@ -1793,34 +1807,72 @@ export default function HaggaBasinMap() {
                           {name}
                         </span>
 
-                        {marker?.owner_name && (
-                          <span
-                            style={{
-                              display:
-                                'block',
-                              maxWidth: 180,
-                              overflow:
-                                'hidden',
-                              textOverflow:
-                                'ellipsis',
-                              marginTop: 1,
-                              color:
-                                '#9b8468',
-                              fontSize:
-                                '0.6rem',
-                              lineHeight:
-                                '1.1',
-                              whiteSpace:
-                                'nowrap',
-                              pointerEvents:
-                                'none',
-                            }}
-                          >
-                            {
-                              marker.owner_name
-                            }
-                          </span>
-                        )}
+                        <span
+                          style={{
+                            display:
+                              'block',
+                            maxWidth: 180,
+                            overflow:
+                              'hidden',
+                            textOverflow:
+                              'ellipsis',
+                            marginTop: 1,
+                            padding:
+                              '2px 6px',
+                            background:
+                              'rgba(23,14,7,.94)',
+                            border:
+                              '1px solid #6f4e2d',
+                            color:
+                              '#ead8ba',
+                            fontSize:
+                              '0.6rem',
+                            lineHeight:
+                              '1.1',
+                            whiteSpace:
+                              'nowrap',
+                            boxShadow:
+                              '0 2px 8px rgba(0,0,0,.7)',
+                            pointerEvents:
+                              'none',
+                          }}
+                        >
+                          {marker?.owner_name || 'Unknown'}
+                        </span>
+
+                        <span
+                          style={{
+                            display:
+                              'block',
+                            width:
+                              'fit-content',
+                            marginTop: 1,
+                            padding:
+                              '2px 6px',
+                            background:
+                              'rgba(23,14,7,.94)',
+                            border:
+                              '1px solid #6f4e2d',
+                            color:
+                              getMarkerRelationship(marker) === 'Owned'
+                                ? '#d8a75f'
+                                : '#bda987',
+                            fontSize:
+                              '0.58rem',
+                            fontWeight:
+                              'bold',
+                            lineHeight:
+                              '1.1',
+                            whiteSpace:
+                              'nowrap',
+                            boxShadow:
+                              '0 2px 8px rgba(0,0,0,.7)',
+                            pointerEvents:
+                              'none',
+                          }}
+                        >
+                          {getMarkerRelationship(marker).toUpperCase()}
+                        </span>
                       </button>
                     );
                   }

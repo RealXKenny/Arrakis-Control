@@ -10,11 +10,11 @@ export async function GET() {
     // Initialize the Dune client only when the request runs.
     const duneClient = getDuneClient();
 
-    // Fetch both Dune endpoints through duneClient.
-    const [serverStatus, playersData] = await Promise.all([
+    // Fetch online players and total players through duneClient.
+    const [onlinePlayers, playersData] = await Promise.all([
       duneClient.request(
         'GET',
-        '/api/server/status'
+        '/api/players/online?page=0&pageSize=100'
       ),
 
       duneClient.request(
@@ -23,30 +23,50 @@ export async function GET() {
       ),
     ]);
 
-    // Extract active player count.
-    const activePlayers =
-      serverStatus?.activePlayers ??
-      serverStatus?.activePlayerCount ??
-      serverStatus?.players ??
-      serverStatus?.playerCount ??
-      0;
+    console.log(
+      '[TELEMETRY API] RAW ONLINE PLAYERS RESPONSE:',
+      onlinePlayers
+    );
 
-    // Extract total player count from pagination.
-    const totalPlayers =
-      playersData?.total ??
+    console.log(
+      '[TELEMETRY API] RAW TOTAL PLAYERS RESPONSE:',
+      playersData
+    );
+
+    // Extract active player count.
+    const activePlayers = Number(
+      onlinePlayers?.totalCount ??
+      onlinePlayers?.totalPlayers ??
+      onlinePlayers?.count ??
+      onlinePlayers?.pagination?.total ??
+      onlinePlayers?.pagination?.totalCount ??
+      onlinePlayers?.meta?.total ??
+      onlinePlayers?.meta?.totalCount ??
+      0
+    );
+
+    // Extract total player count.
+    const totalPlayers = Number(
+      playersData?.totalCount ??
       playersData?.totalPlayers ??
       playersData?.count ??
       playersData?.pagination?.total ??
       playersData?.pagination?.totalCount ??
       playersData?.meta?.total ??
       playersData?.meta?.totalCount ??
-      0;
+      0
+    );
+
+    console.log('[PLAYER TELEMETRY] Counts:', {
+      activePlayers,
+      totalPlayers,
+    });
 
     return NextResponse.json(
       {
         ok: true,
-        activePlayers: Number(activePlayers),
-        totalPlayers: Number(totalPlayers),
+        activePlayers,
+        totalPlayers,
       },
       {
         status: 200,

@@ -1,227 +1,384 @@
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { getDuneClient } from '../dune/route';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-let duneClient = null;
-let initialized = false;
+function extractRows(data) {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== 'object') return [];
 
-// ============================================================
-// DUNE CLIENT
-// ============================================================
+  const candidates = [
+    data.markers,
+    data.rows,
+    data.data?.markers,
+    data.data?.rows,
+    data.data,
+  ];
 
-async function getDuneClient() {
-  if (!duneClient) {
-    duneClient = new DuneClient(
-      process.env.CONSOLE_URL
-    );
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) return candidate;
   }
 
-  // Log into the Dune Console only once.
-  if (!initialized) {
-    await duneClient.login(
-      process.env.CONSOLE_PASSWORD
-    );
-
-    initialized = true;
-  }
-
-  return duneClient;
+  return [];
 }
 
-// ============================================================
-// GET /api/map
-// ============================================================
+function extractBaseRows(data) {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== 'object') return [];
 
-export async function GET() {
-  const requestStarted = Date.now();
+  const candidates = [
+    data.rows,
+    data.bases,
+    data.data?.rows,
+    data.data?.bases,
+    data.data,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) return candidate;
+  }
+
+  return [];
+}
+
+function extractMapConfig(data) {
+  if (!data || typeof data !== 'object') return null;
+
+  if (data.map) return data.map;
+
+  if (data.maps && data.defaultMap) {
+    const defaultMap = data.maps[data.defaultMap];
+    if (defaultMap) return defaultMap;
+  }
+
+  if (data.maps && typeof data.maps === 'object') {
+    const firstMap = Object.values(data.maps)[0];
+    if (firstMap) return firstMap;
+  }
+
+  if (data.config) return data.config;
+  if (data.data?.map) return data.data.map;
+  if (data.data?.config) return data.data.config;
+
+  return null;
+}
+
+function isBaseMarker(marker) {
+  return (
+    typeof marker?.type === 'string' &&
+    marker.type.trim().toLowerCase() === 'base'
+  );
+}
+
+function normalizeBase(base, index) {
+  const x =
+    base?.x ??
+    base?.pos_x ??
+    base?.longitude ??
+    base?.position?.x ??
+    base?.coordinates?.x ??
+    null;
+
+  const y =
+    base?.y ??
+    base?.pos_y ??
+    base?.latitude ??
+    base?.position?.y ??
+    base?.coordinates?.y ??
+    null;
+
+  return {
+    ...base,
+    id: base?.id ?? base?.base_id ?? `base-${index}`,
+    name:
+      base?.name ??
+      base?.base_name ??
+      base?.character_name ??
+      `Base ${index + 1}`,
+    x,
+    y,
+    icon: base?.icon ?? 'Base',
+  };
+}
+
+function getBaseId(base) {
+  const value =
+    base?.base_id ??
+    base?.baseId ??
+    base?.id ??
+    base?.uuid;
+
+  if (
+    value === undefined ||
+    value === null ||
+    value === ''
+  ) {
+    return null;
+  }
+
+  return String(value);
+}
+
+function extractPlayerId(data) {
+  return (
+    data?.pawnId ??
+    data?.controllerId ??
+    data?.playerId ??
+    data?.player_id ??
+    null
+  );
+}
+
+function getMarkerBaseId(marker) {
+  return getBaseId(marker);
+}
+
+function getErrorMessage(error) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  return 'Unable to load map data.';
+}
+
+export async function GET(request) {
+  const started = Date.now();
 
   try {
-    // --------------------------------------------------------
-    // GET DUNE CLIENT
-    // --------------------------------------------------------
+    const cookieStore = await cookies();
+    const sessionId =
+      cookieStore.get('dashboard_session')?.value;
 
-    const client = await getDuneClient();
-
-    // --------------------------------------------------------
-    // REQUEST BASES
-    // --------------------------------------------------------
-
-    const bases = await client.request(
-      'GET',
-      '/api/bases'
-    );
-
-    // --------------------------------------------------------
-    // FULL RAW RESPONSE
-    // --------------------------------------------------------
-
-    console.dir(bases, {
-      depth: null,
-      colors: true,
-    });
-
-    try {
-      console.log(
-        '[MAP API] Bases JSON:',
-        JSON.stringify(bases, null, 2)
-      );
-    } catch (jsonError) {
-      console.warn(
-        '[MAP API] Could not stringify bases:',
-        jsonError
+    if (!sessionId) {
+      return NextResponse.json(
+        { ok: false, error: 'Unauthorized' },
+        {
+          status: 401,
+          headers: {
+            'Cache-Control': 'no-store',
+          },
+        }
       );
     }
 
-    // --------------------------------------------------------
-    // DETECT BASE ROWS
-    // --------------------------------------------------------
+    const session =
+      global.dashboardSessions?.get(sessionId);
 
-    let baseRows = [];
-
-    if (Array.isArray(bases)) {
-      baseRows = bases;
-    } else if (Array.isArray(bases?.rows)) {
-      baseRows = bases.rows;
-    } else if (Array.isArray(bases?.bases)) {
-      baseRows = bases.bases;
-    } else if (Array.isArray(bases?.data)) {
-      baseRows = bases.data;
-    } else if (Array.isArray(bases?.data?.rows)) {
-      baseRows = bases.data.rows;
+    if (
+      !session ||
+      !session.expiresAt ||
+      session.expiresAt < Date.now()
+    ) {
+      return NextResponse.json(
+        { ok: false, error: 'Session expired or invalid' },
+        {
+          status: 401,
+          headers: {
+            'Cache-Control': 'no-store',
+          },
+        }
+      );
     }
 
-    // --------------------------------------------------------
-    // PRINT EVERY BASE
-    // --------------------------------------------------------
+    if (!process.env.CONSOLE_URL) {
+      throw new Error(
+        'CONSOLE_URL is not configured'
+      );
+    }
 
-    baseRows.forEach((base) => {
-      console.dir(base, {
-        depth: null,
-        colors: true,
-      });
-    });
+    if (!process.env.ADAPTER_TOKEN) {
+      throw new Error(
+        'ADAPTER_TOKEN is not configured'
+      );
+    }
 
-    // --------------------------------------------------------
-    // BUILD RESPONSE
-    // --------------------------------------------------------
-
-    const responseData = {
-      ok: true,
-
-      // Keep the original API response.
-      bases,
-
-      // Normalized array for the React map.
-      markers: baseRows.map((base, index) => {
-        const x =
-          base?.x ??
-          base?.pos_x ??
-          base?.longitude ??
-          base?.position?.x ??
-          base?.coordinates?.x;
-
-        const y =
-          base?.y ??
-          base?.pos_y ??
-          base?.latitude ??
-          base?.position?.y ??
-          base?.coordinates?.y;
-
-        return {
-          ...base,
-
-          id:
-            base?.id ??
-            base?.base_id ??
-            `base-${index}`,
-
-          name:
-            base?.name ??
-            base?.base_name ??
-            base?.character_name ??
-            `Base ${index + 1}`,
-
-          x,
-          y,
-
-          icon:
-            base?.icon ??
-            'Base',
-        };
-      }),
-
-      count: baseRows.length,
-
-      timestamp:
-        new Date().toISOString(),
-
-      durationMs:
-        Date.now() - requestStarted,
+    const actor = {
+      guildId: session.guildId,
+      channelId: 'dashboard',
+      userId: session.user.id,
+      username: session.user.username,
+      roleIds: [
+        ...(session.roleIds || []),
+        process.env.VERIFIED_MEMBER_ROLE_ID,
+      ].filter(Boolean),
+      interactionId: `map-${Date.now()}`,
+      commandName: 'portal',
     };
 
-    // --------------------------------------------------------
-    // PRINT NORMALIZED MARKERS
-    // --------------------------------------------------------
-
-    console.dir(responseData.markers, {
-      depth: null,
-      colors: true,
-    });
-
-    return Response.json(
-      responseData,
+    const playerResponse = await fetch(
+      `${process.env.CONSOLE_URL}/api/integrations/discord/players/me`,
       {
-        status: 200,
+        method: 'POST',
+        body: JSON.stringify({ actor }),
         headers: {
-          'Cache-Control':
-            'no-store, no-cache, must-revalidate',
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization:
+            `Bearer ${process.env.ADAPTER_TOKEN}`,
         },
+        cache: 'no-store',
       }
     );
 
+    if (!playerResponse.ok) {
+      throw new Error(
+        `Discord Adapter request failed with status: ${playerResponse.status}`
+      );
+    }
+
+    const playerData = await playerResponse.json();
+
+    if (playerData?.linked !== true) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Your Discord account is not linked to a Dune player.',
+          markers: [],
+          bases: [],
+          map: null,
+          count: 0,
+        },
+        {
+          status: 403,
+          headers: {
+            'Cache-Control': 'no-store',
+          },
+        }
+      );
+    }
+
+    const playerId = extractPlayerId(playerData);
+
+    if (!playerId) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Unable to determine your Dune player ID.',
+          markers: [],
+          bases: [],
+          map: null,
+          count: 0,
+        },
+        {
+          status: 403,
+          headers: {
+            'Cache-Control': 'no-store',
+          },
+        }
+      );
+    }
+
+    const duneClient = getDuneClient();
+    const url = new URL(request.url);
+    const mapName = url.searchParams.get('map')?.trim();
+
+    const markerEndpoint = mapName
+      ? `/api/map/markers?map=${encodeURIComponent(mapName)}`
+      : '/api/map/markers';
+
+    const [basesData, mapData] = await Promise.all([
+      duneClient.request(
+        'GET',
+        `/api/players/${encodeURIComponent(playerId)}/bases`
+      ),
+      duneClient.request('GET', markerEndpoint),
+    ]);
+
+    const baseRows = extractBaseRows(basesData);
+    const bases = baseRows.map(normalizeBase);
+
+    const playerBaseIds = new Set(
+      bases
+        .map(getBaseId)
+        .filter(Boolean)
+    );
+
+    const allMarkers = extractRows(mapData);
+
+    const markers = allMarkers
+      .filter(isBaseMarker)
+      .filter((marker) => {
+        const markerBaseId =
+          getMarkerBaseId(marker);
+
+        return (
+          markerBaseId &&
+          playerBaseIds.has(markerBaseId)
+        );
+      })
+      .map((marker) => {
+        const baseId = getMarkerBaseId(marker);
+        const base = bases.find(
+          (item) => getBaseId(item) === baseId
+        );
+
+        return {
+          ...marker,
+          base_id: base?.base_id ?? marker?.base_id,
+          name: base?.name ?? marker?.name,
+          owner_name:
+            base?.owner_name ??
+            marker?.owner_name,
+          relationship:
+            base?.relationship ??
+            marker?.relationship,
+        };
+      });
+
+    const map = extractMapConfig(mapData);
+
+    if (!map) {
+      console.warn('[MAP API] No map configuration returned', {
+        mapName: mapName || null,
+      });
+    }
+
+    const durationMs = Date.now() - started;
+
+    console.log('[MAP API] Loaded player map data', {
+      map: mapName || 'default',
+      userId: session.user.id,
+      playerId,
+      bases: bases.length,
+      markers: markers.length,
+      durationMs,
+    });
+
+    return NextResponse.json(
+      {
+        ok: true,
+        bases,
+        markers,
+        map,
+        count: markers.length,
+        timestamp: new Date().toISOString(),
+        durationMs,
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+      }
+    );
   } catch (error) {
-    // --------------------------------------------------------
-    // ERROR DEBUG
-    // --------------------------------------------------------
+    const durationMs = Date.now() - started;
 
-    console.error('');
-    console.error(
-      '============================================================'
-    );
-    console.error('[MAP API] ERROR');
-    console.error(
-      '============================================================'
-    );
-    console.error('Error:', error);
-    console.error(
-      'Error message:',
-      error?.message
-    );
-    console.error(
-      'Error stack:',
-      error?.stack
-    );
-    console.error(
-      '============================================================'
-    );
+    console.error('[MAP API] Failed to load map data:', error);
 
-    return Response.json(
+    return NextResponse.json(
       {
         ok: false,
-
-        error:
-          error?.message ||
-          'Unable to load map data.',
-
+        error: getErrorMessage(error),
         bases: [],
         markers: [],
+        map: null,
         count: 0,
-
-        timestamp:
-          new Date().toISOString(),
+        timestamp: new Date().toISOString(),
+        durationMs,
       },
       {
         status: 500,
-
         headers: {
           'Cache-Control': 'no-store',
         },
