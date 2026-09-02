@@ -1,8 +1,7 @@
-import { getDuneClient } from '../dune/client';
+import { getDuneClient } from '../dune/route';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { normalizeCurrency, extractVehicleRows, getBaseId, normalizeBaseStorage, normalizeBaseWater } from './utils/helpers';
-import { extractGuildRows, findGuildMember, createGuildSummary } from './utils/guilds';
-import { getDashboardSession, getSessionId } from '../_utils/session';
 
 async function loadBaseTelemetry(base, duneClient) {
   const baseId = getBaseId(base);
@@ -101,7 +100,13 @@ async function loadPlayerGuild(playerId, playerName, duneClient) {
       '/api/guilds?page=0&pageSize=100'
     );
 
-    const guilds = extractGuildRows(guildResponse);
+    const guilds = Array.isArray(guildResponse)
+      ? guildResponse
+      : Array.isArray(guildResponse?.rows)
+        ? guildResponse.rows
+        : Array.isArray(guildResponse?.data)
+          ? guildResponse.data
+          : [];
 
     for (const guild of guilds) {
       const guildId = guild?.id ?? guild?.guildId ?? guild?.guild_id;
@@ -113,14 +118,28 @@ async function loadPlayerGuild(playerId, playerName, duneClient) {
         `/api/guilds/${encodeURIComponent(guildId)}/members`
       );
 
-      const member = findGuildMember(
-        extractGuildRows(memberResponse),
-        playerId,
-        playerName
-      );
+      const members = Array.isArray(memberResponse)
+        ? memberResponse
+        : Array.isArray(memberResponse?.rows)
+          ? memberResponse.rows
+          : Array.isArray(memberResponse?.data)
+            ? memberResponse.data
+            : [];
+
+      const member = members.find((entry) => {
+        const memberId = entry?.player_id ?? entry?.playerId ?? entry?.pawnId ?? entry?.pawn_id ?? entry?.controllerId ?? entry?.controller_id;
+        const memberName = String(entry?.character_name ?? entry?.characterName ?? entry?.name ?? '').trim().toLowerCase();
+        return String(memberId ?? '') === String(playerId) ||
+          (memberName && memberName === String(playerName ?? '').trim().toLowerCase());
+      });
 
       if (member) {
-        return createGuildSummary(guild, member, guildId);
+        return {
+          id: guildId,
+          name: guild?.name ?? guild?.guildName ?? guild?.guild_name ?? 'Unknown Guild',
+          tag: guild?.tag ?? guild?.abbreviation ?? null,
+          rank: member?.rank ?? member?.role ?? member?.memberRole ?? null,
+        };
       }
     }
   } catch (error) {
@@ -138,17 +157,17 @@ export async function GET(request) {
     // Create/get the Dune client only when the request runs.
     const duneClient = getDuneClient();
 
-    const sessionId = await getSessionId();
-    const dashboardSession = await getDashboardSession();
+    const cookieStore = await cookies();
 
-    if (!dashboardSession) {
-      const error = sessionId
-        ? 'Session expired or invalid'
-        : 'Unauthorized';
+    const sessionId =
+      cookieStore.get(
+        'dashboard_session'
+      )?.value;
 
+    if (!sessionId) {
       return NextResponse.json(
         {
-          error,
+          error: 'Unauthorized',
         },
         {
           status: 401,
@@ -156,7 +175,24 @@ export async function GET(request) {
       );
     }
 
-    const { session } = dashboardSession;
+    const session =
+      global.dashboardSessions?.get(
+        sessionId
+      );
+
+    if (
+      !session ||
+      session.expiresAt < Date.now()
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Session expired or invalid',
+        },
+        {
+          status: 401,
+        }
+      );
+    }
 
     const actor = {
       guildId: session.guildId,

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import { REFRESH_INTERVAL } from '../config/progression';
 import { extractBases, getBaseId } from '../utils/bases';
-import { requestJson } from '../../utils/requestCache';
 
 export function usePlayerData() {
 
@@ -16,7 +15,6 @@ export function usePlayerData() {
     useState(false);
 
   const refreshInProgress = useRef(false);
-  const mounted = useRef(true);
 
   const [basesTelemetry, setBasesTelemetry] =
     useState({});
@@ -40,7 +38,7 @@ export function usePlayerData() {
       return;
     }
 
-    setBasesLoading(true);
+    setBasesLoading(false);
 
     const results = bases.map((base) => {
       const baseId = getBaseId(base);
@@ -62,13 +60,11 @@ export function usePlayerData() {
       }
     }
 
-    if (mounted.current) {
-      setBasesTelemetry(nextTelemetry);
-    }
+    setBasesTelemetry(
+      nextTelemetry
+    );
 
-    if (mounted.current) {
-      setBasesLoading(false);
-    }
+    setBasesLoading(false);
   }
 
   async function loadPlayerData(showLoading = false) {
@@ -85,18 +81,24 @@ export function usePlayerData() {
 
       setStatusLoading(true);
 
-      const data = await requestJson('/api/player', {
-        ttl: REFRESH_INTERVAL,
+      const res = await fetch('/api/player', {
+        cache: 'no-store',
       });
 
-      if (!mounted.current) {
-        return;
-      }
-
-      if (data?.error === 'Unauthorized' || data?.error === 'Session expired or invalid') {
+      if (res.status === 401) {
         window.location.href = '/auth/login';
         return;
       }
+
+      if (!res.ok) {
+        console.error(
+          'Player API returned:',
+          res.status
+        );
+        return;
+      }
+
+      const data = await res.json();
       const bases = extractBases(data);
 
       /*
@@ -108,22 +110,15 @@ export function usePlayerData() {
 
       await loadBaseTelemetry(bases);
     } catch (error) {
-      if (error?.status === 401) {
-        window.location.href = '/auth/login';
-        return;
-      }
-
       console.error(
         'Failed to fetch player data:',
         error
       );
     } finally {
-      if (mounted.current) {
-        setStatusLoading(false);
-      }
+      setStatusLoading(false);
       refreshInProgress.current = false;
 
-      if (showLoading && mounted.current) {
+      if (showLoading) {
         setLoading(false);
       }
     }
@@ -131,7 +126,6 @@ export function usePlayerData() {
 
   useEffect(() => {
     let cancelled = false;
-    mounted.current = true;
 
     async function initialLoad() {
       if (cancelled) {
@@ -151,7 +145,6 @@ export function usePlayerData() {
 
     return () => {
       cancelled = true;
-      mounted.current = false;
       clearInterval(interval);
     };
   }, []);
