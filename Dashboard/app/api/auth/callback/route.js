@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
+import { getDiscordOAuthConfig } from '../utils/oauth';
 
 // Load .env from the project/parent directory when available.
 let currentDir = process.cwd();
@@ -59,14 +60,12 @@ export async function GET(request) {
       );
     }
 
-    const clientId =
-      process.env.DISCORD_CLIENT_ID ?? process.env.CLIENT_ID;
-
-    const clientSecret =
-      process.env.DISCORD_CLIENT_SECRET ?? process.env.CLIENT_SECRET;
-
-    const guildId = process.env.GUILD_ID;
-    const ownerRoleId = process.env.OWNER_ROLE_ID;
+    const {
+      clientId,
+      clientSecret,
+      guildId,
+      ownerRoleId,
+    } = getDiscordOAuthConfig();
 
     // Use the exact same redirect URI configured for Discord OAuth.
     const redirectUri = process.env.DISCORD_REDIRECT_URI;
@@ -213,10 +212,7 @@ export async function GET(request) {
     if (memberResponse.ok) {
       memberData = await memberResponse.json();
     } else {
-      console.error('Discord guild membership lookup failed:', {
-        status: memberResponse.status,
-        response: await memberResponse.text(),
-      });
+
     }
 
     const rolesArray = Array.isArray(memberData.roles)
@@ -247,14 +243,6 @@ export async function GET(request) {
       sameSite: 'lax',
       maxAge: 86400,
       path: '/',
-    });
-
-    console.log('Discord authentication successful:', {
-      userId: userData.id,
-      username: userData.username,
-      guildId,
-      roleCount: rolesArray.length,
-      isOwner,
     });
 
     // Owners go to dashboard; other authenticated members go to portal.

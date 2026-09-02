@@ -14,10 +14,8 @@ import {
     markerKey,
 } from '../utils/markers';
 
-const IMAGE_SRC =
-    '/maps/hagga-basin.png';
-
 export default function MapCanvas({
+    mapName = 'HaggaBasin',
     mapConfig,
     markers,
     zoom,
@@ -96,10 +94,12 @@ export default function MapCanvas({
             {/* MAP IMAGE */}
 
             <img
-                src={IMAGE_SRC}
+                src={mapName === 'DeepDesert'
+                    ? '/maps/deep-desert.png'
+                    : '/maps/hagga-basin.png'}
                 alt={
                     mapConfig.label ||
-                    'Hagga Basin'
+                    (mapName === 'DeepDesert' ? 'Deep Desert' : 'Hagga Basin')
                 }
                 draggable={false}
                 style={{

@@ -1,544 +1,9 @@
+import { getDuneClient } from '../dune/client';
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { normalizeCurrency, extractVehicleRows, getBaseId, normalizeBaseStorage, normalizeBaseWater } from './utils/helpers';
+import { extractGuildRows, findGuildMember, createGuildSummary } from './utils/guilds';
+import { getDashboardSession, getSessionId } from '../_utils/session';
 
-import { getDuneClient } from '../dune/route';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
-/**
- * Helpers
- */
-
-function firstNumber(...values) {
-  for (const value of values) {
-    const number = Number(value);
-
-    if (Number.isFinite(number)) {
-      return number;
-    }
-  }
-
-  return null;
-}
-
-function firstValue(...values) {
-  for (const value of values) {
-    if (
-      value !== undefined &&
-      value !== null &&
-      value !== ''
-    ) {
-      return value;
-    }
-  }
-
-  return null;
-}
-
-function clampPercent(value) {
-  if (!Number.isFinite(value)) {
-    return null;
-  }
-
-  return Math.max(0, Math.min(100, value));
-}
-
-/**
- * Normalize currency.
- */
-function normalizeCurrency(currency) {
-  if (!currency) {
-    return {
-      available: false,
-      rows: [],
-      solariCredit: null,
-      scrip: null,
-    };
-  }
-
-  const rows = Array.isArray(currency)
-    ? currency
-    : Array.isArray(currency.rows)
-      ? currency.rows
-      : Array.isArray(currency.data)
-        ? currency.data
-        : [];
-
-  const normalizedRows = rows.map((row) => ({
-    ...row,
-    currency_id: firstNumber(
-      row?.currency_id,
-      row?.currencyId,
-      row?.id
-    ),
-    balance: firstNumber(row?.balance) ?? 0,
-    label: row?.label ?? null,
-  }));
-
-  const solariRow = normalizedRows.find((row) => {
-    const label = String(row.label ?? '').toLowerCase();
-
-    return (
-      label.includes('solari') ||
-      label.includes('solar')
-    );
-  });
-
-  const scripRow = normalizedRows.find((row) => {
-    const label = String(row.label ?? '').toLowerCase();
-
-    return label.includes('scrip');
-  });
-
-  return {
-    ...currency,
-    available:
-      currency?.capabilities?.currency === true ||
-      normalizedRows.length > 0,
-    rows: normalizedRows,
-
-    // Convenient values for the frontend.
-    solariCredit: solariRow?.balance ?? null,
-    scrip: scripRow?.balance ?? null,
-
-    // Keep the original API naming available too.
-    solarisCoin: solariRow?.balance ?? null,
-  };
-}
-
-/**
- * Extract vehicle rows from common API response wrappers.
- */
-function extractVehicleRows(response) {
-  if (Array.isArray(response)) {
-    return response;
-  }
-
-  const queue = [response];
-  const seen = new Set();
-
-  while (queue.length > 0) {
-    const current = queue.shift();
-
-    if (!current || typeof current !== 'object') {
-      continue;
-    }
-
-    if (seen.has(current)) {
-      continue;
-    }
-
-    seen.add(current);
-
-    if (Array.isArray(current)) {
-      return current;
-    }
-
-    for (const key of [
-      'rows',
-      'vehicles',
-      'data',
-      'results',
-      'items',
-    ]) {
-      const value = current[key];
-
-      if (Array.isArray(value)) {
-        return value;
-      }
-
-      if (
-        value &&
-        typeof value === 'object'
-      ) {
-        queue.push(value);
-      }
-    }
-  }
-
-  return [];
-}
-
-/**
- * Extract base ID.
- */
-function getBaseId(base) {
-  return firstValue(
-    base?.base_id,
-    base?.baseId,
-    base?.id,
-    base?.uuid
-  );
-}
-
-/**
- * Normalize base inventory storage.
- */
-function normalizeBaseStorage(inventory) {
-  if (!inventory) {
-    return {
-      available: false,
-      used: null,
-      max: null,
-      percent: null,
-    };
-  }
-
-  const directUsed = firstNumber(
-    inventory.used,
-    inventory.usedStorage,
-    inventory.storageUsed,
-    inventory.totalUsed,
-    inventory.usedSlots,
-    inventory.occupied,
-    inventory.current
-  );
-
-  const directMax = firstNumber(
-    inventory.max,
-    inventory.maxStorage,
-    inventory.storageMax,
-    inventory.storageCapacity,
-    inventory.capacity,
-    inventory.maxCapacity,
-    inventory.totalCapacity,
-    inventory.slots,
-    inventory.maxSlots
-  );
-
-  const storage = inventory.storage || {};
-
-  const storageUsed = firstNumber(
-    directUsed,
-    storage.used,
-    storage.usedStorage,
-    storage.storageUsed,
-    storage.current,
-    storage.occupied
-  );
-
-  const storageMax = firstNumber(
-    directMax,
-    storage.max,
-    storage.maxStorage,
-    storage.storageMax,
-    storage.capacity,
-    storage.maxCapacity,
-    storage.totalCapacity,
-    storage.slots,
-    storage.maxSlots
-  );
-
-  const containers = Array.isArray(inventory.containers)
-    ? inventory.containers
-    : Array.isArray(inventory.rows)
-      ? inventory.rows
-      : Array.isArray(inventory.data)
-        ? inventory.data
-        : [];
-
-  let containerUsed = null;
-  let containerMax = null;
-
-  for (const container of containers) {
-    const type = String(
-      container?.type ||
-        container?.containerType ||
-        container?.category ||
-        ''
-    ).toLowerCase();
-
-    const isStorage =
-      type.includes('storage') ||
-      type.includes('inventory');
-
-    if (!isStorage) {
-      continue;
-    }
-
-    const used = firstNumber(
-      container?.used,
-      container?.usedSlots,
-      container?.occupied,
-      container?.current,
-      container?.itemCount
-    );
-
-    const max = firstNumber(
-      container?.max,
-      container?.maxSlots,
-      container?.capacity,
-      container?.slots,
-      container?.maxCapacity
-    );
-
-    if (used !== null) {
-      containerUsed = (containerUsed ?? 0) + used;
-    }
-
-    if (max !== null) {
-      containerMax = (containerMax ?? 0) + max;
-    }
-  }
-
-  const used =
-    storageUsed !== null
-      ? storageUsed
-      : containerUsed;
-
-  const max =
-    storageMax !== null
-      ? storageMax
-      : containerMax;
-
-  let percent = null;
-
-  if (
-    used !== null &&
-    max !== null &&
-    max > 0
-  ) {
-    percent = clampPercent((used / max) * 100);
-  }
-
-  if (percent === null) {
-    const suppliedPercent = firstNumber(
-      inventory.percent,
-      inventory.fillPercent,
-      inventory.storagePercent,
-      inventory.usedPercent,
-      storage.percent,
-      storage.fillPercent,
-      storage.usedPercent
-    );
-
-    if (suppliedPercent !== null) {
-      percent = clampPercent(
-        suppliedPercent > 1
-          ? suppliedPercent
-          : suppliedPercent * 100
-      );
-    }
-  }
-
-  return {
-    available:
-      used !== null ||
-      max !== null ||
-      percent !== null,
-    used,
-    max,
-    percent,
-  };
-}
-
-/**
- * Normalize water.
- */
-function normalizeBaseWater(water) {
-  if (!water) {
-    return {
-      available: false,
-      containers: 0,
-      volume: null,
-      maxVolume: null,
-      percent: null,
-      bloodVolume: null,
-      bloodMaxVolume: null,
-      bloodPercent: null,
-    };
-  }
-
-  const containers = Array.isArray(water)
-    ? water
-    : Array.isArray(water?.containers)
-      ? water.containers
-      : Array.isArray(water?.rows)
-        ? water.rows
-        : Array.isArray(water?.data)
-          ? water.data
-          : [];
-
-  const directVolume = firstNumber(
-    water.volume,
-    water.currentVolume,
-    water.totalVolume,
-    water.waterVolume
-  );
-
-  const directMaxVolume = firstNumber(
-    water.maxVolume,
-    water.capacity,
-    water.maxCapacity,
-    water.totalCapacity
-  );
-
-  let volume = directVolume;
-  let maxVolume = directMaxVolume;
-
-  let bloodVolume = firstNumber(
-    water.bloodVolume,
-    water.currentBloodVolume
-  );
-
-  let bloodMaxVolume = firstNumber(
-    water.bloodMaxVolume,
-    water.bloodCapacity,
-    water.maxBloodVolume
-  );
-
-  if (containers.length > 0) {
-    let summedVolume = 0;
-    let summedMaxVolume = 0;
-    let summedBloodVolume = 0;
-    let summedBloodMaxVolume = 0;
-
-    let foundVolume = false;
-    let foundMaxVolume = false;
-    let foundBloodVolume = false;
-    let foundBloodMaxVolume = false;
-
-    for (const container of containers) {
-      const current = firstNumber(
-        container?.volume,
-        container?.currentVolume,
-        container?.waterVolume,
-        container?.currentWaterVolume
-      );
-
-      const max = firstNumber(
-        container?.maxVolume,
-        container?.capacity,
-        container?.maxCapacity,
-        container?.waterCapacity
-      );
-
-      const blood = firstNumber(
-        container?.bloodVolume,
-        container?.currentBloodVolume
-      );
-
-      const bloodMax = firstNumber(
-        container?.bloodMaxVolume,
-        container?.bloodCapacity,
-        container?.maxBloodVolume
-      );
-
-      if (current !== null) {
-        summedVolume += current;
-        foundVolume = true;
-      }
-
-      if (max !== null) {
-        summedMaxVolume += max;
-        foundMaxVolume = true;
-      }
-
-      if (blood !== null) {
-        summedBloodVolume += blood;
-        foundBloodVolume = true;
-      }
-
-      if (bloodMax !== null) {
-        summedBloodMaxVolume += bloodMax;
-        foundBloodMaxVolume = true;
-      }
-    }
-
-    if (volume === null && foundVolume) {
-      volume = summedVolume;
-    }
-
-    if (maxVolume === null && foundMaxVolume) {
-      maxVolume = summedMaxVolume;
-    }
-
-    if (bloodVolume === null && foundBloodVolume) {
-      bloodVolume = summedBloodVolume;
-    }
-
-    if (
-      bloodMaxVolume === null &&
-      foundBloodMaxVolume
-    ) {
-      bloodMaxVolume = summedBloodMaxVolume;
-    }
-  }
-
-  let percent = null;
-
-  if (
-    volume !== null &&
-    maxVolume !== null &&
-    maxVolume > 0
-  ) {
-    percent = clampPercent(
-      (volume / maxVolume) * 100
-    );
-  }
-
-  let bloodPercent = null;
-
-  if (
-    bloodVolume !== null &&
-    bloodMaxVolume !== null &&
-    bloodMaxVolume > 0
-  ) {
-    bloodPercent = clampPercent(
-      (bloodVolume / bloodMaxVolume) * 100
-    );
-  }
-
-  if (percent === null) {
-    const suppliedPercent = firstNumber(
-      water.percent,
-      water.fillPercent,
-      water.waterPercent
-    );
-
-    if (suppliedPercent !== null) {
-      percent = clampPercent(
-        suppliedPercent > 1
-          ? suppliedPercent
-          : suppliedPercent * 100
-      );
-    }
-  }
-
-  if (bloodPercent === null) {
-    const suppliedBloodPercent = firstNumber(
-      water.bloodPercent,
-      water.bloodFillPercent
-    );
-
-    if (suppliedBloodPercent !== null) {
-      bloodPercent = clampPercent(
-        suppliedBloodPercent > 1
-          ? suppliedBloodPercent
-          : suppliedBloodPercent * 100
-      );
-    }
-  }
-
-  return {
-    available:
-      containers.length > 0 ||
-      volume !== null ||
-      maxVolume !== null,
-    containers: containers.length,
-    volume,
-    maxVolume,
-    percent,
-    bloodVolume,
-    bloodMaxVolume,
-    bloodPercent,
-  };
-}
-
-/**
- * Load one base's additional telemetry.
- */
 async function loadBaseTelemetry(base, duneClient) {
   const baseId = getBaseId(base);
 
@@ -629,6 +94,42 @@ async function loadBaseTelemetry(base, duneClient) {
   };
 }
 
+async function loadPlayerGuild(playerId, playerName, duneClient) {
+  try {
+    const guildResponse = await duneClient.request(
+      'GET',
+      '/api/guilds?page=0&pageSize=100'
+    );
+
+    const guilds = extractGuildRows(guildResponse);
+
+    for (const guild of guilds) {
+      const guildId = guild?.id ?? guild?.guildId ?? guild?.guild_id;
+
+      if (!guildId) continue;
+
+      const memberResponse = await duneClient.request(
+        'GET',
+        `/api/guilds/${encodeURIComponent(guildId)}/members`
+      );
+
+      const member = findGuildMember(
+        extractGuildRows(memberResponse),
+        playerId,
+        playerName
+      );
+
+      if (member) {
+        return createGuildSummary(guild, member, guildId);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load player guild:', error);
+  }
+
+  return null;
+}
+
 /**
  * GET /api/player
  */
@@ -637,17 +138,17 @@ export async function GET(request) {
     // Create/get the Dune client only when the request runs.
     const duneClient = getDuneClient();
 
-    const cookieStore = await cookies();
+    const sessionId = await getSessionId();
+    const dashboardSession = await getDashboardSession();
 
-    const sessionId =
-      cookieStore.get(
-        'dashboard_session'
-      )?.value;
+    if (!dashboardSession) {
+      const error = sessionId
+        ? 'Session expired or invalid'
+        : 'Unauthorized';
 
-    if (!sessionId) {
       return NextResponse.json(
         {
-          error: 'Unauthorized',
+          error,
         },
         {
           status: 401,
@@ -655,24 +156,7 @@ export async function GET(request) {
       );
     }
 
-    const session =
-      global.dashboardSessions?.get(
-        sessionId
-      );
-
-    if (
-      !session ||
-      session.expiresAt < Date.now()
-    ) {
-      return NextResponse.json(
-        {
-          error: 'Session expired or invalid',
-        },
-        {
-          status: 401,
-        }
-      );
-    }
+    const { session } = dashboardSession;
 
     const actor = {
       guildId: session.guildId,
@@ -898,13 +382,22 @@ export async function GET(request) {
       )
     );
 
+    const guild = await loadPlayerGuild(
+      playerId,
+      data.characterName,
+      duneClient
+    );
+
     /**
      * Final response.
      */
     const responseData = {
       ...data,
       details:
-        Object.fromEntries(details),
+        {
+          ...Object.fromEntries(details),
+          guild,
+        },
     };
 
     return NextResponse.json(

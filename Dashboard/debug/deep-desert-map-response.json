@@ -1,0 +1,3599 @@
+{
+  "mapData": {
+    "capabilities": {
+      "players": true,
+      "vehicles": true,
+      "storage": true,
+      "bases": true,
+      "services": true,
+      "farmState": true,
+      "coordinateTransform": "Uses raw dune.actors.transform world coordinates; calibrated image/world transform is not verified.",
+      "spice": true,
+      "spice_active": true,
+      "flour_sand": true,
+      "ore": true,
+      "scrap": true,
+      "flora": true,
+      "poi": true,
+      "house_representative": true,
+      "trainer": true,
+      "fortress": true,
+      "hazard": true,
+      "enemy": true
+    },
+    "overlays": {
+      "players": "",
+      "vehicles": "",
+      "bases": "",
+      "storage": "",
+      "spice": ""
+    },
+    "rows": [
+      {
+        "id": "4064240254099371",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 40875,
+        "y": 212325,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "5035995462371229",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 1949,
+        "y": 110725,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "5301169994542945",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 733025,
+        "y": 726675,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "6600348354419704",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 990200,
+        "y": -533800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "7062562720587399",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 663175,
+        "y": -333775,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "9622871661540504",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -330600,
+        "y": -25800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "9965173541226664",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 837800,
+        "y": -381400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "10066841311642581",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 263125,
+        "y": -136925,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "11864097572432017",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 174225,
+        "y": -873525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "12519899228791813",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 517125,
+        "y": -638575,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "12623837535210783",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -193249,
+        "y": 688575,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "14311422287639241",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 1012425,
+        "y": 85325,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "15049574988530065",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -638575,
+        "y": -257575,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "16069768633859016",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 736200,
+        "y": -330600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "16357339564076751",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 1044175,
+        "y": 479025,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "16857558295693409",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -79775,
+        "y": -73425,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "17248052249140337",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 40049,
+        "y": -517925,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "17759257706778104",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -635400,
+        "y": -25800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "18422616981520856",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 279000,
+        "y": -381400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "18527324475423229",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -67075,
+        "y": -784625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "18898118707287265",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -486175,
+        "y": -136925,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "19095091957819320",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -432200,
+        "y": -584600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "22428598142592952",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -432200,
+        "y": -686200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "22429944882397752",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 787000,
+        "y": -44024,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "22732522784692101",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 923525,
+        "y": -467125,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "24764386981681976",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -25800,
+        "y": -483000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "27298194448685880",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -25800,
+        "y": -229000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "30423607487748824",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -533800,
+        "y": -991000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "9205149012523483136",
+        "type": "spice",
+        "name": "Large Spice",
+        "map": "DeepDesert",
+        "x": 0,
+        "y": -914400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Large"
+      },
+      {
+        "id": "13821654412964749",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -117875,
+        "y": -670325,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "7248559098778219",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -568725,
+        "y": 275825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "12207644585905656",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -635400,
+        "y": -635400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "15358277208991743",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 485375,
+        "y": 142475,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "26532508214449160",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -44024,
+        "y": -432200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "20907999327791491",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 371075,
+        "y": -149625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "21111614525563375",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 942575,
+        "y": 472675,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "24898745397063571",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -86125,
+        "y": 669525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "19818615486198477",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -85299,
+        "y": 485375,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "8148067877645889",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -790975,
+        "y": -721125,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "24166685455214157",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -727475,
+        "y": -276625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "25427686330958855",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -556025,
+        "y": -867175,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "2969246527004153",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -123399,
+        "y": 269475,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "25801367139747720",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -686200,
+        "y": -940200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "9205148799454327488",
+        "type": "spice",
+        "name": "Large Spice",
+        "map": "DeepDesert",
+        "x": -609600,
+        "y": -1016000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Large"
+      },
+      {
+        "id": "23510684045253361",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -943375,
+        "y": -606825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "6241259960987101",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 847325,
+        "y": 205975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "13914619309431608",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -25800,
+        "y": -381400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "18421764698712280",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 43224,
+        "y": -787800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "22659340707224935",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -860825,
+        "y": 288525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "10133364661559816",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 533000,
+        "y": 126600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "15651201809173061",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 313925,
+        "y": -689375,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "7299697676424417",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -486175,
+        "y": -505225,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "13730733661274463",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 180575,
+        "y": 15475,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "17758405422920952",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 177400,
+        "y": -432200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "18419071218460504",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -940200,
+        "y": 25000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "22562064323174945",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 123425,
+        "y": 40875,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "25286902233016152",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -940200,
+        "y": -889400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "42278686612655704",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -127400,
+        "y": 126600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "13101726450437816",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 380600,
+        "y": -25800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "28828068764007297",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -181375,
+        "y": -536975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "19575151532138607",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -40849,
+        "y": -263925,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "10383127786561643",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 8299,
+        "y": -314725,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "14201344613230616",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 75800,
+        "y": 25000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "24134700605989601",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 90849,
+        "y": -848125,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "10269457740241065",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 301225,
+        "y": 9125,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "10643145207541505",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 225025,
+        "y": -60725,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "23759464911885633",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 21825,
+        "y": 580625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "24948991740813519",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -581425,
+        "y": -536975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "30409257971010459",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -78949,
+        "y": 555225,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "12236676272496605",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -778275,
+        "y": 625075,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "25801367138869768",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 533000,
+        "y": -940200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "5787736883618216",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 25000,
+        "y": -44024,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "8984082905652049",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -435375,
+        "y": -536975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "33503631663283849",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -409975,
+        "y": -327425,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "21052861865702648",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 177400,
+        "y": -279800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "41029794547890443",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -263925,
+        "y": 199625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "27048404687908075",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 650475,
+        "y": 199625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "12208496867600504",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 583800,
+        "y": -229000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "13999387372267907",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 371075,
+        "y": 193275,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "35079237618512781",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -117875,
+        "y": 199625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "18378529982118568",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -787800,
+        "y": -432200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "10137404884014472",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 939400,
+        "y": -44024,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "29766350823683224",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -330600,
+        "y": 177400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "30425312051610072",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 279000,
+        "y": -178200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "34633836398351827",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -289325,
+        "y": -371875,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "32022022665719651",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -340125,
+        "y": -73425,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "16802963977049384",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 431400,
+        "y": -940200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "25573700781356885",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 669525,
+        "y": -448075,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "2048310290298567",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -117049,
+        "y": -562375,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "6066350187224569",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -123399,
+        "y": 688575,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "9546460232132511",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -22625,
+        "y": -810025,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "10801509907357928",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -991000,
+        "y": -44024,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "11144961967798585",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 14649,
+        "y": 148825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "12085632954091496",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": -178200,
+        "y": -94824,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "13913767025574456",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 787000,
+        "y": -787800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "16854798229212155",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -619525,
+        "y": 707625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "17200066587415944",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 939400,
+        "y": -330600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "19492294443095603",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 218675,
+        "y": 72625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "21371418874972111",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 231375,
+        "y": 625075,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "22452153112205047",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -911625,
+        "y": 59925,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "22457123785445799",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 561575,
+        "y": 332975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "22623051029940125",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 1949,
+        "y": -238525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "24948785327848392",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 736200,
+        "y": -635400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "26187532827717719",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -167849,
+        "y": 745725,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "31255843704837003",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 955275,
+        "y": -511575,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "31301328980540143",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 129775,
+        "y": 205975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "37229496171254137",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -765575,
+        "y": 15475,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "38502076375793143",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -98825,
+        "y": 752075,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "10830583277189679",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -886225,
+        "y": -860825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "19095944239107768",
+        "type": "spice",
+        "name": "Medium Spice",
+        "map": "DeepDesert",
+        "x": 380600,
+        "y": -178200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium"
+      },
+      {
+        "id": "29238285611679369",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": -409975,
+        "y": 34525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "30993345872703863",
+        "type": "spice",
+        "name": "Small Spice",
+        "map": "DeepDesert",
+        "x": 307575,
+        "y": 148825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small"
+      },
+      {
+        "id": "2048310290298567",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -117049,
+        "y": -562375,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "9546460232132511",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -22625,
+        "y": -810025,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "10801509907357928",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": -991000,
+        "y": -44024,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "10830583277189679",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -886225,
+        "y": -860825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "11144961967798585",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 14649,
+        "y": 148825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "12085632954091496",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": -178200,
+        "y": -94824,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "12207644585905656",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": -635400,
+        "y": -635400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "13913767025574456",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": 787000,
+        "y": -787800,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "14201344613230616",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": 75800,
+        "y": 25000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "16069768633859016",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": 736200,
+        "y": -330600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "16854798229212155",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -619525,
+        "y": 707625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "17200066587415944",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": 939400,
+        "y": -330600,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "19095944239107768",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": 380600,
+        "y": -178200,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "19492294443095603",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 218675,
+        "y": 72625,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "21371418874972111",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 231375,
+        "y": 625075,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "22457123785445799",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 561575,
+        "y": 332975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "22623051029940125",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 1949,
+        "y": -238525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "24948785327848392",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": 736200,
+        "y": -635400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "26187532827717719",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -167849,
+        "y": 745725,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "27298194448685880",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": -25800,
+        "y": -229000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "29238285611679369",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -409975,
+        "y": 34525,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "29766350823683224",
+        "type": "spice_active",
+        "name": "Active Medium Spice",
+        "map": "DeepDesert",
+        "x": -330600,
+        "y": 177400,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Medium",
+        "partition_id": 8
+      },
+      {
+        "id": "30993345872703863",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 307575,
+        "y": 148825,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "31255843704837003",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 955275,
+        "y": -511575,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "31301328980540143",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": 129775,
+        "y": 205975,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "37229496171254137",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -765575,
+        "y": 15475,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "38502076375793143",
+        "type": "spice_active",
+        "name": "Active Small Spice",
+        "map": "DeepDesert",
+        "x": -98825,
+        "y": 752075,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Small",
+        "partition_id": 8
+      },
+      {
+        "id": "9205148799454327488",
+        "type": "spice_active",
+        "name": "Active Large Spice",
+        "map": "DeepDesert",
+        "x": -609600,
+        "y": -1016000,
+        "z": null,
+        "confidence": "decoded",
+        "subtype": "Large",
+        "partition_id": 8
+      },
+      {
+        "id": "5386254471037375",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 688575,
+        "y": -644925,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "6365404031264913",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 174225,
+        "y": 682225,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "8250621223287731",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -1000525,
+        "y": -54375,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "9023345717669583",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 1044175,
+        "y": -689375,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "9896462753923327",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -327425,
+        "y": 409175,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "10383207689056969",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 1012425,
+        "y": -276625,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "10383702147166921",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 1012425,
+        "y": -40849,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "13788813817995567",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -73425,
+        "y": 447275,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "15130191368113485",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 85325,
+        "y": 434575,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "15134482880396841",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -917975,
+        "y": 383775,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "17381125583499835",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -822725,
+        "y": 21825,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "18018429503480015",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -581425,
+        "y": -175025,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "18357611761017573",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -1006875,
+        "y": 78975,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "19529812741320741",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -397275,
+        "y": -911625,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "19647118305174245",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -1006875,
+        "y": 498075,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "21864119937628961",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -689375,
+        "y": 682225,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "22096896795677871",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 332975,
+        "y": 529825,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "23925112503754863",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -40849,
+        "y": -124225,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "24144923343081365",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -110699,
+        "y": -167849,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "24998184317050165",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -41675,
+        "y": -148799,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "25661382057637767",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -149625,
+        "y": -581425,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "26966669687085905",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -435375,
+        "y": -1025925,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "27887219733193541",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -498875,
+        "y": -378225,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "28821536544674311",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 20999,
+        "y": 542525,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "30333107952549417",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -917975,
+        "y": -104349,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "31284442592794505",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -174199,
+        "y": 542525,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "31763669857799113",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 199625,
+        "y": 466325,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "33078805618616611",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": -136925,
+        "y": 523475,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "33367733410502825",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 301225,
+        "y": -117049,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "33786052140298953",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 1012425,
+        "y": 123425,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      },
+      {
+        "id": "38610204852253143",
+        "type": "flour_sand",
+        "name": "Flour Sand",
+        "map": "DeepDesert",
+        "x": 815575,
+        "y": -117049,
+        "z": null,
+        "confidence": "decoded",
+        "partition_id": 8
+      }
+    ],
+    "map": {
+      "key": "DeepDesert",
+      "label": "The Deep Desert",
+      "actorMap": "DeepDesert",
+      "image": "/images/maps/deep-desert.png",
+      "width": 4096,
+      "height": 4096,
+      "minX": -1268624.82,
+      "maxX": 1163312.83,
+      "minY": -1266548.17,
+      "maxY": 1162416.13,
+      "flipY": false,
+      "defaultPartitionId": 8
+    },
+    "maps": {
+      "HaggaBasin": {
+        "key": "HaggaBasin",
+        "label": "Hagga Basin",
+        "actorMap": "HaggaBasin",
+        "image": "/images/maps/hagga-basin.png",
+        "width": 4096,
+        "height": 4096,
+        "minX": -456752.21,
+        "maxX": 354547.46,
+        "minY": -450630.14,
+        "maxY": 353821.95,
+        "flipY": false,
+        "defaultPartitionId": 1
+      },
+      "DeepDesert": {
+        "key": "DeepDesert",
+        "label": "The Deep Desert",
+        "actorMap": "DeepDesert",
+        "image": "/images/maps/deep-desert.png",
+        "width": 4096,
+        "height": 4096,
+        "minX": -1268624.82,
+        "maxX": 1163312.83,
+        "minY": -1266548.17,
+        "maxY": 1162416.13,
+        "flipY": false,
+        "defaultPartitionId": 8
+      }
+    },
+    "defaultMap": "HaggaBasin",
+    "coriolisSeed": "cor-4",
+    "coriolisNextCycleAt": "2026-09-08T11:00:00.000Z",
+    "coriolisSeedStaleSince": "",
+    "partitions": [
+      {
+        "map": "DeepDesert",
+        "partition_id": 8,
+        "name": "DeepDesert_0",
+        "marker_count": 0
+      },
+      {
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "name": "Abbir",
+        "marker_count": 635
+      }
+    ]
+  },
+  "basesData": {
+    "capabilities": {
+      "bases": true,
+      "generatorRefill": true,
+      "generatorRefillQueue": true,
+      "basePermissions": true,
+      "waterRefill": true,
+      "waterRefillQueue": true,
+      "baseDelete": true,
+      "baseDeleteQueue": true,
+      "baseChildAccess": true,
+      "baseChildAccessQueue": true
+    },
+    "totalCount": 4,
+    "totalBases": 4,
+    "totalOwned": 3,
+    "totalShared": 1,
+    "totalPieces": 1732,
+    "totalPlaceables": 486,
+    "rows": [
+      {
+        "base_id": "2010",
+        "name": "Kenny's Gharb Base",
+        "base_type": "Advanced Sub-Fief",
+        "owner_name": "RealXKenny",
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "partition_map": "Survival_1",
+        "dimension_index": 0,
+        "x": 5276.797419204529,
+        "y": -238683.3946034762,
+        "z": 2329.68740978837,
+        "piece_count": 583,
+        "placeable_count": 105,
+        "shared_with": [
+          {
+            "name": "Credence Senjak",
+            "rank": 2,
+            "label": "Co-Owner"
+          }
+        ],
+        "relationship": "Owner",
+        "partitionMap": "Survival_1",
+        "dimensionIndex": 0,
+        "generatorDataAvailable": true,
+        "generatorCount": 14,
+        "fuelCells": 6918,
+        "generatorRuntimeSeconds": 1778400,
+        "generatorUptimeMultiplier": 1,
+        "generatorUptimeEventLabel": "",
+        "generatorUptimeEventEndsAt": "",
+        "generatorUnstockedCount": 0,
+        "generatorAllUnstocked": false,
+        "generators": [
+          {
+            "type": "fuel",
+            "name": "Fuel-Powered Generator",
+            "fuelName": "Fuel Cell",
+            "fuelCells": 6918,
+            "generatorCount": 14,
+            "runtimeSeconds": 1778400,
+            "unstockedCount": 0
+          }
+        ]
+      },
+      {
+        "base_id": "1250",
+        "name": "Kenny's Hagga Base",
+        "base_type": "Sub-Fief",
+        "owner_name": "RealXKenny",
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "partition_map": "Survival_1",
+        "dimension_index": 0,
+        "x": 10294.95674119654,
+        "y": 246950.86291426612,
+        "z": 6445.745576560497,
+        "piece_count": 166,
+        "placeable_count": 101,
+        "shared_with": [
+          {
+            "name": "Credence Senjak",
+            "rank": 2,
+            "label": "Co-Owner"
+          }
+        ],
+        "relationship": "Owner",
+        "partitionMap": "Survival_1",
+        "dimensionIndex": 0,
+        "generatorDataAvailable": true,
+        "generatorCount": 8,
+        "fuelCells": 2880,
+        "generatorRuntimeSeconds": 1296000,
+        "generatorUptimeMultiplier": 1,
+        "generatorUptimeEventLabel": "",
+        "generatorUptimeEventEndsAt": "",
+        "generatorUnstockedCount": 0,
+        "generatorAllUnstocked": false,
+        "generators": [
+          {
+            "type": "fuel",
+            "name": "Fuel-Powered Generator",
+            "fuelName": "Fuel Cell",
+            "fuelCells": 2880,
+            "generatorCount": 8,
+            "runtimeSeconds": 1296000,
+            "unstockedCount": 0
+          }
+        ]
+      },
+      {
+        "base_id": "2001",
+        "name": "Kenny's Rift Base",
+        "base_type": "Advanced Sub-Fief",
+        "owner_name": "RealXKenny",
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "partition_map": "Survival_1",
+        "dimension_index": 0,
+        "x": 284855.7079424644,
+        "y": -40604.94126490466,
+        "z": 9200.306856110792,
+        "piece_count": 646,
+        "placeable_count": 214,
+        "shared_with": [
+          {
+            "name": "Credence Senjak",
+            "rank": 2,
+            "label": "Co-Owner"
+          }
+        ],
+        "relationship": "Owner",
+        "partitionMap": "Survival_1",
+        "dimensionIndex": 0,
+        "generatorDataAvailable": true,
+        "generatorCount": 19,
+        "fuelCells": 6695,
+        "generatorRuntimeSeconds": 1263600,
+        "generatorUptimeMultiplier": 1,
+        "generatorUptimeEventLabel": "",
+        "generatorUptimeEventEndsAt": "",
+        "generatorUnstockedCount": 0,
+        "generatorAllUnstocked": false,
+        "generators": [
+          {
+            "type": "fuel",
+            "name": "Fuel-Powered Generator",
+            "fuelName": "Fuel Cell",
+            "fuelCells": 5969,
+            "generatorCount": 17,
+            "runtimeSeconds": 1263600,
+            "unstockedCount": 0
+          },
+          {
+            "type": "windTurbineOmni",
+            "name": "Omnidirectional Wind Turbine",
+            "fuelName": "Low-grade Lubricant",
+            "fuelCells": 726,
+            "generatorCount": 2,
+            "runtimeSeconds": 1306800,
+            "unstockedCount": 0
+          }
+        ]
+      },
+      {
+        "base_id": "573",
+        "name": "Totem_Patent",
+        "base_type": "Advanced Sub-Fief",
+        "owner_name": "Credence Senjak",
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "partition_map": "Survival_1",
+        "dimension_index": 0,
+        "x": 174445.99585374724,
+        "y": -96152.21424595005,
+        "z": 2183.963152885437,
+        "piece_count": 337,
+        "placeable_count": 66,
+        "shared_with": [
+          {
+            "name": "RealXKenny",
+            "rank": 2,
+            "label": "Co-Owner"
+          }
+        ],
+        "relationship": "Co-Owner",
+        "partitionMap": "Survival_1",
+        "dimensionIndex": 0,
+        "generatorDataAvailable": true,
+        "generatorCount": 7,
+        "fuelCells": 2224,
+        "generatorRuntimeSeconds": 1713600,
+        "generatorUptimeMultiplier": 1,
+        "generatorUptimeEventLabel": "",
+        "generatorUptimeEventEndsAt": "",
+        "generatorUnstockedCount": 2,
+        "generatorAllUnstocked": false,
+        "generators": [
+          {
+            "type": "fuel",
+            "name": "Fuel-Powered Generator",
+            "fuelName": "Fuel Cell",
+            "fuelCells": 1904,
+            "generatorCount": 4,
+            "runtimeSeconds": 1713600,
+            "unstockedCount": 0
+          },
+          {
+            "type": "windTurbineDirectional",
+            "name": "Directional Wind Turbine",
+            "fuelName": "Industrial-grade Lubricant",
+            "fuelCells": 320,
+            "generatorCount": 3,
+            "runtimeSeconds": 1728000,
+            "unstockedCount": 2
+          }
+        ]
+      }
+    ]
+  },
+  "vehiclesData": {
+    "capabilities": {
+      "vehicles": true,
+      "vehiclePermissions": true,
+      "vehicleDelete": true,
+      "vehicleDeleteQueue": true,
+      "vehicleStorage": true
+    },
+    "totalCount": 13,
+    "totalVehicles": 13,
+    "rows": [
+      {
+        "id": "1442",
+        "name": "BP_TreadWheel",
+        "type": "BP_TreadWheel",
+        "owner": "",
+        "relationship": null,
+        "condition_percent": null,
+        "condition_estimated": false,
+        "current_fuel": "148.486633",
+        "max_fuel": null,
+        "fuel_percent": null,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "173604.902630268",
+        "y": "-71362.0607020468",
+        "z": "2106.67612324307",
+        "modules": [
+          {
+            "condition": 998.918457,
+            "templateId": "TreadwheelBoost_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Treadwheel Boost Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2000,
+            "templateId": "TreadwheelChassis_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Treadwheel Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 998.178894,
+            "templateId": "TreadwheelEngine_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Treadwheel Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 999.089477,
+            "templateId": "TreadwheelGenerator_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Treadwheel PSU Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "TreadwheelHull_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Treadwheel Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 997.710144,
+            "templateId": "TreadwheelLocomotionLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "TreadwheelLocomotionLeft_6",
+            "isStorage": false
+          },
+          {
+            "condition": 997.710144,
+            "templateId": "TreadwheelLocomotionRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "TreadwheelLocomotionRight_6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "TreadwheelScanner_2",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Treadwheel Scanner Mk2",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Jabal Eifrit Al-janub"
+      },
+      {
+        "id": "598",
+        "name": "Buggy",
+        "type": "Buggy",
+        "owner": "Credence Senjak",
+        "relationship": null,
+        "condition_percent": null,
+        "condition_estimated": false,
+        "current_fuel": "264.250915",
+        "max_fuel": null,
+        "fuel_percent": null,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "172895.433380813",
+        "y": "-94966.6981898093",
+        "z": "2435.83541564923",
+        "modules": [
+          {
+            "condition": 3500,
+            "templateId": "BuggyChassis_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1412.568969,
+            "templateId": "BuggyEngine_Unique_Accelerate_06",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Bluddshot Buggy Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1580.466308,
+            "templateId": "BuggyGenerator_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy PSU Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2625,
+            "templateId": "BuggyHullBackExtra_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Utility Rear Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2625,
+            "templateId": "BuggyHullFront_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1750,
+            "templateId": "BuggyInventory_Unique_Capacity_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "BuggyInventory_Unique_Capacity_6",
+            "isStorage": true
+          },
+          {
+            "condition": 1444.027343,
+            "templateId": "BuggyLocomotionBackLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Tread Mk6 (Back Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 1444.027343,
+            "templateId": "BuggyLocomotionBackRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Tread Mk6 (Back Right)",
+            "isStorage": false
+          },
+          {
+            "condition": 1444.027343,
+            "templateId": "BuggyLocomotionFrontLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Tread Mk6 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 1444.027343,
+            "templateId": "BuggyLocomotionFrontRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Buggy Tread Mk6 (Front Right)",
+            "isStorage": false
+          },
+          {
+            "condition": 1673.818603,
+            "templateId": "BuggyMining_Unique_YieldIncrease_06",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Focused Buggy Cutteray Mk6",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Jabal Eifrit Al-janub"
+      },
+      {
+        "id": "1443",
+        "name": "Carrier Ornithopter",
+        "type": "Carrier Ornithopter",
+        "owner": "",
+        "relationship": null,
+        "condition_percent": null,
+        "condition_estimated": false,
+        "current_fuel": "2450.197753",
+        "max_fuel": null,
+        "fuel_percent": null,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "173365.408851736",
+        "y": "-73086.3425174727",
+        "z": "8578.59267884187",
+        "modules": [
+          {
+            "condition": 3000,
+            "templateId": "OrnithopterTransportBoost_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Thruster Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 6000,
+            "templateId": "OrnithopterTransportChassis_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.67871,
+            "templateId": "OrnithopterTransportEngine_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2996.373046,
+            "templateId": "OrnithopterTransportGenerator_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Generator Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 4500,
+            "templateId": "OrnithopterTransportHullBackLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportHullBackLeft_6",
+            "isStorage": false
+          },
+          {
+            "condition": 4500,
+            "templateId": "OrnithopterTransportHullBackRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportHullBackRight_6",
+            "isStorage": false
+          },
+          {
+            "condition": 4500,
+            "templateId": "OrnithopterTransportHullFrontLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportHullFrontLeft_6",
+            "isStorage": false
+          },
+          {
+            "condition": 4500,
+            "templateId": "OrnithopterTransportHullFrontRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportHullFrontRight_6",
+            "isStorage": false
+          },
+          {
+            "condition": 4500,
+            "templateId": "OrnithopterTransportHull_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Main Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionBackLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Wing Mk6 (Back Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionBackRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Wing Mk6 (Back Right)",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionCenterLeft1_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportLocomotionCenterLeft1_6",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionCenterLeft2_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportLocomotionCenterLeft2_6",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionCenterRight1_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportLocomotionCenterRight1_6",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionCenterRight2_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "OrnithopterTransportLocomotionCenterRight2_6",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionFrontLeft_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Wing Mk6 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 2992.541748,
+            "templateId": "OrnithopterTransportLocomotionFrontRight_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Carrier Ornithopter Wing Mk6 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Jabal Eifrit Al-janub"
+      },
+      {
+        "id": "2106",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "Basher",
+        "relationship": null,
+        "condition_percent": 93,
+        "condition_estimated": true,
+        "current_fuel": "54.763202",
+        "max_fuel": null,
+        "fuel_percent": null,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "107539.333378011",
+        "y": "243568.548783622",
+        "z": "676.367321605358",
+        "modules": [
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_1",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 993.599304,
+            "templateId": "SandbikeEngine_3",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Sandbike Engine Mk3",
+            "isStorage": false
+          },
+          {
+            "condition": 996.799682,
+            "templateId": "SandbikeGenerator_3",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Sandbike PSU Mk3",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_1",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeInventory_2",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Sandbike Inventory Mk2",
+            "isStorage": true
+          },
+          {
+            "condition": 896.092956,
+            "templateId": "SandbikeLocomotionBackCenter_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 93,
+            "name": "Sandbike Tread Mk1 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 896.092956,
+            "templateId": "SandbikeLocomotionFrontLeft_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 93,
+            "name": "Sandbike Tread Mk1 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 896.092956,
+            "templateId": "SandbikeLocomotionFrontRight_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 93,
+            "name": "Sandbike Tread Mk1 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Hagga Basin South"
+      },
+      {
+        "id": "2161",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "",
+        "relationship": null,
+        "condition_percent": 53,
+        "condition_estimated": true,
+        "current_fuel": "69.381813",
+        "max_fuel": "84.437484",
+        "fuel_percent": 82,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "32308.6701012824",
+        "y": "157456.570818791",
+        "z": "6532.05556034429",
+        "modules": [
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_1",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 418.582611,
+            "templateId": "SandbikeEngine_1",
+            "maxInferred": false,
+            "maxCondition": 425.922973,
+            "conditionPercent": 98,
+            "name": "Sandbike Engine Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 988.751159,
+            "templateId": "SandbikeGenerator_1",
+            "maxInferred": false,
+            "maxCondition": 992.449707,
+            "conditionPercent": 99,
+            "name": "Sandbike PSU Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_1",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 933.406982,
+            "templateId": "SandbikeLocomotionBackCenter_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 96,
+            "name": "Sandbike Tread Mk1 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 933.406982,
+            "templateId": "SandbikeLocomotionFrontLeft_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 96,
+            "name": "Sandbike Tread Mk1 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 933.406982,
+            "templateId": "SandbikeLocomotionFrontRight_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 96,
+            "name": "Sandbike Tread Mk1 (Front Right)",
+            "isStorage": false
+          },
+          {
+            "condition": 273.144012,
+            "templateId": "SandbikeSeat_1",
+            "maxInferred": false,
+            "maxCondition": 515.179077,
+            "conditionPercent": 53,
+            "name": "Sandbike Backseat Mk1",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Eastern Vermillius Gap"
+      },
+      {
+        "id": "2171",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "mikio",
+        "relationship": null,
+        "condition_percent": 88,
+        "condition_estimated": true,
+        "current_fuel": "32.277217",
+        "max_fuel": "84.437484",
+        "fuel_percent": 38,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "-90049.3126230014",
+        "y": "138764.313002031",
+        "z": "1713.53282759281",
+        "modules": [
+          {
+            "condition": 962.945556,
+            "templateId": "SandbikeBoost_2",
+            "maxInferred": true,
+            "maxCondition": 997.035766,
+            "conditionPercent": 96,
+            "name": "Sandbike Booster Mk2",
+            "isStorage": false
+          },
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_1",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 877.835021,
+            "templateId": "SandbikeEngine_1",
+            "maxInferred": true,
+            "maxCondition": 973.868286,
+            "conditionPercent": 90,
+            "name": "Sandbike Engine Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 928.287902,
+            "templateId": "SandbikeGenerator_1",
+            "maxInferred": true,
+            "maxCondition": 988.751159,
+            "conditionPercent": 93,
+            "name": "Sandbike PSU Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_1",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 854.514831,
+            "templateId": "SandbikeLocomotionBackCenter_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 88,
+            "name": "Sandbike Tread Mk1 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 854.514831,
+            "templateId": "SandbikeLocomotionFrontLeft_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 88,
+            "name": "Sandbike Tread Mk1 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 854.514831,
+            "templateId": "SandbikeLocomotionFrontRight_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 88,
+            "name": "Sandbike Tread Mk1 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Western Vermillius Gap"
+      },
+      {
+        "id": "2285",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "RealXKenny",
+        "relationship": null,
+        "condition_percent": 99,
+        "condition_estimated": true,
+        "current_fuel": "148.933746",
+        "max_fuel": "150.0",
+        "fuel_percent": 99,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "5523.67850114445",
+        "y": "-238740.70484504",
+        "z": "2499.79575352831",
+        "modules": [
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_6",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 998.489318,
+            "templateId": "SandbikeEngine_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 99,
+            "name": "Sandbike Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 999.244628,
+            "templateId": "SandbikeGenerator_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 99,
+            "name": "Sandbike PSU Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_6",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 998.040405,
+            "templateId": "SandbikeLocomotionBackCenter_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 99,
+            "name": "Sandbike Tread Mk6 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 998.040405,
+            "templateId": "SandbikeLocomotionFrontLeft_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 99,
+            "name": "Sandbike Tread Mk6 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 998.040405,
+            "templateId": "SandbikeLocomotionFrontRight_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 99,
+            "name": "Sandbike Tread Mk6 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Jabal Eifrit Al-gharb"
+      },
+      {
+        "id": "2286",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "RealXKenny",
+        "relationship": null,
+        "condition_percent": 100,
+        "condition_estimated": true,
+        "current_fuel": "150.0",
+        "max_fuel": "150.0",
+        "fuel_percent": 100,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "4074.83461017088",
+        "y": "-240225.490032008",
+        "z": "2485.76122205382",
+        "modules": [
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_6",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeEngine_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeGenerator_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike PSU Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_6",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeLocomotionBackCenter_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk6 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeLocomotionFrontLeft_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk6 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeLocomotionFrontRight_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk6 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Jabal Eifrit Al-gharb"
+      },
+      {
+        "id": "2287",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "RealXKenny",
+        "relationship": null,
+        "condition_percent": 100,
+        "condition_estimated": true,
+        "current_fuel": "150.0",
+        "max_fuel": "150.0",
+        "fuel_percent": 100,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "3874.13441882261",
+        "y": "-240098.294933628",
+        "z": "2485.76123375904",
+        "modules": [
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_6",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeEngine_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeGenerator_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike PSU Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_6",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeLocomotionBackCenter_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk6 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeLocomotionFrontLeft_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk6 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 1000,
+            "templateId": "SandbikeLocomotionFrontRight_6",
+            "maxInferred": true,
+            "maxCondition": 1000,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk6 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Jabal Eifrit Al-gharb"
+      },
+      {
+        "id": "2304",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "Zorg",
+        "relationship": null,
+        "condition_percent": 99,
+        "condition_estimated": true,
+        "current_fuel": "84.437484",
+        "max_fuel": "84.437484",
+        "fuel_percent": 100,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "87486.2393998828",
+        "y": "251634.941137467",
+        "z": "1313.27444377385",
+        "modules": [
+          {
+            "condition": 997.035766,
+            "templateId": "SandbikeBoost_2",
+            "maxInferred": true,
+            "maxCondition": 997.035766,
+            "conditionPercent": 100,
+            "name": "Sandbike Booster Mk2",
+            "isStorage": false
+          },
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_1",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 973.868286,
+            "templateId": "SandbikeEngine_1",
+            "maxInferred": true,
+            "maxCondition": 973.868286,
+            "conditionPercent": 100,
+            "name": "Sandbike Engine Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 985.901184,
+            "templateId": "SandbikeGenerator_1",
+            "maxInferred": true,
+            "maxCondition": 988.751159,
+            "conditionPercent": 99,
+            "name": "Sandbike PSU Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_1",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 962.857849,
+            "templateId": "SandbikeLocomotionBackCenter_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk1 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 962.857849,
+            "templateId": "SandbikeLocomotionFrontLeft_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk1 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 962.857849,
+            "templateId": "SandbikeLocomotionFrontRight_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 100,
+            "name": "Sandbike Tread Mk1 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Hagga Basin South"
+      },
+      {
+        "id": "2319",
+        "name": "Sandbike",
+        "type": "Sandbike",
+        "owner": "iRAMP",
+        "relationship": null,
+        "condition_percent": 94,
+        "condition_estimated": true,
+        "current_fuel": "55.870895",
+        "max_fuel": "84.437484",
+        "fuel_percent": 66,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "-16385.6312349195",
+        "y": "235602.014630258",
+        "z": "510.435249557336",
+        "modules": [
+          {
+            "condition": 994.733398,
+            "templateId": "SandbikeBoost_2",
+            "maxInferred": true,
+            "maxCondition": 997.035766,
+            "conditionPercent": 99,
+            "name": "Sandbike Booster Mk2",
+            "isStorage": false
+          },
+          {
+            "condition": 2000,
+            "templateId": "SandbikeChassis_1",
+            "maxInferred": true,
+            "maxCondition": 2000,
+            "conditionPercent": 100,
+            "name": "Sandbike Chassis Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 924.844177,
+            "templateId": "SandbikeEngine_1",
+            "maxInferred": true,
+            "maxCondition": 973.868286,
+            "conditionPercent": 94,
+            "name": "Sandbike Engine Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 960.347473,
+            "templateId": "SandbikeGenerator_1",
+            "maxInferred": true,
+            "maxCondition": 988.751159,
+            "conditionPercent": 97,
+            "name": "Sandbike PSU Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 1500,
+            "templateId": "SandbikeHull_1",
+            "maxInferred": true,
+            "maxCondition": 1500,
+            "conditionPercent": 100,
+            "name": "Sandbike Hull Mk1",
+            "isStorage": false
+          },
+          {
+            "condition": 909.24945,
+            "templateId": "SandbikeLocomotionBackCenter_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 94,
+            "name": "Sandbike Tread Mk1 (Back Center)",
+            "isStorage": false
+          },
+          {
+            "condition": 909.24945,
+            "templateId": "SandbikeLocomotionFrontLeft_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 94,
+            "name": "Sandbike Tread Mk1 (Front Left)",
+            "isStorage": false
+          },
+          {
+            "condition": 909.24945,
+            "templateId": "SandbikeLocomotionFrontRight_1",
+            "maxInferred": true,
+            "maxCondition": 962.857849,
+            "conditionPercent": 94,
+            "name": "Sandbike Tread Mk1 (Front Right)",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Hagga Basin South"
+      },
+      {
+        "id": "528",
+        "name": "Scout Ornithopter",
+        "type": "Scout Ornithopter",
+        "owner": "Credence Senjak",
+        "relationship": null,
+        "condition_percent": 100,
+        "condition_estimated": true,
+        "current_fuel": "383.65686",
+        "max_fuel": "383.65686",
+        "fuel_percent": 100,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "172685.501756399",
+        "y": "-93363.704572078",
+        "z": "5924.31530275601",
+        "modules": [
+          {
+            "condition": 3500,
+            "templateId": "OrnithopterLightChassis_6",
+            "maxInferred": true,
+            "maxCondition": 3500,
+            "conditionPercent": 100,
+            "name": "Scout Ornithopter Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1206.017944,
+            "templateId": "OrnithopterLightEngine_6",
+            "maxInferred": true,
+            "maxCondition": 1206.017944,
+            "conditionPercent": 100,
+            "name": "Scout Ornithopter Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1332.634887,
+            "templateId": "OrnithopterLightGenerator_6",
+            "maxInferred": true,
+            "maxCondition": 1332.634887,
+            "conditionPercent": 100,
+            "name": "Scout Ornithopter Generator Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2625,
+            "templateId": "OrnithopterLightHullBack_6",
+            "maxInferred": true,
+            "maxCondition": 2625,
+            "conditionPercent": 100,
+            "name": "Scout Ornithopter Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2625,
+            "templateId": "OrnithopterLightHullFront_6",
+            "maxInferred": true,
+            "maxCondition": 2625,
+            "conditionPercent": 100,
+            "name": "Scout Ornithopter Cockpit Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1750,
+            "templateId": "OrnithopterLightInventory_4",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Scout Ornithopter Storage Mk4",
+            "isStorage": true
+          },
+          {
+            "condition": 1332.967651,
+            "templateId": "OrnithopterLightLocomotionBackLeft_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 100,
+            "name": "OrnithopterLightLocomotionBackLeft_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 1332.967651,
+            "templateId": "OrnithopterLightLocomotionBackRight_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 100,
+            "name": "OrnithopterLightLocomotionBackRight_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 1332.967651,
+            "templateId": "OrnithopterLightLocomotionFrontLeft_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 100,
+            "name": "OrnithopterLightLocomotionFrontLeft_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 1332.967651,
+            "templateId": "OrnithopterLightLocomotionFrontRight_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 100,
+            "name": "OrnithopterLightLocomotionFrontRight_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 1580,
+            "templateId": "OrnithopterLightScanner_4",
+            "maxInferred": true,
+            "maxCondition": 1580,
+            "conditionPercent": 100,
+            "name": "Scout Ornithopter Scan Module",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [
+          {
+            "name": "RealXKenny",
+            "rank": 3,
+            "label": "Associate"
+          }
+        ],
+        "region": "Jabal Eifrit Al-janub"
+      },
+      {
+        "id": "980",
+        "name": "Scout Ornithopter",
+        "type": "Scout Ornithopter",
+        "owner": "",
+        "relationship": null,
+        "condition_percent": 65,
+        "condition_estimated": true,
+        "current_fuel": "298.131378",
+        "max_fuel": "383.65686",
+        "fuel_percent": 77,
+        "map": "HaggaBasin",
+        "partition_id": 1,
+        "x": "-33592.933123664",
+        "y": "-142243.869686588",
+        "z": "5901.68486956509",
+        "modules": [
+          {
+            "condition": 1256.626464,
+            "templateId": "OrnithopterLightBoost_Unique_LessHeat_6",
+            "maxInferred": null,
+            "maxCondition": null,
+            "conditionPercent": null,
+            "name": "Stormrider Boost Module Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 3499.135253,
+            "templateId": "OrnithopterLightChassis_6",
+            "maxInferred": true,
+            "maxCondition": 3500,
+            "conditionPercent": 99,
+            "name": "Scout Ornithopter Chassis Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 885.342895,
+            "templateId": "OrnithopterLightEngine_6",
+            "maxInferred": true,
+            "maxCondition": 1206.017944,
+            "conditionPercent": 73,
+            "name": "Scout Ornithopter Engine Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 1024.630126,
+            "templateId": "OrnithopterLightGenerator_6",
+            "maxInferred": true,
+            "maxCondition": 1332.634887,
+            "conditionPercent": 76,
+            "name": "Scout Ornithopter Generator Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2474.0625,
+            "templateId": "OrnithopterLightHullBack_6",
+            "maxInferred": true,
+            "maxCondition": 2625,
+            "conditionPercent": 94,
+            "name": "Scout Ornithopter Hull Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 2474.0625,
+            "templateId": "OrnithopterLightHullFront_6",
+            "maxInferred": true,
+            "maxCondition": 2625,
+            "conditionPercent": 94,
+            "name": "Scout Ornithopter Cockpit Mk6",
+            "isStorage": false
+          },
+          {
+            "condition": 874.273925,
+            "templateId": "OrnithopterLightLocomotionBackLeft_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 65,
+            "name": "OrnithopterLightLocomotionBackLeft_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 874.273925,
+            "templateId": "OrnithopterLightLocomotionBackRight_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 65,
+            "name": "OrnithopterLightLocomotionBackRight_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 874.273925,
+            "templateId": "OrnithopterLightLocomotionFrontLeft_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 65,
+            "name": "OrnithopterLightLocomotionFrontLeft_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 874.273925,
+            "templateId": "OrnithopterLightLocomotionFrontRight_Unique_Speed_6",
+            "maxInferred": true,
+            "maxCondition": 1332.967651,
+            "conditionPercent": 65,
+            "name": "OrnithopterLightLocomotionFrontRight_Unique_Speed_6",
+            "isStorage": false
+          },
+          {
+            "condition": 1453.75,
+            "templateId": "OrnithopterLightScanner_4",
+            "maxInferred": true,
+            "maxCondition": 1580,
+            "conditionPercent": 92,
+            "name": "Scout Ornithopter Scan Module",
+            "isStorage": false
+          }
+        ],
+        "shared_with": [],
+        "region": "Western Vermillius Gap"
+      }
+    ]
+  },
+  "onlinePlayersData": {
+    "capabilities": {
+      "players": true,
+      "status": "online",
+      "statusFilterApplied": true,
+      "banFilterApplied": true
+    },
+    "totalCount": 0,
+    "totalPlayers": 14,
+    "rows": []
+  }
+}
