@@ -20,3 +20,4 @@ package-lock.json*
 
 # Dashboard build output
 /Dashboard/.next/
+.aider*
