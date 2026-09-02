@@ -7,10 +7,8 @@ export const revalidate = 0;
 
 export async function GET() {
   try {
-    // Initialize the Dune client only when the request runs.
-    const duneClient = getDuneClient();
+    const duneClient = await getDuneClient();
 
-    // Fetch online players and total players through duneClient.
     const [onlinePlayers, playersData] = await Promise.all([
       duneClient.request(
         'GET',
@@ -23,17 +21,6 @@ export async function GET() {
       ),
     ]);
 
-    console.log(
-      '[TELEMETRY API] RAW ONLINE PLAYERS RESPONSE:',
-      onlinePlayers
-    );
-
-    console.log(
-      '[TELEMETRY API] RAW TOTAL PLAYERS RESPONSE:',
-      playersData
-    );
-
-    // Extract active player count.
     const activePlayers = Number(
       onlinePlayers?.totalCount ??
       onlinePlayers?.totalPlayers ??
@@ -45,7 +32,6 @@ export async function GET() {
       0
     );
 
-    // Extract total player count.
     const totalPlayers = Number(
       playersData?.totalCount ??
       playersData?.totalPlayers ??
@@ -56,11 +42,6 @@ export async function GET() {
       playersData?.meta?.totalCount ??
       0
     );
-
-    console.log('[PLAYER TELEMETRY] Counts:', {
-      activePlayers,
-      totalPlayers,
-    });
 
     return NextResponse.json(
       {
