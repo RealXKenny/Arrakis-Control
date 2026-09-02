@@ -204,17 +204,6 @@ class DuneConsoleClient {
 
     const startedAt = Date.now();
 
-    logger.debug(
-      `Discord Adapter POST ${route} requested.`,
-      {
-        bodyFields: Object.keys(body),
-        hasActor: Boolean(body?.actor),
-        userId: body?.actor?.userId ?? null,
-        commandName:
-          body?.actor?.commandName ?? null,
-      }
-    );
-
     let response;
 
     for (
@@ -342,11 +331,6 @@ class DuneConsoleClient {
         data
       );
     }
-
-    logger.debug(
-      `Discord Adapter POST ${route} completed with HTTP ${response.status} ` +
-        `in ${Date.now() - startedAt}ms.`
-    );
 
     return data;
   }
@@ -556,19 +540,6 @@ class DuneConsoleClient {
 
     const startedAt = Date.now();
 
-    logger.debug(
-      `${method} ${route} requested.`,
-      {
-        query: query
-          ? Object.keys(query)
-          : [],
-        hasBody:
-          body !== undefined,
-        authenticated:
-          authenticate,
-      }
-    );
-
     let response;
 
     for (
@@ -707,11 +678,6 @@ class DuneConsoleClient {
       );
     }
 
-    logger.debug(
-      `${method} ${route} completed with HTTP ${response.status} ` +
-        `in ${Date.now() - startedAt}ms.`
-    );
-
     return data;
   }
 
@@ -772,10 +738,6 @@ class DuneConsoleClient {
     }
 
     const startedAt = Date.now();
-
-    logger.debug(
-      `${method} ${route} multipart request requested.`
-    );
 
     let response;
 
@@ -847,11 +809,6 @@ class DuneConsoleClient {
         data
       );
     }
-
-    logger.debug(
-      `${method} ${route} completed with HTTP ${response.status} ` +
-        `in ${Date.now() - startedAt}ms.`
-    );
 
     return data;
   }
@@ -1096,10 +1053,6 @@ export async function GET() {
       result
     );
   } catch (error) {
-    console.error(
-      "[DUNE API] GET failed:",
-      error
-    );
 
     if (
       error instanceof

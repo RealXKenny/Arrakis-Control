@@ -14,12 +14,10 @@ export default function LandingPage() {
       });
 
       if (!res.ok) {
-        throw new Error(`Server telemetry request failed: ${res.status} `);
+        throw new Error(`Server telemetry request failed: ${ res.status } `);
       }
 
       const data = await res.json();
-
-      console.log('[LANDING PAGE] TELEMETRY RESPONSE:', data);
 
       setActivePlayers(
         data.activePlayers !== null ? Number(data.activePlayers) : null
@@ -433,6 +431,51 @@ export default function LandingPage() {
               <span style={{ fontSize: '1.1rem' }}>→</span>
             </a>
 
+            <a
+              href="https://discord.gg/crimsonskies"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                width: '100%',
+                maxWidth: '280px',
+                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                marginTop: '12px',
+                padding: '13px 24px',
+                borderRadius: '8px',
+                border: '1px solid rgba(205,162,107,0.25)',
+                backgroundColor: 'rgba(205,162,107,0.06)',
+                color: '#cda26b',
+                textDecoration: 'none',
+                fontSize: '0.88rem',
+                fontWeight: '800',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
+                transition:
+                  'transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.backgroundColor =
+                  'rgba(205,162,107,0.12)';
+                e.currentTarget.style.borderColor =
+                  'rgba(205,162,107,0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.backgroundColor =
+                  'rgba(205,162,107,0.06)';
+                e.currentTarget.style.borderColor =
+                  'rgba(205,162,107,0.25)';
+              }}
+            >
+              <span style={{ fontSize: '1.05rem' }}>◈</span>
+              <span>Join Discord</span>
+              <span style={{ fontSize: '1rem' }}>↗</span>
+            </a>
+
             <div
               style={{
                 marginTop: '16px',
@@ -480,37 +523,37 @@ export default function LandingPage() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 700px) {
+@media(max - width: 700px) {
           main {
-            padding: 30px 15px !important;
-          }
+    padding: 30px 15px!important;
+  }
 
           section {
-            grid-template-columns: 1fr !important;
-          }
+    grid - template - columns: 1fr!important;
+  }
 
-          section > div:first-child {
-            border-right: none !important;
-            border-bottom: 1px solid rgba(205, 162, 107, 0.1);
-          }
-        }
+  section > div: first - child {
+    border - right: none!important;
+    border - bottom: 1px solid rgba(205, 162, 107, 0.1);
+  }
+}
 
-        @media (max-height: 750px) and (min-width: 701px) {
+@media(max - height: 750px) and(min - width: 701px) {
           main {
-            padding-top: 25px !important;
-            padding-bottom: 25px !important;
-          }
+    padding - top: 25px!important;
+    padding - bottom: 25px!important;
+  }
 
           header {
-            margin-bottom: 20px !important;
-          }
+    margin - bottom: 20px!important;
+  }
 
-          section > div {
-            padding-top: 35px !important;
-            padding-bottom: 35px !important;
-          }
-        }
-      `}</style>
+  section > div {
+    padding - top: 35px!important;
+    padding - bottom: 35px!important;
+  }
+}
+`}</style>
     </main>
   );
 }

@@ -213,10 +213,7 @@ export async function GET(request) {
     if (memberResponse.ok) {
       memberData = await memberResponse.json();
     } else {
-      console.error('Discord guild membership lookup failed:', {
-        status: memberResponse.status,
-        response: await memberResponse.text(),
-      });
+
     }
 
     const rolesArray = Array.isArray(memberData.roles)
@@ -247,14 +244,6 @@ export async function GET(request) {
       sameSite: 'lax',
       maxAge: 86400,
       path: '/',
-    });
-
-    console.log('Discord authentication successful:', {
-      userId: userData.id,
-      username: userData.username,
-      guildId,
-      roleCount: rolesArray.length,
-      isOwner,
     });
 
     // Owners go to dashboard; other authenticated members go to portal.
