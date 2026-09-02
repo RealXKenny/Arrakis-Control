@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { SESSION_COOKIE_NAME, getSessionId } from '../../_utils/session';
 
 export async function GET() {
   try {
     const cookieStore = await cookies();
-
-    const sessionId =
-      cookieStore.get('dashboard_session')?.value;
+    const sessionId = await getSessionId();
 
     // Remove the server-side session.
     if (sessionId && global.dashboardSessions) {
@@ -14,7 +13,7 @@ export async function GET() {
     }
 
     // Clear the authentication cookie.
-    cookieStore.set('dashboard_session', '', {
+    cookieStore.set(SESSION_COOKIE_NAME, '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-import { getDuneClient } from '../dune/route';
+import { getDuneClient } from '../dune/client';
+import { getDashboardSession, getSessionId } from '../_utils/session';
 
 import {
   extractBaseRows,
@@ -82,22 +81,16 @@ export async function GET(request) {
   const started = Date.now();
 
   try {
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get('dashboard_session')?.value;
+    const sessionId = await getSessionId();
+    const dashboardSession = await getDashboardSession();
 
-    if (!sessionId) {
-      return unauthorizedResponse();
+    if (!dashboardSession) {
+      return unauthorizedResponse(
+        sessionId ? 'Session expired or invalid' : 'Unauthorized'
+      );
     }
 
-    const session = global.dashboardSessions?.get(sessionId);
-
-    if (
-      !session ||
-      !session.expiresAt ||
-      session.expiresAt < Date.now()
-    ) {
-      return unauthorizedResponse('Session expired or invalid');
-    }
+    const { session } = dashboardSession;
 
     if (!process.env.CONSOLE_URL) {
       throw new Error('CONSOLE_URL is not configured');
