@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
-import { createDiscordAuthorizationUrl, getDiscordOAuthConfig } from '../utils/oauth';
 
 export async function GET() {
   try {
-    const { clientId, redirectUri } = getDiscordOAuthConfig();
+    const clientId =
+      process.env.DISCORD_CLIENT_ID ?? process.env.CLIENT_ID;
+
+    const redirectUri = process.env.DISCORD_REDIRECT_URI;
 
     if (!clientId) {
       console.error(
@@ -33,7 +35,15 @@ export async function GET() {
       );
     }
 
-    const discordAuthUrl = createDiscordAuthorizationUrl(clientId, redirectUri);
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'identify guilds.members.read',
+    });
+
+    const discordAuthUrl =
+      `https://discord.com/oauth2/authorize?${params.toString()}`;
 
     return NextResponse.redirect(discordAuthUrl);
   } catch (error) {

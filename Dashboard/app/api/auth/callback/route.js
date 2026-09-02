@@ -4,7 +4,6 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import { getDiscordOAuthConfig } from '../utils/oauth';
 
 // Load .env from the project/parent directory when available.
 let currentDir = process.cwd();
@@ -60,12 +59,14 @@ export async function GET(request) {
       );
     }
 
-    const {
-      clientId,
-      clientSecret,
-      guildId,
-      ownerRoleId,
-    } = getDiscordOAuthConfig();
+    const clientId =
+      process.env.DISCORD_CLIENT_ID ?? process.env.CLIENT_ID;
+
+    const clientSecret =
+      process.env.DISCORD_CLIENT_SECRET ?? process.env.CLIENT_SECRET;
+
+    const guildId = process.env.GUILD_ID;
+    const ownerRoleId = process.env.OWNER_ROLE_ID;
 
     // Use the exact same redirect URI configured for Discord OAuth.
     const redirectUri = process.env.DISCORD_REDIRECT_URI;

@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { requestJson } from '../../utils/requestCache';
 
 const REFRESH_INTERVAL = 30_000;
 
@@ -51,16 +50,38 @@ export default function useMapData(mapName = 'HaggaBasin') {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
-    const loadMap = useCallback(async () => {
+    const loadMap = useCallback(async (signal) => {
         try {
             setLoading(true);
 
-            const data = await requestJson(
+            const response = await fetch(
                 `/api/map?map=${encodeURIComponent(mapName)}`,
                 {
-                    ttl: REFRESH_INTERVAL,
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                    signal,
                 }
             );
+
+            if (response.status === 401) {
+                window.location.href = '/auth/login';
+                return;
+            }
+
+            if (!response.ok) {
+                const errorData =
+                    await response.json().catch(() => null);
+
+                throw new Error(
+                    errorData?.error ||
+                    `Map API returned ${response.status}`
+                );
+            }
+
+            const data = await response.json();
 
             if (!data?.ok) {
                 throw new Error(
@@ -86,11 +107,6 @@ export default function useMapData(mapName = 'HaggaBasin') {
                 return;
             }
 
-            if (err?.status === 401) {
-                window.location.href = '/auth/login';
-                return;
-            }
-
             setError(
                 err?.message ||
                 'Unable to load map data.'
@@ -101,26 +117,33 @@ export default function useMapData(mapName = 'HaggaBasin') {
     }, [mapName]);
 
     useEffect(() => {
-        void loadMap();
+        const controller = new AbortController();
+
+        void loadMap(controller.signal);
 
         const interval = window.setInterval(() => {
-            if (!document.hidden) void loadMap();
+            const refreshController =
+                new AbortController();
+
+            void loadMap(refreshController.signal);
+
+            window.setTimeout(() => {
+                refreshController.abort();
+            }, 15_000);
         }, REFRESH_INTERVAL);
 
-        const handleVisibilityChange = () => {
-            if (!document.hidden) void loadMap();
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
         return () => {
+            controller.abort();
             window.clearInterval(interval);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [loadMap]);
 
     const reload = useCallback(() => {
-        void loadMap();
+        const controller = new AbortController();
+
+        void loadMap(controller.signal);
+
+        return () => controller.abort();
     }, [loadMap]);
 
     return {
