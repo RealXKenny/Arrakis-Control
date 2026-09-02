@@ -45,10 +45,6 @@ export async function GET() {
     const discordAuthUrl =
       `https://discord.com/oauth2/authorize?${params.toString()}`;
 
-    console.log('Starting Discord OAuth authentication:', {
-      redirectUri,
-    });
-
     return NextResponse.redirect(discordAuthUrl);
   } catch (error) {
     console.error(
