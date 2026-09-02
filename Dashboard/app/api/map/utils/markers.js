@@ -93,12 +93,20 @@ export function filterMapMarkers(
         new Set([
             'player',
             'base',
+            'storage',
+            'vehicle',
             'spice',
             'spice_active',
             'flour_sand',
+            'ore',
+            'scrap',
+            'flora',
             'poi',
             'house_representative',
             'trainer',
+            'fortress',
+            'hazard',
+            'enemy',
         ]);
 
     return allMarkers.filter((marker) => {

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-const MAP_NAME = 'HaggaBasin';
 const REFRESH_INTERVAL = 30_000;
 
 function getMarkerArray(data) {
@@ -45,7 +44,7 @@ function getMapConfig(data) {
     return null;
 }
 
-export default function useMapData() {
+export default function useMapData(mapName = 'HaggaBasin') {
     const [mapConfig, setMapConfig] = useState(null);
     const [markers, setMarkers] = useState([]);
     const [error, setError] = useState('');
@@ -56,7 +55,7 @@ export default function useMapData() {
             setLoading(true);
 
             const response = await fetch(
-                `/api/map?map=${MAP_NAME}`,
+                `/api/map?map=${encodeURIComponent(mapName)}`,
                 {
                     method: 'GET',
                     cache: 'no-store',
@@ -115,7 +114,7 @@ export default function useMapData() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [mapName]);
 
     useEffect(() => {
         const controller = new AbortController();

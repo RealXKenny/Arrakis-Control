@@ -14,8 +14,8 @@ import useMapWindow from '../hooks/useMapWindow';
 
 import styles from '../map.module.css';
 
-const LEGEND_STORAGE_KEY =
-    'hagga-basin-map-legend';
+const LEGEND_STORAGE_KEY_PREFIX =
+    'map-legend';
 
 const LEGEND_CATEGORIES = [
     {
@@ -43,6 +43,10 @@ const LEGEND_CATEGORIES = [
         label: 'Base',
     },
     {
+        type: 'storage',
+        label: 'Storage',
+    },
+    {
         type: 'spice',
         label: 'Static Spice Spawns',
     },
@@ -53,6 +57,18 @@ const LEGEND_CATEGORIES = [
     {
         type: 'flour_sand',
         label: 'Flour Sand',
+    },
+    {
+        type: 'ore',
+        label: 'Ore & Pickups',
+    },
+    {
+        type: 'scrap',
+        label: 'Wreckage & Scrap',
+    },
+    {
+        type: 'flora',
+        label: 'Flora',
     },
     {
         type: 'poi',
@@ -100,6 +116,18 @@ const LEGEND_CATEGORIES = [
             ['trainertrooper', 'Trooper'],
         ],
     },
+    {
+        type: 'fortress',
+        label: 'Fortresses',
+    },
+    {
+        type: 'hazard',
+        label: 'Hazards',
+    },
+    {
+        type: 'enemy',
+        label: 'Enemies',
+    },
 ];
 
 function normalizeSubtype(value) {
@@ -132,14 +160,16 @@ function getLegendIconClass(category, subtype) {
     ].join(' ');
 }
 
-export default function MapWindow() {
+export default function MapWindow({ mapName = 'HaggaBasin', title = 'HAGGA BASIN', offset = { x: 0, y: 0 }, split = false, onMapChange }) {
     const {
         mapConfig,
         markers,
         error,
         loading,
         loadMap,
-    } = useMapData();
+    } = useMapData(mapName);
+
+    const legendStorageKey = `${LEGEND_STORAGE_KEY_PREFIX}-${mapName}`;
 
     const [selected, setSelected] =
         React.useState(null);
@@ -175,7 +205,7 @@ export default function MapWindow() {
         restore,
         toggleMaximize,
         close,
-    } = useMapWindow(mapConfig);
+    } = useMapWindow(mapConfig, offset, split);
 
     const {
         zoom,
@@ -201,7 +231,7 @@ export default function MapWindow() {
         try {
             const saved =
                 window.localStorage.getItem(
-                    LEGEND_STORAGE_KEY
+                    legendStorageKey
                 );
 
             if (!saved) {
@@ -255,8 +285,8 @@ export default function MapWindow() {
                 open
             ) => {
                 try {
-                    window.localStorage.setItem(
-                        LEGEND_STORAGE_KEY,
+                window.localStorage.setItem(
+                    legendStorageKey,
                         JSON.stringify({
                             disabled,
                             expanded,
@@ -267,7 +297,7 @@ export default function MapWindow() {
                     // Ignore localStorage failures.
                 }
             },
-            []
+            [legendStorageKey]
         );
 
     const toggleLegendItem =
@@ -572,8 +602,29 @@ export default function MapWindow() {
                                     styles.title
                                 }
                             >
-                                HAGGA BASIN — LIVE MAP
+                                {title} — LIVE MAP
                             </div>
+
+                            {onMapChange && (
+                                <select
+                                    value={mapName}
+                                    onChange={(event) => onMapChange(event.target.value)}
+                                    onMouseDown={(event) => event.stopPropagation()}
+                                    title="Select map"
+                                    style={{
+                                        marginRight: 8,
+                                        background: '#24180e',
+                                        border: '1px solid #624324',
+                                        color: '#d9c19c',
+                                        fontFamily: 'inherit',
+                                        fontSize: 10,
+                                        padding: '3px 5px',
+                                    }}
+                                >
+                                    <option value="HaggaBasin">Hagga Basin</option>
+                                    <option value="DeepDesert">Deep Desert</option>
+                                </select>
+                            )}
 
                             <button
                                 type="button"
@@ -710,6 +761,7 @@ export default function MapWindow() {
                         >
                             {mapConfig ? (
                                 <MapCanvas
+                                    mapName={mapName}
                                     mapConfig={
                                         mapConfig
                                     }
@@ -902,20 +954,6 @@ export default function MapWindow() {
                                                     >
                                                         <span
                                                             className={
-                                                                styles.mapLegendIconSmall
-                                                            }
-                                                        >
-                                                            <span
-                                                                className={
-                                                                    getLegendIconClass(
-                                                                        category
-                                                                    )
-                                                                }
-                                                            />
-                                                        </span>
-
-                                                        <span
-                                                            className={
                                                                 styles.mapLegendCategoryName
                                                             }
                                                         >
@@ -1078,7 +1116,7 @@ export default function MapWindow() {
                         ▸_
                     </span>
 
-                    HAGGA BASIN — LIVE MAP
+                    {title} — LIVE MAP
                 </button>
             )}
         </main>

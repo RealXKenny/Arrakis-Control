@@ -1382,3 +1382,12 @@
 .mapLegendCollapsed {
   height: 38px !important;
 }
+:global(.live-map-marker.subtype-brittlebush) { background-image: url('/maps/plantfiber.webp'); }
+:global(.live-map-marker.subtype-enemycamp) { background-image: url('/maps/enemycamp.webp'); }
+:global(.live-map-marker.subtype-fuelcellwreckage) { background-image: url('/maps/fuelcellwreckage.webp'); }
+:global(.live-map-marker.subtype-scrapmetalwreckage),
+:global(.live-map-marker.subtype-scrapmetalpart),
+:global(.live-map-marker.subtype-fuelcellpart) { background-image: url('/maps/scrapmetalwreckage.webp'); }
+:global(.live-map-marker.subtype-hazard_quicksand) { background: rgba(194, 142, 64, .65); }
+:global(.live-map-marker.subtype-hazard_radiation) { background: rgba(104, 214, 112, .65); }
+:global(.live-map-marker.marker-storage) { background: #8b6a42; border: 1px solid #d8a75f; border-radius: 3px; }

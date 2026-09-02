@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export default function useMapWindow(mapConfig) {
+export default function useMapWindow(mapConfig, offset = { x: 0, y: 0 }, split = false) {
     const [windowState, setWindowState] = useState({
         x: 0,
         y: 0,
@@ -40,7 +40,9 @@ export default function useMapWindow(mapConfig) {
 
         const maxWidth = Math.max(
             280,
-            viewportWidth - horizontalPadding
+            split
+                ? (viewportWidth - horizontalPadding - 12) / 2
+                : viewportWidth - horizontalPadding
         );
 
         const maxHeight = Math.max(
@@ -121,19 +123,23 @@ export default function useMapWindow(mapConfig) {
         }
 
         const center = () => {
+            const horizontalOffset = split
+                ? (offset.x < 0 ? -window.innerWidth / 4 : window.innerWidth / 4)
+                : offset.x;
+
             setWindowState((current) => ({
                 ...current,
                 x: Math.max(
                     8,
                     Math.round(
                         (window.innerWidth - current.width) / 2
-                    )
+                    ) + horizontalOffset
                 ),
                 y: Math.max(
                     8,
                     Math.round(
                         (window.innerHeight - current.height) / 2
-                    )
+                    ) + offset.y
                 ),
             }));
         };
@@ -155,6 +161,9 @@ export default function useMapWindow(mapConfig) {
         windowState.width,
         windowState.height,
         windowState.maximized,
+        offset.x,
+        offset.y,
+        split,
     ]);
 
     const handleWindowMouseDown = useCallback(
