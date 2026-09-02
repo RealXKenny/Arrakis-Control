@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { requestJson } from './utils/requestCache';
+
+const STATUS_CACHE_TTL = 30_000;
 
 export default function LandingPage() {
   const [activePlayers, setActivePlayers] = useState(null);
@@ -9,15 +12,9 @@ export default function LandingPage() {
 
   async function loadTelemetry() {
     try {
-      const res = await fetch('/api/server/status', {
-        cache: 'no-store',
+      const data = await requestJson('/api/server/status', {
+        ttl: STATUS_CACHE_TTL,
       });
-
-      if (!res.ok) {
-        throw new Error(`Server telemetry request failed: ${ res.status } `);
-      }
-
-      const data = await res.json();
 
       setActivePlayers(
         data.activePlayers !== null ? Number(data.activePlayers) : null
@@ -39,9 +36,20 @@ export default function LandingPage() {
   useEffect(() => {
     loadTelemetry();
 
-    const interval = setInterval(loadTelemetry, 15000);
+    const interval = setInterval(() => {
+      if (!document.hidden) loadTelemetry();
+    }, STATUS_CACHE_TTL);
 
-    return () => clearInterval(interval);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) loadTelemetry();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const serverOnline = !serverStatusError;

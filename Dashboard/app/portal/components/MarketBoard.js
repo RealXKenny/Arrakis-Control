@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { COLORS, styles } from '../config/colors';
 import { formatNumber } from '../utils/formatting';
+import { requestJson } from '../../utils/requestCache';
+
+const MARKET_CACHE_TTL = 60_000;
 
 function rows(value, keys) {
   for (const key of keys) if (Array.isArray(value?.[key])) return value[key];
@@ -24,17 +27,46 @@ export default function MarketBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  async function loadMarket(force = false) {
+    setLoading(true);
+
+    try {
+      const body = await requestJson('/api/market', {
+        ttl: MARKET_CACHE_TTL,
+        force,
+      });
+      setData(body);
+      setError('');
+    } catch (reason) {
+      if (reason.name !== 'AbortError') {
+        setError(reason.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const controller = new AbortController();
-    fetch('/api/market', { cache: 'no-store', signal: controller.signal })
-      .then((response) => response.json().then((body) => ({ response, body })))
-      .then(({ response, body }) => {
-        if (!response.ok || !body.ok) throw new Error(body.error || `Market API returned ${response.status}`);
-        setData(body);
-      })
-      .catch((reason) => { if (reason.name !== 'AbortError') setError(reason.message); })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
+    loadMarket();
+
+    const interval = window.setInterval(() => {
+      if (!document.hidden) {
+        loadMarket();
+      }
+    }, MARKET_CACHE_TTL);
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadMarket();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const items = rows(data?.items, ['rows', 'items']);
@@ -50,7 +82,7 @@ export default function MarketBoard() {
     <section style={{ ...styles.panel, width: '100%', boxSizing: 'border-box', overflow: 'hidden', padding: 24, marginBottom: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
         <div><p style={{ margin: '0 0 5px', color: COLORS.goldLight, fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px' }}>Choam Exchange</p><h2 style={styles.sectionTitle}>Market Board</h2></div>
-        <button type="button" onClick={() => window.location.reload()} style={{ border: `1px solid ${COLORS.border}`, background: 'transparent', color: COLORS.goldLight, padding: '8px 12px', borderRadius: 6, fontSize: '0.68rem', fontWeight: 700 }}>Refresh Market</button>
+        <button type="button" onClick={() => loadMarket(true)} style={{ border: `1px solid ${COLORS.border}`, background: 'transparent', color: COLORS.goldLight, padding: '8px 12px', borderRadius: 6, fontSize: '0.68rem', fontWeight: 700 }}>Refresh Market</button>
       </div>
       {error && <p style={{ color: COLORS.red }}>{error}</p>}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', border: `1px solid ${COLORS.border}` }}>

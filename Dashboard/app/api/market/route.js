@@ -2,7 +2,9 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
-import { getDuneClient } from '../dune/route';
+import { getDuneClient } from '../dune/client';
+import { getOrSetCachedValue } from '../_utils/cache';
+import { createMarketPayload } from './utils/market';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -15,15 +17,17 @@ export async function GET() {
       return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const client = getDuneClient();
-    const [stats, items, config, marketConfig] = await Promise.all([
-      client.request('GET', '/api/exchange/stats'),
-      client.request('GET', '/api/exchange/items?page=0&pageSize=100'),
-      client.request('GET', '/api/exchange/config'),
-      client.request('GET', '/api/exchange/market'),
-    ]);
+    const payload = await getOrSetCachedValue('market', 30_000, async () => {
+      const client = getDuneClient();
+      const [stats, items, config, marketConfig] = await Promise.all([
+        client.request('GET', '/api/exchange/stats'),
+        client.request('GET', '/api/exchange/items?page=0&pageSize=100'),
+        client.request('GET', '/api/exchange/config'),
+        client.request('GET', '/api/exchange/market'),
+      ]);
 
-    const payload = { stats, items, config, marketConfig };
+      return createMarketPayload({ stats, items, config, marketConfig });
+    });
     try {
       const debugDirectory = path.join(process.cwd(), 'debug');
       await mkdir(debugDirectory, { recursive: true });

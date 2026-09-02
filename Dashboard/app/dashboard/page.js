@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { requestJson } from '../utils/requestCache';
+
+const STATS_CACHE_TTL = 60_000;
 
 export default function OwnerDashboard() {
   const [stats, setStats] = useState({ uptime: '...', memoryMb: '...', shards: [], guilds: [] });
@@ -8,9 +11,9 @@ export default function OwnerDashboard() {
 
   async function refreshStats() {
     try {
-      const res = await fetch('/api/stats');
-      if (!res.ok) return;
-      const data = await res.json();
+      const data = await requestJson('/api/stats', {
+        ttl: STATS_CACHE_TTL,
+      });
       setStats(data);
     } catch (err) {
       console.error('Failed to fetch telemetry data:', err);
@@ -35,8 +38,17 @@ export default function OwnerDashboard() {
 
   useEffect(() => {
     refreshStats();
-    const interval = setInterval(refreshStats, 15000);
-    return () => clearInterval(interval);
+    const interval = setInterval(() => {
+      if (!document.hidden) refreshStats();
+    }, STATS_CACHE_TTL);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) refreshStats();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return (

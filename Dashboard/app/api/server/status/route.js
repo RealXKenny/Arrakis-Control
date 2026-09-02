@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { getDuneClient } from '../../dune/route';
+import { getDuneClient } from '../../dune/client';
+import { createStatusPayload } from '../utils/status';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -21,34 +22,8 @@ export async function GET() {
       ),
     ]);
 
-    const activePlayers = Number(
-      onlinePlayers?.totalCount ??
-      onlinePlayers?.totalPlayers ??
-      onlinePlayers?.count ??
-      onlinePlayers?.pagination?.total ??
-      onlinePlayers?.pagination?.totalCount ??
-      onlinePlayers?.meta?.total ??
-      onlinePlayers?.meta?.totalCount ??
-      0
-    );
-
-    const totalPlayers = Number(
-      playersData?.totalCount ??
-      playersData?.totalPlayers ??
-      playersData?.count ??
-      playersData?.pagination?.total ??
-      playersData?.pagination?.totalCount ??
-      playersData?.meta?.total ??
-      playersData?.meta?.totalCount ??
-      0
-    );
-
     return NextResponse.json(
-      {
-        ok: true,
-        activePlayers,
-        totalPlayers,
-      },
+      createStatusPayload(onlinePlayers, playersData),
       {
         status: 200,
         headers: {
