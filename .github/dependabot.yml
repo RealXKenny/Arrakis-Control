@@ -1,7 +1,9 @@
 version: 2
+
 updates:
+  # Dashboard
   - package-ecosystem: npm
-    directory: /
+    directory: /Dashboard
     schedule:
       interval: daily
     open-pull-requests-limit: 10
@@ -11,6 +13,19 @@ updates:
       npm-development:
         dependency-type: development
 
+  # Bot
+  - package-ecosystem: npm
+    directory: /Bot
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    groups:
+      npm-production:
+        dependency-type: production
+      npm-development:
+        dependency-type: development
+
+  # GitHub Actions
   - package-ecosystem: github-actions
     directory: /.github/workflows
     schedule:
